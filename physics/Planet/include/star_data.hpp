@@ -1,4 +1,5 @@
 //
+// added J_limit to star
 // Created by Noah Kubli on 07.03.2024.
 //
 
@@ -19,6 +20,7 @@ struct StarData
     double                u_floor{9.3e-6}; // 9.3e-6 approx. 1 K; 2.73 K: u = 2.5e-5;
     double                u_max{std::numeric_limits<double>::infinity()};
     double                K_u{0.25};
+    double                J_limit{}; // specific angular momentum limit for accretion
     double du_adjust{std::numeric_limits<double>::infinity()}; //  ~ 0.25 * u_typical / t_resolve; 0.25 * 5e-5
                                                                // / 0.125 = 1e-4
 
@@ -56,6 +58,7 @@ struct StarData
         optionalIO("star::u_floor", &u_floor, 1);
         optionalIO("star::u_max", &u_max, 1);
         optionalIO("star::K_u", &K_u, 1);
+        optionalIO("star::J_limit", &J_limit, 1);
         optionalIO("star::du_adjust", &du_adjust, 1);
     };
 

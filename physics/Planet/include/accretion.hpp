@@ -29,7 +29,7 @@ void computeAccretionCondition(size_t first, size_t last, Dataset& d, StarData& 
     {
         computeAccretionConditionGPU(first, last, d, star);
     }
-    else { computeAccretionConditionImpl(first, last, d, star); }
+    else { computeAccretionConditionImplAng(first, last, d, star); }
 }
 
 //! @brief Exchange accreted mass and momentum between ranks and add to star.
