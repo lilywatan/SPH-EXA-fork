@@ -19,9 +19,12 @@ template<typename Dataset, typename StarData>
 // TODO: adjust function to remove particle based on threshold angular momentum 
 // - calculate relative angular momentum of particle-star 
 // - compare to threshold value 
-void computeAccretionConditionImplAng(size_t first, size_t last, Dataset& d, StarData& star)
+void computeAccretionConditionImplAngMom(size_t first, size_t last, Dataset& d, StarData& star)
 {
     const double star_size2 = star.inner_size * star.inner_size;
+    const double J_circ2 = 2 * d.g * star.m *  star.inner_size; // angular momentum limit based on circular orbit 
+    const double frac = 0.8; // fraction of escape angular momentum to consider
+    const double J_esc2 = frac * J_circ2; // based on escape velocity
 
     double accr_mass{};
     double accr_mom[3]{};
@@ -54,7 +57,8 @@ void computeAccretionConditionImplAng(size_t first, size_t last, Dataset& d, Sta
         const double Jz = (dx*d.vy[i] - dy*d.vx[i]);
         const double J2 = Jx * Jx + Jy * Jy + Jz * Jz;
 
-        if (J2 < star.J_limit) { remove_and_sum(i, accr_mass, accr_mom, n_accreted); }
+        // check if angular momentum is below limit 
+        if (J2 < J_circ2) { remove_and_sum(i, accr_mass, accr_mom, n_accreted); }
         else if (d.h[i] > star.removal_limit_h) { remove_and_sum(i, removed_mass, removed_mom, n_removed); }
     }
 

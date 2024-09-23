@@ -46,6 +46,8 @@
 #endif
 #include "turb_ve.hpp"
 #include "std_planet.hpp"
+#include "std_angmom.hpp"
+
 namespace sphexa
 {
 
@@ -86,6 +88,7 @@ propagatorFactory(const std::string& choice, bool avClean, std::ostream& output,
     {
         return std::make_unique<PlanetVEProp<false, DomainType, ParticleDataType>>(output, rank, s);
     }
+    if (choice == "std-angmom") { return std::make_unique<AngMomProp<DomainType, ParticleDataType>>(output, rank, s); }
 
     throw std::runtime_error("Unknown propagator choice: " + choice);
 }
