@@ -13,7 +13,7 @@ struct StarData
     std::array<double, 3> position{};
     std::array<double, 3> position_m1{};
     double                m{1.};
-    double                inner_size{5.};
+    double                inner_size{2.5}; // inner radius changed to 2.5 AU
     double                beta{6.28};
     double                removal_limit_h{5.};
     float                 cooling_rho_limit{1.683e-3};

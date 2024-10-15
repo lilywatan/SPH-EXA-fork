@@ -8,6 +8,7 @@
 #pragma once
 
 #include <variant>
+#include <fstream>
 
 #include "cstone/fields/field_get.hpp"
 #include "sph/particles_data.hpp"
@@ -77,6 +78,7 @@ public:
         if (std::filesystem::exists(path))
         {
             int snapshotIndex = numberAfterSign(initCond, ":");
+            printf("snapshot index: %d\n", snapshotIndex);
             reader->setStep(path, snapshotIndex, FileMode::independent);
             star.loadOrStoreAttributes(reader);
             reader->closeStep();
@@ -197,9 +199,19 @@ public:
 
         if (Base::rank_ == 0)
         {
-            printf("star position: %lf\t%lf\t%lf\n", star.position[0], star.position[1], star.position[2]);
-            printf("star mass: %lf\n", star.m);
-            printf("additional pot. erg.: %lf\n", star.potential);
+            // additional output file for star mass
+            std::ofstream outputFile("../output/star_mass.txt", std::ios::app);  // append mode
+            if (!outputFile.is_open()) {
+                std::cerr << "Could not open output file." << std::endl;
+            } else {
+                printf("star position: %lf\t%lf\t%lf\n", star.position[0], star.position[1], star.position[2]);
+                printf("star mass: %lf\n", star.m);
+                printf("additional pot. erg.: %lf\n", star.potential);
+
+                // write time-step and star mass to output file
+                outputFile << d.minDt << ", " << star.m << "\n";
+                outputFile.close();
+            }
         }
     }
 

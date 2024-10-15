@@ -22,7 +22,7 @@ template<typename Dataset, typename StarData>
 void computeAccretionConditionImplAngMom(size_t first, size_t last, Dataset& d, StarData& star)
 {
     const double star_size2 = star.inner_size * star.inner_size;
-    const double R_Bondi = (2 * d.g * star.m) / (d.c * d.c); // bondi radius if want to use for sth
+    // const double R_Bondi = (2 * d.g * star.m) / (d.c * d.c); // bondi radius if want to use for sth
     const double J_circ2 = 2 * d.g * star.m *  star.inner_size; // angular momentum limit based on circular orbit 
     const double frac = 0.8; // fraction of escape angular momentum to consider
     const double J_esc2 = frac * J_circ2; // based on escape velocity
