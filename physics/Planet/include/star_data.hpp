@@ -1,5 +1,4 @@
 //
-// added J_limit to star
 // Created by Noah Kubli on 07.03.2024.
 //
 

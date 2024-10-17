@@ -200,7 +200,7 @@ public:
         if (Base::rank_ == 0)
         {
             // additional output file for star mass
-            std::ofstream outputFile("../output/star_mass.txt", std::ios::app);  // append mode
+            std::ofstream outputFile("../output/star_mass_sound_speed.txt", std::ios::app);  // append mode
             if (!outputFile.is_open()) {
                 std::cerr << "Could not open output file." << std::endl;
             } else {
@@ -209,7 +209,7 @@ public:
                 printf("additional pot. erg.: %lf\n", star.potential);
 
                 // write time-step and star mass to output file
-                outputFile << d.minDt << ", " << star.m << "\n";
+                outputFile << d.c[0] << ", " << d.minDt << ", " << star.m << "\n";
                 outputFile.close();
             }
         }
