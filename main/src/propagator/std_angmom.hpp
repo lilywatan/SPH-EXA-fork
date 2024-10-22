@@ -200,7 +200,7 @@ public:
         if (Base::rank_ == 0)
         {
             // additional output file for star mass
-            std::ofstream outputFile("../output/star_mass_sound_speed.txt", std::ios::app);  // append mode
+            std::ofstream outputFile("../output/star_mass_sound_speed_1000.txt", std::ios::app);  // append mode
             if (!outputFile.is_open()) {
                 std::cerr << "Could not open output file." << std::endl;
             } else {
