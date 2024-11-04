@@ -4,9 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 import h5py
-from scipy.interpolate import CubicSpline 
-from scipy.interpolate import UnivariateSpline as us
-from scipy.stats import zscore
 import re
 
 f5 = '/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/output/run_disk_1J_5000.hdf5'
@@ -17,7 +14,6 @@ plots = '/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/output/plots/'
 
 # constants
 G = 1 
-G2 = G * G
 alpha = 0.5 # scaling parameter for analytical mass accretion rate
 
 def read_hdf5_data_2(file, output=None, block_size=1):
@@ -46,24 +42,23 @@ def read_hdf5_data_2(file, output=None, block_size=1):
         # determine number of full chunks
         num_chunks = len(star_mass_data) // block_size
 
-        # reshape arrays into chunks for averaging
+        # reshape arrays into chunks for averaging (mean of n datapoints)
         f5_mass_list = np.mean(star_mass_data[:num_chunks * block_size].reshape(-1, block_size), axis=1)
         f5_sound_speed = np.mean(sound_speed_data[:num_chunks * block_size].reshape(-1, block_size), axis=1)
-        f5_time_list = np.mean(time_data[:num_chunks * block_size].reshape(-1, block_size), axis=1)
+        # list of every n-th time 
+        f5_time_list = time_data[:-1:block_size]
+        # print("length of mass_list: ", len(f5_mass_list), " ")
+        # print("length of time_list: ", len(f5_time_list), " ")
 
         # write to output if specified
         if output is not None:
             with open(output, 'a') as o:
-                #for mass, speed in zip(f5_mass_list, f5_sound_speed):
-                    #o.write(f"{mass}, {speed} \n")
                 for i in range(1, len(time_data), 1):
                     o.write(f"{time_data[i]}, {time_data[i] - time_data[i-1]} \n")
 
                 o.write("averaged times (every 10th timestep): \n")
                 for t in zip(f5_time_list):
                     o.write(f"{t} \n")
-
-        # print(len(f5_mass_list), " ", len(f5_sound_speed))
 
     return f5_mass_list, f5_sound_speed, f5_time_list
 
@@ -84,91 +79,53 @@ def calc_mass_accretion(masses, time_list):
 def calc_analytical_accretion(c_s):
     analytical_rate = []
     for i in range(1, len(c_s)):
-        analytical_rate.append(alpha * ((c_s[i] * c_s[i] * c_s[i]) / G)) # M_dot = a * c_s^3/G
+        analytical_rate.append(alpha * ((c_s[i]**3) / G)) # M_dot = a * c_s^3/G
     return analytical_rate
 
-def filter_data(accretion_rates, analytical_rates):
-    accretion_rates = np.array(accretion_rates)
-    analytical_rates = np.array(analytical_rates)
-
-    # Compute Z-scores for accretion rates
-    z_scores_accretion = zscore(accretion_rates)
-    z_scores_analytical = zscore(analytical_rates)
-
-    # Define a threshold for Z-score to detect outliers (e.g., 3 standard deviations)
-    threshold = 2
-
-    # Filter out outliers
-    filtered_acc_rates = accretion_rates[np.abs(z_scores_accretion) < threshold]
-    filtered_an_rates = analytical_rates[np.abs(z_scores_analytical) < threshold]
-
-    # Also filter corresponding steps
-    mask_acc = np.where(np.abs(z_scores_accretion) < threshold)[0]
-    mask_an = np.where(np.abs(z_scores_analytical) < threshold)[0]
-    #print("\n", mask, "\n", len(filtered_acc_rates), " ", len(mask), len(filtered_an_rates))
-
-    return filtered_acc_rates, filtered_an_rates, mask_acc, mask_an
-
 # plots the mass of the star & mass accretion rates of the simulation
-# input lists of masses, sound speed, timesteps, accretion rates, analytical accretion rates & string to specify datatype
-def plot_data(masses, sound_speeds, timesteps, accretion_rates, analytical_rates, double_acc_rates, half_acc_rates, datatype, file_loc):
+# input lists of masses, sound speed, times, accretion rates, analytical accretion rates & string to specify datatype
+def plot_data(masses, sound_speeds, time, accretion_rates, analytical_rates, double_acc_rates, half_acc_rates, datatype, file_loc):
     plt.figure(figsize=(10, 10))
-
-    # various x-axes for the plots & interpolation
-    cumulative_time = np.cumsum(timesteps)
-    spaced_timesteps = np.arange(0, 1000, 10)
-    # print("\n", len(cumulative_time))
-    steps = np.arange(1, len(timesteps), 1)
-    fine_time = np.linspace(min(cumulative_time), max(cumulative_time), 500)
-    fine_steps = np.linspace(min(steps), max(steps), 100)
     
     # plot mass evolution 
     plt.subplot(2, 2, 1)
-    plt.scatter(timesteps, masses, label='Mass of Star', color='blue', marker='.')  # Cumulative sum of minDt
-    #plt.plot(fine_time, cs_mass(fine_time), label='Cubic Spline Interpolation', color='violet', alpha=0.8)
-    #plt.plot(fine_time, us_mass(fine_time), label='Univariate Interpolation', color='green', alpha=0.8)
+    plt.scatter(time, masses, label='Mass of Star', color='blue', marker='.')  # Cumulative sum of minDt
     plt.title('Star Mass Over Time')
-    plt.xlabel('Time')
-    plt.ylabel('Mass')
+    plt.xlabel('Time (yr)')
+    plt.ylabel('Mass (solar masses)')
     plt.grid()
     plt.legend()
 
     # plot mass accretion rate, x-axis in realtime
     plt.subplot(2, 2, 2)
-    plt.scatter(timesteps[1:], accretion_rates, label='Mass Accretion Rate', color='blue', marker='.')
-    #plt.plot(fine_time[1:], cs_accretion(fine_time[1:]), label='Cubic Spline Interpolation', color='violet', alpha=0.8)
-    #plt.plot(fine_time[1:], us_accretion(fine_time[1:]), label='Univariate Interpolation', color='green', alpha=0.8)
+    plt.scatter(time[1:], accretion_rates, label='Mass Accretion Rate', color='blue', marker='.')
     plt.title('Mass Accretion Rate Over Time')
-    plt.xlabel('Time')
-    plt.ylabel('Mass Accretion Rate')
+    plt.xlabel('Time (yr)')
+    plt.ylabel('Mass Accretion Rate (solar masses)')
     plt.ylim(0, 0.002)
     plt.grid()
     plt.legend()
 
     # plot mass accretion rate compared to analytical rate, x-axis in #timesteps
     plt.subplot(2, 2, 3)
-    plt.scatter(timesteps[1:], accretion_rates, label='Mass Accretion Rate', color='blue',marker='.' )
-    # plt.plot(fine_steps, us_acc_steps(fine_steps), label='Univariate Interpolation (accretion rate)', color='green')
-    plt.scatter(timesteps[1:], analytical_rates, label=f'Analytical Mass Accretion Rate, alpha = {alpha}', color='deeppink', marker='.', alpha=0.8)
-    #plt.plot(fine_steps, us_an_steps(fine_steps), label='Univariate Interpolation (analytical rate)', color='green')
+    plt.scatter(time[1:], accretion_rates, label='Mass Accretion Rate', color='blue',marker='.' )
+    plt.scatter(time[1:], analytical_rates, label=f'Analytical Mass Accretion Rate, alpha = {alpha}', color='deeppink', marker='.', alpha=0.8)
     plt.title('Mass Accretion Rate Compared to Analytical')
-    plt.xlabel('Time')
-    plt.ylabel('Mass Accretion Rate')
+    plt.xlabel('Time (yr)')
+    plt.ylabel('Mass Accretion Rate (solar masses)')
     plt.ylim(0, 0.002)
     plt.grid()
     plt.legend()
 
     # plot mass accretion rate compared to analytical rate, x-axis in #timesteps
     plt.subplot(2, 2, 4)
-    plt.scatter(timesteps[1:], double_acc_rates, label='Mass Accretion Rate (double threshold)', color='darkorange',marker='.' )
-    plt.scatter(timesteps[1:], half_acc_rates, label='Mass Accretion Rate (half threshold)', color='darkorchid',marker='.' )
-    plt.scatter(timesteps[1:], accretion_rates, label='Mass Accretion Rate', color='blue',marker='.', alpha=0.8 )
-    # plt.plot(fine_steps, us_acc_steps(fine_steps), label='Univariate Interpolation (accretion rate)', color='green')
-    plt.scatter(timesteps[1:], analytical_rates, label=f'Analytical Mass Accretion Rate, alpha = {alpha}', color='deeppink', marker='.', alpha=0.5)
-    #plt.plot(fine_steps, us_an_steps(fine_steps), label='Univariate Interpolation (analytical rate)', color='green')
+    plt.scatter(time[1:], double_acc_rates, label='Mass Accretion Rate (double threshold)', color='darkorange',marker='.' )
+    plt.scatter(time[1:], half_acc_rates, label='Mass Accretion Rate (half threshold)', color='darkorchid',marker='.' )
+    plt.scatter(time[1:], accretion_rates, label='Mass Accretion Rate', color='blue',marker='.', alpha=0.8 )
+    plt.scatter(time[1:], analytical_rates, label=f'Analytical Mass Accretion Rate, alpha = {alpha}', color='deeppink', marker='.', alpha=0.5)
     plt.title('Mass Accretion Rate Compared to Analytical')
-    plt.xlabel('Time')
-    plt.ylabel('Mass Accretion Rate')
+    plt.xlabel('Time (yr)')
+    plt.ylabel('Mass Accretion Rate (solar masses)')
     plt.ylim(0, 0.002)
     plt.grid()
     plt.legend()
