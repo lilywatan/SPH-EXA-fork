@@ -1,0 +1,234 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "physics/Planet/test/planet_tests"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_executable",
+			"install",
+			"target_link_libraries",
+			"target_compile_options",
+			"target_compile_definitions",
+			"target_include_directories"
+		],
+		"files" : 
+		[
+			"physics/Planet/test/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 3,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 15,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 11,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 4,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 5,
+				"parent" : 0
+			},
+			{
+				"command" : 5,
+				"file" : 0,
+				"line" : 6,
+				"parent" : 0
+			},
+			{
+				"command" : 5,
+				"file" : 0,
+				"line" : 7,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-O3 -march=native -DNDEBUG -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk -fdiagnostics-color=always"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-Wall"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-Wextra"
+				},
+				{
+					"fragment" : "-std=gnu++20"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 3,
+					"define" : "GTEST_LINKED_AS_SHARED_LIBRARY=1"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "SPH_EXA_HAVE_H5PART"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 6,
+					"path" : "/opt/homebrew/Cellar/open-mpi/5.0.3_1/include"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/physics/Planet/include"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/domain/include"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/sph/include"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/include"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/main/src"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "/Users/lilywatanabe/opt/anaconda3/include"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					3
+				],
+				"standard" : "20"
+			},
+			"sourceIndexes" : 
+			[
+				0,
+				1
+			]
+		}
+	],
+	"id" : "planet_tests::@e54573eafb0c09413e7d",
+	"install" : 
+	{
+		"destinations" : 
+		[
+			{
+				"backtrace" : 2,
+				"path" : "/physics"
+			}
+		],
+		"prefix" : 
+		{
+			"path" : "/usr/local"
+		}
+	},
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-O3 -march=native -DNDEBUG",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "/opt/homebrew/Cellar/open-mpi/5.0.3_1/lib/libmpi.dylib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "/Users/lilywatanabe/opt/anaconda3/lib/libgtest_main.1.10.0.dylib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "/Users/lilywatanabe/opt/anaconda3/lib/libgtest.1.10.0.dylib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lstdc++",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "planet_tests",
+	"nameOnDisk" : "planet_tests",
+	"paths" : 
+	{
+		"build" : "physics/Planet/test",
+		"source" : "physics/Planet/test"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "physics/Planet/test/planet_test.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "physics/Planet/test/accretion.cpp",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "EXECUTABLE"
+}

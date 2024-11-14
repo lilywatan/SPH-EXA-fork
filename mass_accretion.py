@@ -9,12 +9,14 @@ import re
 f5 = '/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/output/run_disk_1J_5000.hdf5'
 f5_double = '/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/output/run_disk_2J_5000.hdf5'
 f5_half = '/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/output/run_disk_05J_5000.hdf5'
+combined_criteria = '/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/output/run_disk_1J_5000_dist.hdf5'
 output = '/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/output/5000.txt'
 plots = '/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/output/plots/'
+cloud = '/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/output/run_cloud_1000.hdf5'
 
 # constants
 G = 1 
-alpha = 0.5 # scaling parameter for analytical mass accretion rate
+alpha = 0.4 # scaling parameter for analytical mass accretion rate
 
 def read_hdf5_data_2(file, output=None, block_size=1):
     f5_mass_list = []
@@ -84,34 +86,45 @@ def calc_analytical_accretion(c_s):
 
 # plots the mass of the star & mass accretion rates of the simulation
 # input lists of masses, sound speed, times, accretion rates, analytical accretion rates & string to specify datatype
-def plot_data(masses, sound_speeds, time, accretion_rates, analytical_rates, double_acc_rates, half_acc_rates, datatype, file_loc):
+def plot_data(masses, sound_speeds, time, accretion_rates, analytical_rates, double_acc_rates, half_acc_rates, comb_acc_rates, datatype, file_loc):
     plt.figure(figsize=(10, 10))
     
     # plot mass evolution 
     plt.subplot(2, 2, 1)
     plt.scatter(time, masses, label='Mass of Star', color='blue', marker='.')  # Cumulative sum of minDt
     plt.title('Star Mass Over Time')
-    plt.xlabel('Time (yr)')
+    plt.xlabel('Time (yr/2pi)')
     plt.ylabel('Mass (solar masses)')
     plt.grid()
     plt.legend()
 
     # plot mass accretion rate, x-axis in realtime
+    #plt.subplot(2, 2, 2)
+    #plt.scatter(time[1:], accretion_rates, label='Mass Accretion Rate', color='blue', marker='.')
+    #plt.title('Mass Accretion Rate Over Time')
+    #plt.xlabel('Time (yr)')
+    #plt.ylabel('Mass Accretion Rate (solar masses)')
+    #plt.ylim(0, 0.002)
+    #plt.grid()
+    #plt.legend()
+
+    # plot mass accretion rate compared to analytical rate, x-axis in #timesteps
     plt.subplot(2, 2, 2)
-    plt.scatter(time[1:], accretion_rates, label='Mass Accretion Rate', color='blue', marker='.')
-    plt.title('Mass Accretion Rate Over Time')
-    plt.xlabel('Time (yr)')
+    plt.scatter(time[1:], accretion_rates, label='Mass Accretion Rate', color='blue',marker='.' )
+    plt.scatter(time[1:], analytical_rates, label=f'Analytical Mass Accretion Rate, alpha = {alpha}', color='deeppink', marker='.', alpha=0.8)
+    plt.title('Mass Accretion Rate Compared to Analytical')
+    plt.xlabel('Time (yr/2pi)')
     plt.ylabel('Mass Accretion Rate (solar masses)')
     plt.ylim(0, 0.002)
     plt.grid()
     plt.legend()
 
-    # plot mass accretion rate compared to analytical rate, x-axis in #timesteps
+    # mass accretion rate of combined criteria compared to 1J accretion rate
     plt.subplot(2, 2, 3)
-    plt.scatter(time[1:], accretion_rates, label='Mass Accretion Rate', color='blue',marker='.' )
-    plt.scatter(time[1:], analytical_rates, label=f'Analytical Mass Accretion Rate, alpha = {alpha}', color='deeppink', marker='.', alpha=0.8)
-    plt.title('Mass Accretion Rate Compared to Analytical')
-    plt.xlabel('Time (yr)')
+    plt.scatter(time[1:], accretion_rates, label='Mass Accretion Rate, momentum criterion', color='blue',marker='.' )
+    plt.scatter(time[1:], comb_acc_rates, label=f'Mass Accretion Rate, distance & momentum criteria', color='deeppink', marker='.', alpha=0.8)
+    plt.title('Mass Accretion Rates of single vs combined criteria')
+    plt.xlabel('Time (yr/2pi)')
     plt.ylabel('Mass Accretion Rate (solar masses)')
     plt.ylim(0, 0.002)
     plt.grid()
@@ -124,13 +137,40 @@ def plot_data(masses, sound_speeds, time, accretion_rates, analytical_rates, dou
     plt.scatter(time[1:], accretion_rates, label='Mass Accretion Rate', color='blue',marker='.', alpha=0.8 )
     plt.scatter(time[1:], analytical_rates, label=f'Analytical Mass Accretion Rate, alpha = {alpha}', color='deeppink', marker='.', alpha=0.5)
     plt.title('Mass Accretion Rate Compared to Analytical')
-    plt.xlabel('Time (yr)')
+    plt.xlabel('Time (yr/2pi)')
     plt.ylabel('Mass Accretion Rate (solar masses)')
     plt.ylim(0, 0.002)
     plt.grid()
     plt.legend()
 
-    fname = f'g_mass_accretion_{datatype}_multJ.png'
+    fname = f'mass_accretion_multJ.png'
+    plt.savefig(file_loc + fname)
+    plt.tight_layout()
+    plt.show()
+
+def plot_mass_accretion(masses, accretion_rates, analytical_rates, time, file_loc):
+    plt.figure(figsize=(10, 10))
+    
+    # plot mass evolution 
+    plt.subplot(2, 1, 1)
+    plt.scatter(time, masses, label='Mass of Star', color='blue', marker='.')  # Cumulative sum of minDt
+    plt.title('Mass Over Time')
+    plt.xlabel('Time (yr/2pi)')
+    plt.ylabel('Mass (solar masses)')
+    plt.grid()
+    plt.legend()
+
+    plt.subplot(2, 1, 2)
+    plt.scatter(time[1:], accretion_rates, label='Mass Accretion Rate', color='blue',marker='.' )
+    plt.scatter(time[1:], analytical_rates, label=f'Analytical Mass Accretion Rate, alpha = {alpha}', color='deeppink', marker='.', alpha=0.8)
+    plt.title('Mass Accretion Rate Compared to Analytical')
+    plt.xlabel('Time (yr/2pi)')
+    plt.ylabel('Mass Accretion Rate (solar masses)')
+    # plt.ylim(0, 0.002)
+    plt.grid()
+    plt.legend()
+
+    fname = f'cloud_accretion.png'
     plt.savefig(file_loc + fname)
     plt.tight_layout()
     plt.show()
@@ -139,13 +179,19 @@ if __name__ == "__main__":
     f5_m, f5_c, f5_t = read_hdf5_data_2(f5, output, 10)
     double_m, double_c, double_t = read_hdf5_data_2(f5_double, None, 10)
     half_m, half_c, half_t = read_hdf5_data_2(f5_half, None, 10)
+    cloud_m, cloud_c, cloud_t = read_hdf5_data_2(cloud, output, 10)
+    comb_m, comb_c, comb_t = read_hdf5_data_2(combined_criteria, output, 10)
 
     f5_acc = calc_mass_accretion(f5_m, f5_t)
     double_acc = calc_mass_accretion(double_m, double_t)
     half_acc = calc_mass_accretion(half_m, half_t)
+    cloud_acc = calc_mass_accretion(cloud_m, cloud_t)
+    combined_acc = calc_mass_accretion(comb_m, comb_t)
 
     f5_an_acc = calc_analytical_accretion(f5_c)
     double_an_acc = calc_analytical_accretion(double_c)
     half_an_acc = calc_analytical_accretion(half_c)
+    cloud_an_acc = calc_analytical_accretion(cloud_c)
 
-    plot_data(f5_m, f5_c, f5_t, f5_acc, f5_an_acc, double_acc, half_acc, "hdf5", plots)
+    plot_data(f5_m, f5_c, f5_t, f5_acc, f5_an_acc, double_acc, half_acc, combined_acc, "hdf5", plots)
+    plot_mass_accretion(cloud_m, cloud_acc, cloud_an_acc, cloud_t, plots)

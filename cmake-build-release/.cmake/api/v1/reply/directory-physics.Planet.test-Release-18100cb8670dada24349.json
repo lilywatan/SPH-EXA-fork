@@ -1,0 +1,45 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"physics/Planet/test/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 15,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "/physics",
+			"paths" : 
+			[
+				"physics/Planet/test/planet_tests"
+			],
+			"targetId" : "planet_tests::@e54573eafb0c09413e7d",
+			"targetIndex" : 51,
+			"type" : "target"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "physics/Planet/test",
+		"source" : "physics/Planet/test"
+	}
+}

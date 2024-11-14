@@ -1,0 +1,72 @@
+Compiling the HIP compiler identification source file "CMakeHIPCompilerId.hip" failed.
+Compiler: /Library/Developer/CommandLineTools/usr/bin/clang++ 
+Build flags: 
+Id flags: -v 
+
+The output was:
+1
+Apple clang version 15.0.0 (clang-1500.1.0.2.5)
+Target: arm64-apple-darwin24.0.0
+Thread model: posix
+InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+clang: error: cannot find ROCm device library; provide its path via '--rocm-path' or '--rocm-device-lib-path', or pass '-nogpulib' to build without ROCm device library
+clang: error: cannot find HIP runtime; provide its path via '--rocm-path', or pass '-nogpuinc' to build without HIP runtime
+ignoring nonexistent directory "/usr/include/c++/v1"
+ignoring nonexistent directory "/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"
+ignoring nonexistent directory "/usr/include/c++/v1"
+ignoring nonexistent directory "/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"
+clang: error: cannot find HIP runtime; provide its path via '--rocm-path', or pass '-nogpuinc' to build without HIP runtime
+ignoring nonexistent directory "/usr/include/c++/v1"
+ignoring nonexistent directory "/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"
+ignoring nonexistent directory "/usr/include/c++/v1"
+ignoring nonexistent directory "/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"
+
+
+Compiling the HIP compiler identification source file "CMakeHIPCompilerId.hip" failed.
+Compiler: /Library/Developer/CommandLineTools/usr/bin/clang++ 
+Build flags: 
+Id flags:  
+
+The output was:
+1
+clang: error: cannot find ROCm device library; provide its path via '--rocm-path' or '--rocm-device-lib-path', or pass '-nogpulib' to build without ROCm device library
+clang: error: cannot find HIP runtime; provide its path via '--rocm-path', or pass '-nogpuinc' to build without HIP runtime
+clang: error: cannot find HIP runtime; provide its path via '--rocm-path', or pass '-nogpuinc' to build without HIP runtime
+
+
+Compiling the HIP compiler identification source file "CMakeHIPCompilerId.hip" failed.
+Compiler: /Library/Developer/CommandLineTools/usr/bin/clang++ 
+Build flags: 
+Id flags: -v 
+
+The output was:
+1
+Apple clang version 15.0.0 (clang-1500.1.0.2.5)
+Target: arm64-apple-darwin24.0.0
+Thread model: posix
+InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+clang: error: cannot find ROCm device library; provide its path via '--rocm-path' or '--rocm-device-lib-path', or pass '-nogpulib' to build without ROCm device library
+clang: error: cannot find HIP runtime; provide its path via '--rocm-path', or pass '-nogpuinc' to build without HIP runtime
+ignoring nonexistent directory "/usr/include/c++/v1"
+ignoring nonexistent directory "/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"
+ignoring nonexistent directory "/usr/include/c++/v1"
+ignoring nonexistent directory "/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"
+clang: error: cannot find HIP runtime; provide its path via '--rocm-path', or pass '-nogpuinc' to build without HIP runtime
+ignoring nonexistent directory "/usr/include/c++/v1"
+ignoring nonexistent directory "/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"
+ignoring nonexistent directory "/usr/include/c++/v1"
+ignoring nonexistent directory "/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"
+
+
+Compiling the HIP compiler identification source file "CMakeHIPCompilerId.hip" failed.
+Compiler: /Library/Developer/CommandLineTools/usr/bin/clang++ 
+Build flags: 
+Id flags:  
+
+The output was:
+1
+clang: error: cannot find ROCm device library; provide its path via '--rocm-path' or '--rocm-device-lib-path', or pass '-nogpulib' to build without ROCm device library
+clang: error: cannot find HIP runtime; provide its path via '--rocm-path', or pass '-nogpuinc' to build without HIP runtime
+clang: error: cannot find HIP runtime; provide its path via '--rocm-path', or pass '-nogpuinc' to build without HIP runtime
+
+

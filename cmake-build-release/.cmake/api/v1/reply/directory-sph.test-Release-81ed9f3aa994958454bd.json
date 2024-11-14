@@ -1,0 +1,61 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"sph/test/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 18,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 19,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "/hydro",
+			"paths" : 
+			[
+				"sph/test/sph_tests"
+			],
+			"targetId" : "sph_tests::@29d34b2f20bafb2aa5f4",
+			"targetIndex" : 56,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "/hydro",
+			"paths" : 
+			[
+				"sph/test/example_data.txt"
+			],
+			"type" : "file"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "sph/test",
+		"source" : "sph/test"
+	}
+}

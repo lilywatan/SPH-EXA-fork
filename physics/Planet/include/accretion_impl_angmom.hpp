@@ -22,8 +22,7 @@ template<typename Dataset, typename StarData>
 void computeAccretionConditionImplAngMom(size_t first, size_t last, Dataset& d, StarData& star)
 {
     const double star_size2 = star.inner_size * star.inner_size;
-    // const double R_Bondi = (2 * d.g * star.m) / (d.c * d.c); // bondi radius if want to use for sth
-    const double J_circ2 = 2 * d.g * star.m *  star.inner_size; // angular momentum limit based on circular orbit 
+    const double J_circ2 = d.g * star.m *  star.inner_size; // angular momentum limit based on circular orbit
     const double frac = 1.0; // fraction of escape angular momentum to consider
     const double J_esc2 = frac * J_circ2; // based on escape velocity
 
@@ -52,13 +51,15 @@ void computeAccretionConditionImplAngMom(size_t first, size_t last, Dataset& d, 
         const double dx    = d.x[i] - star.position[0];
         const double dy    = d.y[i] - star.position[1];
         const double dz    = d.z[i] - star.position[2];
+        const double dist2 = dx * dx + dy * dy + dz * dz;
         // calculate specific angular momentum of particle i relative to star (cross product r and v)
         const double Jx = (dy*d.vz[i] - dz*d.vy[i]);
         const double Jy = (dz*d.vx[i] - dx*d.vz[i]);
         const double Jz = (dx*d.vy[i] - dy*d.vx[i]);
         const double J2 = Jx * Jx + Jy * Jy + Jz * Jz;
 
-        // check if angular momentum is below limit 
+        // check if angular momentum is below limit
+        // & radius smaller star
         if (J2 < J_esc2) { remove_and_sum(i, accr_mass, accr_mom, n_accreted); }
         else if (d.h[i] > star.removal_limit_h) { remove_and_sum(i, removed_mass, removed_mom, n_removed); }
     }

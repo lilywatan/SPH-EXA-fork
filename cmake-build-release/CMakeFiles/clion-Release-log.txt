@@ -1,0 +1,43 @@
+/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_MAKE_PROGRAM=/Applications/CLion.app/Contents/bin/ninja/mac/ninja -DCMAKE_C_COMPILER=/opt/homebrew/bin/gcc-14 -DCMAKE_CXX_COMPILER=/opt/homebrew/bin/g++-14 -DSPH_EXA_WITH_H5PART=ON -DSPH_EXA_WITH_GRACKLE=OFF -DCMAKE_CXX_STANDARD_LIBRARIES=-lstdc++ -G Ninja -S /Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork -B /Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/cmake-build-release
+-- The CXX compiler identification is GNU 14.2.0
+-- The C compiler identification is GNU 14.2.0
+-- Checking whether CXX compiler has -isysroot
+-- Checking whether CXX compiler has -isysroot - yes
+-- Checking whether CXX compiler supports OSX deployment target flag
+-- Checking whether CXX compiler supports OSX deployment target flag - yes
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /opt/homebrew/bin/g++-14 - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Checking whether C compiler has -isysroot
+-- Checking whether C compiler has -isysroot - yes
+-- Checking whether C compiler supports OSX deployment target flag
+-- Checking whether C compiler supports OSX deployment target flag - yes
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /opt/homebrew/bin/gcc-14 - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Found GTest: /Users/lilywatanabe/opt/anaconda3/lib/cmake/GTest/GTestConfig.cmake (found version "1.10.0")  
+-- Found MPI_C: /opt/homebrew/Cellar/open-mpi/5.0.3_1/lib/libmpi.dylib (found version "3.1") 
+-- Found MPI_CXX: /opt/homebrew/Cellar/open-mpi/5.0.3_1/lib/libmpi.dylib (found version "3.1") 
+-- Found MPI: TRUE (found version "3.1")  
+-- Found OpenMP_C: -fopenmp (found version "4.5") 
+-- Found OpenMP_CXX: -fopenmp (found version "4.5") 
+-- Found OpenMP: TRUE (found version "4.5")  
+-- Looking for a CUDA compiler
+-- Looking for a CUDA compiler - NOTFOUND
+-- Looking for a HIP compiler
+-- Looking for a HIP compiler - NOTFOUND
+-- Found HDF5: hdf5-shared (found version "1.14.3")  
+-- Found PkgConfig: /opt/homebrew/bin/pkg-config (found version "0.29.2") 
+-- Found FFTW: /opt/homebrew/include   
+-- Found OpenMP_C: -fopenmp (found version "4.5") 
+-- Found OpenMP_CXX: -fopenmp (found version "4.5") 
+-- No CUDA support
+-- Found Git: /opt/homebrew/bin/git (found version "2.45.0") 
+-- cstone test dir /Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/domain/include/../test
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/cmake-build-release

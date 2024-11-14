@@ -1,0 +1,129 @@
+{
+	"archive" : {},
+	"artifacts" : 
+	[
+		{
+			"path" : "main/src/init/libsim_init.a"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"target_link_libraries",
+			"target_include_directories"
+		],
+		"files" : 
+		[
+			"main/src/init/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 1,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 4,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 2,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-O3 -march=native -DNDEBUG -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk -fdiagnostics-color=always"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "-fopenmp"
+				},
+				{
+					"fragment" : "-std=gnu++20"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 3,
+					"path" : "/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/main/src"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/physics/cooling/include"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/domain/include"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/sph/include"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "/opt/homebrew/Cellar/open-mpi/5.0.3_1/include"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					1
+				],
+				"standard" : "20"
+			},
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"id" : "sim_init::@c0b17f964be0e9b8eae2",
+	"name" : "sim_init",
+	"nameOnDisk" : "libsim_init.a",
+	"paths" : 
+	{
+		"build" : "main/src/init",
+		"source" : "main/src/init"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "main/src/init/sim_init.cpp",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "STATIC_LIBRARY"
+}
