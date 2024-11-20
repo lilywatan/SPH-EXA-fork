@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import sys
 import h5py
 import re
+from scipy.optimize import minimize 
 
 f5 = '/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/output/run_disk_1J_5000.hdf5'
 f5_double = '/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/output/run_disk_2J_5000.hdf5'
@@ -84,9 +85,20 @@ def calc_analytical_accretion(c_s):
         analytical_rate.append(alpha * ((c_s[i]**3) / G)) # M_dot = a * c_s^3/G
     return analytical_rate
 
+def error_function(alpha, accretion_rate, sound_speeds): 
+    analytical_rate =  alpha * (sound_speeds**3) / G 
+    mse = np.mean((accretion_rate - analytical_rate)**2)
+    return mse
+
+def alpha_estimation(accretion_rates, sound_speeds, initial_alpha=0.4): 
+    mse = lambda accretion_rates, analytical_rates: np.mean((accretion_rates - analytical_rates)**2)
+    res = minimize(error_function, initial_alpha, args=(accretion_rates, sound_speeds), method='Nelder-Mead')
+    best_alpha = res.x[0]
+    return best_alpha
+    
 # plots the mass of the star & mass accretion rates of the simulation
 # input lists of masses, sound speed, times, accretion rates, analytical accretion rates & string to specify datatype
-def plot_data(masses, sound_speeds, time, accretion_rates, analytical_rates, double_acc_rates, half_acc_rates, comb_acc_rates, datatype, file_loc):
+def plot_data(masses, c, c_half, c_double, c_combined, time, accretion_rates, double_acc_rates, half_acc_rates, comb_acc_rates, datatype, file_loc):
     plt.figure(figsize=(10, 10))
     
     # plot mass evolution 
@@ -98,20 +110,12 @@ def plot_data(masses, sound_speeds, time, accretion_rates, analytical_rates, dou
     plt.grid()
     plt.legend()
 
-    # plot mass accretion rate, x-axis in realtime
-    #plt.subplot(2, 2, 2)
-    #plt.scatter(time[1:], accretion_rates, label='Mass Accretion Rate', color='blue', marker='.')
-    #plt.title('Mass Accretion Rate Over Time')
-    #plt.xlabel('Time (yr)')
-    #plt.ylabel('Mass Accretion Rate (solar masses)')
-    #plt.ylim(0, 0.002)
-    #plt.grid()
-    #plt.legend()
-
+    alpha = alpha_estimation(np.array(accretion_rates), np.array(c))
+    analytical_rates = alpha * (c**3) / G
     # plot mass accretion rate compared to analytical rate, x-axis in #timesteps
     plt.subplot(2, 2, 2)
     plt.scatter(time[1:], accretion_rates, label='Mass Accretion Rate', color='blue',marker='.' )
-    plt.scatter(time[1:], analytical_rates, label=f'Analytical Mass Accretion Rate, alpha = {alpha}', color='deeppink', marker='.', alpha=0.8)
+    plt.scatter(time, analytical_rates, label=f'Analytical Mass Accretion Rate, alpha = {alpha:.3f}', color='deeppink', marker='.', alpha=0.8)
     plt.title('Mass Accretion Rate Compared to Analytical')
     plt.xlabel('Time (yr/2pi)')
     plt.ylabel('Mass Accretion Rate (solar masses)')
@@ -119,10 +123,14 @@ def plot_data(masses, sound_speeds, time, accretion_rates, analytical_rates, dou
     plt.grid()
     plt.legend()
 
+    alpha_comb = alpha_estimation(np.array(comb_acc_rates), np.array(c_combined))
+    an_rate_comb = alpha_comb * (c**3) / G
     # mass accretion rate of combined criteria compared to 1J accretion rate
     plt.subplot(2, 2, 3)
     plt.scatter(time[1:], accretion_rates, label='Mass Accretion Rate, momentum criterion', color='blue',marker='.' )
-    plt.scatter(time[1:], comb_acc_rates, label=f'Mass Accretion Rate, distance & momentum criteria', color='deeppink', marker='.', alpha=0.8)
+    plt.scatter(time, analytical_rates, label=f'Analytical Mass Accretion Rate, alpha = {alpha:.3f}', color='deeppink', marker='.', alpha=0.8)
+    plt.scatter(time[1:], comb_acc_rates, label=f'Mass Accretion Rate, distance & momentum criteria', color='dodgerblue', marker='.', alpha=0.8)
+    plt.scatter(time, an_rate_comb, label=f'Analytical Mass Accretion Rate of Combined Criteria, alpha = {alpha_comb:.3f}', color='orchid', marker='.', alpha=0.8)
     plt.title('Mass Accretion Rates of single vs combined criteria')
     plt.xlabel('Time (yr/2pi)')
     plt.ylabel('Mass Accretion Rate (solar masses)')
@@ -135,7 +143,7 @@ def plot_data(masses, sound_speeds, time, accretion_rates, analytical_rates, dou
     plt.scatter(time[1:], double_acc_rates, label='Mass Accretion Rate (double threshold)', color='darkorange',marker='.' )
     plt.scatter(time[1:], half_acc_rates, label='Mass Accretion Rate (half threshold)', color='darkorchid',marker='.' )
     plt.scatter(time[1:], accretion_rates, label='Mass Accretion Rate', color='blue',marker='.', alpha=0.8 )
-    plt.scatter(time[1:], analytical_rates, label=f'Analytical Mass Accretion Rate, alpha = {alpha}', color='deeppink', marker='.', alpha=0.5)
+    plt.scatter(time, analytical_rates, label=f'Analytical Mass Accretion Rate, alpha = {alpha:.3f}', color='deeppink', marker='.', alpha=0.5)
     plt.title('Mass Accretion Rate Compared to Analytical')
     plt.xlabel('Time (yr/2pi)')
     plt.ylabel('Mass Accretion Rate (solar masses)')
@@ -175,6 +183,21 @@ def plot_mass_accretion(masses, accretion_rates, analytical_rates, time, file_lo
     plt.tight_layout()
     plt.show()
 
+def plot_fit(observed_rates, sound_speeds, best_alpha, time, file_loc,G=1):
+    analytical_rates = best_alpha * (sound_speeds**3) / G
+    plt.figure(figsize=(10, 5))
+    plt.scatter(time[1:], observed_rates, label="Observed Accretion Rates", color="blue", alpha=0.7, marker='.')
+    plt.plot(time, analytical_rates, label=f"Analytical Rates (alpha={best_alpha:.3f})", color="red", lw=2)
+    plt.xlabel("Time (yr/2pi)")
+    plt.ylabel("Accretion Rate")
+    plt.legend()
+    plt.grid()
+    plt.title("Observed vs Analytical Accretion Rates")
+    fname = f'analytical_accretion.png'
+    plt.savefig(file_loc + fname)
+    plt.tight_layout()
+    plt.show()
+
 if __name__ == "__main__":
     f5_m, f5_c, f5_t = read_hdf5_data_2(f5, output, 10)
     double_m, double_c, double_t = read_hdf5_data_2(f5_double, None, 10)
@@ -193,5 +216,10 @@ if __name__ == "__main__":
     half_an_acc = calc_analytical_accretion(half_c)
     cloud_an_acc = calc_analytical_accretion(cloud_c)
 
-    plot_data(f5_m, f5_c, f5_t, f5_acc, f5_an_acc, double_acc, half_acc, combined_acc, "hdf5", plots)
+    plot_data(f5_m, f5_c, half_c, double_c, comb_c, f5_t, f5_acc, double_acc, half_acc, combined_acc, "hdf5", plots)
     plot_mass_accretion(cloud_m, cloud_acc, cloud_an_acc, cloud_t, plots)
+    best_alpha = alpha_estimation(np.array(f5_acc), np.array(f5_c))
+    print(f"Best-fit alpha: {best_alpha:.4f}")
+
+    # Plot the results
+    plot_fit(f5_acc, f5_c, best_alpha, f5_t, plots)
