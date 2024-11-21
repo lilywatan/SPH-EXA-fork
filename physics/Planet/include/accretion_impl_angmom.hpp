@@ -60,7 +60,7 @@ void computeAccretionConditionImplAngMom(size_t first, size_t last, Dataset& d, 
 
         // check if angular momentum is below limit
         // & radius smaller star
-        if (J2 < J_esc2) { remove_and_sum(i, accr_mass, accr_mom, n_accreted); }
+        if (J2 < J_esc2 && dist2 < star_size2) { remove_and_sum(i, accr_mass, accr_mom, n_accreted); }
         else if (d.h[i] > star.removal_limit_h) { remove_and_sum(i, removed_mass, removed_mom, n_removed); }
     }
 
