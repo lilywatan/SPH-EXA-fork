@@ -49,3 +49,4 @@ test/constants.txt
 
 # output files
 output
+*.err
