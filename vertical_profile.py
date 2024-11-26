@@ -82,6 +82,80 @@ def calc_scale_height(c_s, r, m_s):
     scale_height = c_s / angular_vel
     return scale_height
 
+def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_bins, beta):
+    plt.figure()
+    for t in timesteps:
+        index = int(t/(10*stride))
+        r_disk = r[index][disk_mask[index]]
+        z_disk = z[index][disk_mask[index]]
+        rho_disk = rho[index][disk_mask[index]]
+
+        # bins for radii & height
+        r_min, r_max = np.min(r_disk), np.max(r_disk)
+        z_min, z_max = np.min(z_disk), np.max(z_disk)
+        r_bins = np.linspace(r_min, r_max, num_bins + 1) 
+        z_bins = np.linspace(z_min, z_max, num_bins + 1)
+        r_bin_centers = 0.5 * (r_bins[:-1] + r_bins[1:])  
+        z_bin_centers = 0.5 * (z_bins[:-1] + z_bins[1:]) 
+
+        scale_heights=[]
+
+        for i in range(len(r_bins) - 1):
+            # select particles in the current radial bin
+            mask = (r_disk >= r_bins[i]) & (r_disk < r_bins[i+1])
+            r_selected = r_disk[mask]
+            z_selected = z_disk[mask]
+            density_selected = rho_disk[mask]
+            if len(density_selected) > 0:
+                # bin the data in z and compute average density in each z-bin
+                z_indices = np.digitize(z_selected, z_bins)
+                avg_density = [
+                    density_selected[z_indices == j].mean() if np.any(z_indices == j) else 0
+                    for j in range(1, len(z_bins))
+                ]
+                avg_density = np.array(avg_density)
+
+                # find maximum density and its location
+                max_density = np.max(avg_density)
+                if max_density > 0:
+                    # normalize the density profile
+                    normalized_density = avg_density / max_density
+
+                    # find where the density drops to 1/e
+                    scale_height = None
+                    for zc, rho in zip(z_bin_centers, normalized_density):
+                        if rho <= 1/np.e:
+                            scale_height = abs(zc)  # record |z| 
+                            break
+
+                    # handle case where density never drops below 1/e
+                    if scale_height is None:
+                        scale_height = np.nan 
+
+                    scale_heights.append(scale_height)
+                else:
+                    scale_heights.append(np.nan)
+            else:
+                    scale_heights.append(np.nan)
+
+        # Ensure `scale_heights` matches `r_bin_centers` in length
+        if len(scale_heights) != len(r_bin_centers):
+            scale_heights = [np.nan] * len(r_bin_centers)
+
+        # Calculate the aspect ratio
+        aspect_ratios = np.array(scale_heights) / r_bin_centers
+
+    # Plot the aspect ratio as a function of radius
+        plt.plot(r_bin_centers, aspect_ratios, marker='.', label="Aspect Ratio (h/r)")
+    plt.xlabel("Radius (r)")
+    plt.ylabel("Aspect Ratio (H/r)")
+    plt.title(f"Aspect Ratio vs Radius, beta = {beta}")
+    plt.grid()
+    plt.legend()
+    fname = f'aspect_ratios_density_{beta}.png'
+    plt.savefig(plots + fname)  
+    plt.show()
+
 def plot_aspect_ratio(timesteps, c_s, r, m_s, disk_mask, stride, num_bins): 
     plt.figure()
     for t in timesteps: 
@@ -114,7 +188,7 @@ def plot_aspect_ratio(timesteps, c_s, r, m_s, disk_mask, stride, num_bins):
         plt.ylabel('H(r)/r')
         plt.grid()
         plt.legend()
-        fname = 'aspect_ratios.png'
+        fname = 'aspect_ratios_density.png'
         plt.savefig(plots + fname)  
         plt.show()
 
@@ -161,3 +235,4 @@ if __name__ == '__main__':
     r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
     plot_aspect_ratio([0, 5000, 10000, 15000, 20000], c_s, r, sm, disk_particles, stride, 100)
     plot_vertical_density([0, 5000, 10000, 15000, 20000], z, d, disk_particles, stride, 100)
+    plot_scale_height_density([0, 5000, 10000, 15000, 20000], r, z, d, disk_particles, stride, 100, "inf")
