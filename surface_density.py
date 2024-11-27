@@ -10,7 +10,9 @@ from matplotlib.colors import Normalize
 
 run_20 = './output/run_disk_comb_20.hdf5'
 run_20_beta = '/home/lwatan/data/SPH-EXA-fork/output/run_disk_comb_20_beta.hdf5'
-plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/'
+run_J_20 = './output/run_disk_mom_20.hdf5'
+run_J_20_beta = './output/run_disk_mom_20_beta.hdf5'
+plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/surface-density/'
 
 # constants
 G = 1.0
@@ -67,8 +69,7 @@ def particle_radii2(x, y, z, m, star_x, star_y, star_z, star_m, timesteps):
         
         # calculate the radii for each particle at this step
         step_radii[:] = np.sqrt((x[step] - star_x[step])**2 + 
-                                 (y[step] - star_y[step])**2 + 
-                                 (z[step] - star_z[step])**2)
+                                 (y[step] - star_y[step])**2 )
         threshold_radius = 7.5
         step_disk_particles[:] = step_radii < threshold_radius
 
@@ -122,7 +123,7 @@ def compute_global_min_max(surface_densities):
     global_surface_density_min = np.min(all_values)
     global_surface_density_max = np.max(all_values)
     
-def plot_surface_density(t, x, y, surface_density, disk_mask, stride, grid_size=200): 
+def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, grid_size=200): 
     global surface_density_min, surface_density_max
     
     norm = Normalize(vmin=global_surface_density_min, vmax=global_surface_density_max)
@@ -136,10 +137,10 @@ def plot_surface_density(t, x, y, surface_density, disk_mask, stride, grid_size=
     plt.hexbin(x_disk, y_disk, C=surface_density, gridsize=200, cmap='viridis', norm=norm)
     plt.hist2d(x_disk, y_disk, weights=surface_density, bins=grid_size, cmap='viridis', norm=norm)
     plt.colorbar(label='Surface Density')  # Show color scale
-    plt.title(f'Surface Density at Timestep {t} (beta=2pi)')
+    plt.title(f'Surface Density at Timestep {t} (beta={beta}, combined criteria)')
     plt.xlabel('X Position')
     plt.ylabel('Y Position')
-    fname = f'surface density_20_beta_{t}.png'
+    fname = f'surface_density_20_{t}_{beta}.png'
     plt.savefig(plots + fname)
     plt.show()
     
@@ -155,8 +156,8 @@ if __name__ == '__main__':
 
     compute_global_min_max([sig_20k, sig_15k, sig_10k, sig_5k, sig_10])
 
-    plot_surface_density(20000, x, y, sig_20k, disk_particles, stride)
-    plot_surface_density(15000, x, y, sig_15k, disk_particles, stride)
-    plot_surface_density(10000, x, y, sig_10k, disk_particles, stride)
-    plot_surface_density(5000, x, y, sig_5k, disk_particles, stride)
-    plot_surface_density(10, x, y, sig_10, disk_particles, stride)
+    plot_surface_density(20000, x, y, sig_20k, disk_particles, stride, "2pi")
+    plot_surface_density(15000, x, y, sig_15k, disk_particles, stride, "2pi")
+    plot_surface_density(10000, x, y, sig_10k, disk_particles, stride, "2pi")
+    plot_surface_density(5000, x, y, sig_5k, disk_particles, stride, "2pi")
+    plot_surface_density(10, x, y, sig_10, disk_particles, stride, "2pi")

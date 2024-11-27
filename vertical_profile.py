@@ -10,7 +10,7 @@ from matplotlib.colors import Normalize
 
 run_20 = './output/run_disk_comb_20.hdf5'
 run_20_beta = '/home/lwatan/data/SPH-EXA-fork/output/run_disk_comb_20_beta.hdf5'
-plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/'
+plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/vertical-profile/'
 
 # constants
 G = 1.0
@@ -67,8 +67,7 @@ def particle_radii2(x, y, z, m, star_x, star_y, star_z, star_m, timesteps):
         
         # calculate the radii for each particle at this step
         step_radii[:] = np.sqrt((x[step] - star_x[step])**2 + 
-                                 (y[step] - star_y[step])**2 + 
-                                 (z[step] - star_z[step])**2)
+                                 (y[step] - star_y[step])**2)
         threshold_radius = 7.5
         step_disk_particles[:] = step_radii < threshold_radius
 
@@ -106,26 +105,35 @@ def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_bins,
             r_selected = r_disk[mask]
             z_selected = z_disk[mask]
             density_selected = rho_disk[mask]
+            #print(f"Radial bin {i}: Number of particles = {len(density_selected)}")
             if len(density_selected) > 0:
                 # bin the data in z and compute average density in each z-bin
                 z_indices = np.digitize(z_selected, z_bins)
                 avg_density = [
                     density_selected[z_indices == j].mean() if np.any(z_indices == j) else 0
+                    
                     for j in range(1, len(z_bins))
                 ]
                 avg_density = np.array(avg_density)
 
                 # find maximum density and its location
-                max_density = np.max(avg_density)
-                if max_density > 0:
+                closest_to_zero_idx = np.argmin(np.abs(z_bin_centers))  # index of bin closest to z=0
+                density_at_z0 = avg_density[closest_to_zero_idx]
+                if (i < 10):
+                    print(f"Radial bin {i}: z_bin_centers = {z_bin_centers}")
+                    print(f"Radial bin {i}: avg_density = {avg_density}")
+
+                #print(f"Radial bin {i}: Density at z=0 = {density_at_z0}")
+                if density_at_z0 > 0:
                     # normalize the density profile
-                    normalized_density = avg_density / max_density
+                    # normalized_density = avg_density / density_at_z0
 
                     # find where the density drops to 1/e
                     scale_height = None
-                    for zc, rho in zip(z_bin_centers, normalized_density):
-                        if rho <= 1/np.e:
+                    for zc, d in zip(z_bin_centers, avg_density):
+                        if d <= density_at_z0/np.e:
                             scale_height = abs(zc)  # record |z| 
+                            #print(f"scale height at radius bin {i}: ", scale_height)
                             break
 
                     # handle case where density never drops below 1/e
@@ -146,12 +154,20 @@ def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_bins,
         aspect_ratios = np.array(scale_heights) / r_bin_centers
 
     # Plot the aspect ratio as a function of radius
-        plt.plot(r_bin_centers, aspect_ratios, marker='.', label="Aspect Ratio (h/r)")
-    plt.xlabel("Radius (r)")
-    plt.ylabel("Aspect Ratio (H/r)")
-    plt.title(f"Aspect Ratio vs Radius, beta = {beta}")
-    plt.grid()
-    plt.legend()
+        plt.subplot(2,1,1)
+        plt.plot(r_bin_centers, aspect_ratios, marker='.', label=f"Aspect Ratio at Timestep {t}")
+        plt.xlabel("Radius (r)")
+        plt.ylabel("Aspect Ratio (H/r)")
+        plt.title(f"Aspect Ratio vs Radius, beta = {beta}")
+        plt.grid()
+        plt.legend()
+        plt.subplot(2,1,2)
+        plt.plot(r_bin_centers, scale_heights, marker='.', label=f"Scale Height at Timestep {t}")
+        plt.xlabel("Radius (r)")
+        plt.ylabel("Scale Height")
+        plt.title(f"Scale Height vs Radius, beta = {beta}")
+        plt.grid()
+        plt.legend()
     fname = f'aspect_ratios_density_{beta}.png'
     plt.savefig(plots + fname)  
     plt.show()
@@ -183,12 +199,12 @@ def plot_aspect_ratio(timesteps, c_s, r, m_s, disk_mask, stride, num_bins):
         average_ratio[counts == 0] = np.nan  # set bins with no particles to NaN for better plotting
 
         plt.plot(bin_centers, average_ratio, label=f'Timestep {t}', marker='.')
-        plt.title('Aspect Ratio of Disk at Radius r')
+        plt.title('Aspect Ratio of Disk at Radius r, beta=2pi')
         plt.xlabel('Radius')
         plt.ylabel('H(r)/r')
         plt.grid()
         plt.legend()
-        fname = 'aspect_ratios_density.png'
+        fname = 'aspect_ratios_density_beta.png'
         plt.savefig(plots + fname)  
         plt.show()
 
@@ -220,19 +236,36 @@ def plot_vertical_density(timesteps, z, densities, disk_mask, stride, num_bins=2
 
         plt.plot(bin_centers,average_densities, label=f'Timestep {t}', marker='.')
 
-        plt.title('Vertical Density Profile over Multiple Timesteps')
+        plt.title('Vertical Density Profile over Multiple Timesteps, beta=2pi')
         plt.xlabel('Height')
         plt.ylabel('Density')
         plt.grid()
         plt.legend()
-        fname = 'vertical_density.png'
+        fname = 'vertical_density_beta.png'
         plt.savefig(plots + fname) 
         plt.show()
 
+def plot_edge_on_view(timesteps, x, z, disk_mask, stride, beta):
+    for t in timesteps: 
+        plt.figure()
+        index = int(t/(10*stride))
+        z_disk = z[index][disk_mask[index]]
+        x_disk = x[index][disk_mask[index]]
+        plt.scatter(x_disk, z_disk, marker='.')
+        plt.title(f'Edge-On View of Disk at Timestep {t}')
+        plt.xlabel('x-coordinate')
+        plt.ylabel('z-coordinate')
+        plt.grid()
+        fname = f'edge_on_view_20_{t}_{beta}'
+        plt.savefig(plots + fname)
+        plt.show()
+
+
 if __name__ == '__main__':
     stride=1
-    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_20,stride)
+    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_20_beta,stride)
     r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
     plot_aspect_ratio([0, 5000, 10000, 15000, 20000], c_s, r, sm, disk_particles, stride, 100)
     plot_vertical_density([0, 5000, 10000, 15000, 20000], z, d, disk_particles, stride, 100)
-    plot_scale_height_density([0, 5000, 10000, 15000, 20000], r, z, d, disk_particles, stride, 100, "inf")
+    plot_edge_on_view([10, 5000, 10000, 15000, 20000], x, z, disk_particles, stride, "2pi" )
+    plot_scale_height_density([5000, 10000, 15000, 20000], r, z, d, disk_particles, stride, 50, "2pi")

@@ -10,7 +10,9 @@ from matplotlib.colors import Normalize
 
 run_20 = './output/run_disk_comb_20.hdf5'
 run_20_beta = '/home/lwatan/data/SPH-EXA-fork/output/run_disk_comb_20_beta.hdf5'
-plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/'
+run_20_mom = './output/run_disk_mom_20.hdf5'
+run_20_mom_beta = './output/run_disk_mom_20_beta.hdf5'
+plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/pressure-density/'
 
 # constants
 G = 1.0
@@ -67,8 +69,7 @@ def particle_radii2(x, y, z, m, star_x, star_y, star_z, star_m, timesteps):
         
         # calculate the radii for each particle at this step
         step_radii[:] = np.sqrt((x[step] - star_x[step])**2 + 
-                                 (y[step] - star_y[step])**2 + 
-                                 (z[step] - star_z[step])**2)
+                                 (y[step] - star_y[step])**2)
         threshold_radius = 7.5
         step_disk_particles[:] = step_radii < threshold_radius
 
@@ -76,7 +77,7 @@ def particle_radii2(x, y, z, m, star_x, star_y, star_z, star_m, timesteps):
         disk_particles.append(step_disk_particles)
     return radii, disk_particles
 
-def plot_radial_density_multiple_timesteps(timesteps, r, densities, disk_mask, stride, num_bins=20):
+def plot_radial_density_multiple_timesteps(timesteps, r, densities, disk_mask, stride, beta, num_bins=20):
     plt.figure()
     print("length of r: ", len(r), "\n")
 
@@ -106,16 +107,16 @@ def plot_radial_density_multiple_timesteps(timesteps, r, densities, disk_mask, s
 
         plt.plot(bin_centers, average_densities, label=f'Timestep {t}', marker='.')
 
-    plt.title('Average Particle density at Radius R over Multiple Timesteps (beta=inf)')
+    plt.title(f'Average Particle density at Radius R over Multiple Timesteps (beta={beta}, only momentum)')
     plt.xlabel('Radius')
     plt.ylabel('Average density')
     plt.grid()
     plt.legend()
-    fname = 'radial_density_avg_multiple_timesteps_20.png'
+    fname = f'radial_density_avg_multiple_timesteps_20_momentum_{beta}.png'
     plt.savefig(plots + fname)  
     plt.show()
 
-def plot_radial_pressure_multiple_timesteps(timesteps, r, pressures, disk_mask, stride, num_bins=20):
+def plot_radial_pressure_multiple_timesteps(timesteps, r, pressures, disk_mask, stride, beta, num_bins=20):
     plt.figure()
 
     for t in timesteps:
@@ -143,19 +144,19 @@ def plot_radial_pressure_multiple_timesteps(timesteps, r, pressures, disk_mask, 
 
         plt.plot(bin_centers, average_pressures, label=f'Timestep {t}', marker='.')
 
-    plt.title('Average Particle Pressure at Radius R over Multiple Timesteps (beta = inf)')
+    plt.title(f'Average Particle Pressure at Radius R over Multiple Timesteps (beta = {beta}, only momentum)')
     plt.xlabel('Radius')
     plt.ylabel('Average Pressure')
     plt.grid()
     plt.legend()
-    fname = 'radial_pressure_avg_multiple_timesteps_20.png'
+    fname = f'radial_pressure_avg_multiple_timesteps_20_momentum_{beta}.png'
     plt.savefig(plots + fname) 
     plt.show()
 
 if __name__ == '__main__':
 
     stride=1
-    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_20,stride)
+    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_20_mom,stride)
     r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
-    plot_radial_density_multiple_timesteps([10, 5000, 10000, 15000, 20000], r, d, disk_particles, stride, 100)
-    plot_radial_pressure_multiple_timesteps([10, 5000, 10000, 15000, 20000], r, p, disk_particles, stride, 100)
+    plot_radial_density_multiple_timesteps([10, 5000, 10000, 15000], r, d, disk_particles, stride, "inf", 100)
+    plot_radial_pressure_multiple_timesteps([10, 5000, 10000, 15000], r, p, disk_particles, stride, "inf", 100)

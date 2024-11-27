@@ -9,6 +9,8 @@ from scipy.optimize import minimize
 
 run_20 = './output/run_disk_comb_20.hdf5'
 run_20_beta = './output/run_disk_comb_20_beta.hdf5'
+run_20_mom = './output/run_disk_mom_20.hdf5'
+run_20_mom_beta = './output/run_disk_mom_20_beta.hdf5'
 plots = './output/plots/'
 
 # constants
@@ -180,15 +182,15 @@ def plot_fit(observed_rates, sound_speeds, best_alpha, time, file_loc, beta, G=1
     plt.ylabel("Accretion Rate")
     plt.legend()
     plt.grid()
-    plt.title(f"Observed vs Analytical Accretion Rates (beta={beta})")
+    plt.title(f"Observed vs Analytical Accretion Rates (beta={beta}, only momentum)")
     fname = f'analytical_accretion_{beta}.png'
     plt.savefig(file_loc + fname)
     plt.tight_layout()
     plt.show()
 
 if __name__ == "__main__":
-    comb_m_20, comb_c_20, comb_t_20 = read_hdf5_data_2(run_20)
-    comb_m_20_beta, comb_c_20_beta, comb_t_20_beta = read_hdf5_data_2(run_20_beta)
+    comb_m_20, comb_c_20, comb_t_20 = read_hdf5_data_2(run_20_mom)
+    comb_m_20_beta, comb_c_20_beta, comb_t_20_beta = read_hdf5_data_2(run_20_mom_beta)
     print("length of comb_20_t: ", len(comb_t_20))
     print("length of comb_20_m: ", len(comb_m_20))
     comb_acc_20 = calc_mass_accretion(comb_m_20, comb_t_20)
