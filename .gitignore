@@ -49,4 +49,5 @@ test/constants.txt
 
 # output files
 output/runs
+output/plots/local
 *.err
