@@ -107,7 +107,7 @@ def plot_radial_density_multiple_timesteps(timesteps, r, densities, disk_mask, s
 
         plt.plot(bin_centers, average_densities, label=f'Timestep {t}', marker='.')
 
-    plt.title(f'Average Particle density at Radius R over Multiple Timesteps (beta={beta}, only momentum)')
+    plt.title(f'Average Particle Density at Radius R (beta={beta}, only momentum')
     plt.xlabel('Radius')
     plt.ylabel('Average density')
     plt.grid()
@@ -144,7 +144,7 @@ def plot_radial_pressure_multiple_timesteps(timesteps, r, pressures, disk_mask, 
 
         plt.plot(bin_centers, average_pressures, label=f'Timestep {t}', marker='.')
 
-    plt.title(f'Average Particle Pressure at Radius R over Multiple Timesteps (beta = {beta}, only momentum)')
+    plt.title(f'Average Particle Pressure at Radius R (beta = {beta}, only momentum)')
     plt.xlabel('Radius')
     plt.ylabel('Average Pressure')
     plt.grid()

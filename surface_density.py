@@ -137,27 +137,27 @@ def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, grid
     plt.hexbin(x_disk, y_disk, C=surface_density, gridsize=200, cmap='viridis', norm=norm)
     plt.hist2d(x_disk, y_disk, weights=surface_density, bins=grid_size, cmap='viridis', norm=norm)
     plt.colorbar(label='Surface Density')  # Show color scale
-    plt.title(f'Surface Density at Timestep {t} (beta={beta}, combined criteria)')
+    plt.title(f'Surface Density at Timestep {t} (beta={beta}, only momentum)')
     plt.xlabel('X Position')
     plt.ylabel('Y Position')
-    fname = f'surface_density_20_{t}_{beta}.png'
+    fname = f'surface_density_20_momentum_{t}_{beta}.png'
     plt.savefig(plots + fname)
     plt.show()
     
 if __name__ == '__main__':
     stride=1
-    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_20_beta,stride)
+    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_J_20,stride)
     r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
-    sig_20k = surface_density(20000, d, x, y, h, m, disk_particles, stride)
+    #sig_20k = surface_density(20000, d, x, y, h, m, disk_particles, stride)
     sig_15k = surface_density(15000, d, x, y, h, m, disk_particles, stride)
     sig_10k = surface_density(10000, d, x, y, h, m, disk_particles, stride)
     sig_5k = surface_density(5000, d, x, y, h, m, disk_particles, stride)
     sig_10 = surface_density(10, d, x, y, h, m, disk_particles, stride)
 
-    compute_global_min_max([sig_20k, sig_15k, sig_10k, sig_5k, sig_10])
+    compute_global_min_max([sig_15k, sig_10k, sig_5k, sig_10])
 
-    plot_surface_density(20000, x, y, sig_20k, disk_particles, stride, "2pi")
-    plot_surface_density(15000, x, y, sig_15k, disk_particles, stride, "2pi")
-    plot_surface_density(10000, x, y, sig_10k, disk_particles, stride, "2pi")
-    plot_surface_density(5000, x, y, sig_5k, disk_particles, stride, "2pi")
-    plot_surface_density(10, x, y, sig_10, disk_particles, stride, "2pi")
+    #plot_surface_density(20000, x, y, sig_20k, disk_particles, stride, "inf")
+    plot_surface_density(15000, x, y, sig_15k, disk_particles, stride, "inf")
+    plot_surface_density(10000, x, y, sig_10k, disk_particles, stride, "inf")
+    plot_surface_density(5000, x, y, sig_5k, disk_particles, stride, "inf")
+    plot_surface_density(10, x, y, sig_10, disk_particles, stride, "inf")

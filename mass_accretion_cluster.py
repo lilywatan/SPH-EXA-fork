@@ -180,6 +180,7 @@ def plot_fit(observed_rates, sound_speeds, best_alpha, time, file_loc, beta, G=1
     plt.plot(time, analytical_rates, label=f"Analytical Rates (alpha={best_alpha:.3f})", color="red", lw=2)
     plt.xlabel("Time (yr/2pi)")
     plt.ylabel("Accretion Rate")
+    plt.ylim(0, 0.002)
     plt.legend()
     plt.grid()
     plt.title(f"Observed vs Analytical Accretion Rates (beta={beta}, only momentum)")
