@@ -14,5 +14,5 @@ module load hdf5
 OMP_NUM_THREADS=8
 export OMP_NUM_THREADS
 
-srun build-release/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5.hdf5' --prop std-angmom -s 100000 -w 10 -f m,c,x,y,z,rho,p,vx,vy,vz,h -o '/home/lwatan/data/SPH-EXA-fork/output/run_disk_comb_100.hdf5'
+srun build-release/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5.hdf5' --prop std-angmom -s 100000 -w 10 -f m,c,x,y,z,rho,p,vx,vy,vz,h -o '/home/lwatan/data/SPH-EXA-fork/output/runs/run_disk_comb_100.hdf5'
 

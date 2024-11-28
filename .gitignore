@@ -48,5 +48,5 @@ test/constants.txt
 *.app
 
 # output files
-output
+output/runs
 *.err
