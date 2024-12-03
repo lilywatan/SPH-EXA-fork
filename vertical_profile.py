@@ -8,10 +8,11 @@ from math import pi
 from scipy.spatial import cKDTree
 from matplotlib.colors import Normalize
 
-run_20 = './output/run_disk_comb_20.hdf5'
-run_20_beta = '/home/lwatan/data/SPH-EXA-fork/output/run_disk_comb_20_beta.hdf5'
-run_20_mom = './output/run_disk_mom_20.hdf5'
-run_20_mom_beta = './output/run_disk_mom_20_beta.hdf5'
+run_20 = './output/runs/run_disk_comb_20.hdf5'
+run_20_beta = '/home/lwatan/data/SPH-EXA-fork/output/runs/run_disk_comb_20_beta.hdf5'
+run_20_mom = './output/runs/run_disk_mom_20.hdf5'
+run_20_mom_beta = './output/runs/run_disk_mom_20_beta.hdf5'
+run_radial = './output/runs/run_disk_radial_20.hdf5'
 plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/vertical-profile/'
 
 # constants
@@ -177,10 +178,10 @@ def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_r_bin
         plt.plot(all_r_bin_centers, all_scale_heights[t], marker='o', label=f"Timestep {t}")
     plt.xlabel("Radius (r)")
     plt.ylabel("Scale Height")
-    plt.title(f"Scale Height vs Radius, beta = {beta}, combined criteria")
+    plt.title(f"Scale Height vs Radius, beta = {beta}, 1/3 distance")
     plt.grid()
     plt.legend()
-    fname_scale = f'/scale-height/scale_heights_rho_{beta}.png'
+    fname_scale = f'/scale-height/scale_heights_rho_radial_{beta}.png'
     plt.savefig(plots + fname_scale)
     plt.show()
 
@@ -190,10 +191,10 @@ def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_r_bin
         plt.plot(all_r_bin_centers, all_aspect_ratios[t], marker='o', label=f"Timestep {t}")
     plt.xlabel("Radius (r)")
     plt.ylabel("Aspect Ratio (H(r)/r)")
-    plt.title(f"Aspect Ratio vs Radius, beta = {beta}, combined criteria")
+    plt.title(f"Aspect Ratio vs Radius, beta = {beta}, 1/3 distance")
     plt.grid()
     plt.legend()
-    fname_aspect = f'/ar-rho/aspect_ratios_rho_{beta}.png'
+    fname_aspect = f'/ar-rho/aspect_ratios_rho_radial_{beta}.png'
     plt.savefig(plots + fname_aspect)
     plt.show()
 
@@ -224,12 +225,12 @@ def plot_aspect_ratio(timesteps, c_s, r, m_s, disk_mask, stride, num_bins, beta)
         average_ratio[counts == 0] = np.nan  # set bins with no particles to NaN for better plotting
 
         plt.plot(bin_centers, average_ratio, label=f'Timestep {t}', marker='.')
-        plt.title(f'Aspect Ratio of Disk at Radius r, beta={beta}, combined criteria')
+        plt.title(f'Aspect Ratio of Disk at Radius r, beta={beta}, 1/3 distance')
         plt.xlabel('Radius')
         plt.ylabel('H(r)/r')
         plt.grid()
         plt.legend()
-        fname = f'/ar-cs/aspect_ratios_cs_{beta}.png'
+        fname = f'/ar-cs/aspect_ratios_cs_radial_{beta}.png'
         plt.savefig(plots + fname)  
         plt.show()
 
@@ -261,12 +262,12 @@ def plot_vertical_density(timesteps, z, densities, disk_mask, stride, beta, num_
 
         plt.plot(bin_centers,average_densities, label=f'Timestep {t}', marker='.')
 
-        plt.title(f'Vertical Density Profile, beta={beta}, combined criteria')
+        plt.title(f'Vertical Density Profile, beta={beta}, 1/3 distance')
         plt.xlabel('Height')
         plt.ylabel('Density')
         plt.grid()
         plt.legend()
-        fname = f'/vertical-density/vertical_density_{beta}.png'
+        fname = f'/vertical-density/vertical_density_radial_{beta}.png'
         plt.savefig(plots + fname) 
         plt.show()
 
@@ -277,11 +278,11 @@ def plot_edge_on_view(timesteps, x, z, disk_mask, stride, beta):
         z_disk = z[index][disk_mask[index]]
         x_disk = x[index][disk_mask[index]]
         plt.scatter(x_disk, z_disk, marker='.')
-        plt.title(f'Edge-On View at Timestep {t}, beta={beta}, combined criteria')
+        plt.title(f'Edge-On View at Timestep {t}, beta={beta}, 1/3 distance')
         plt.xlabel('x-coordinate')
         plt.ylabel('z-coordinate')
         plt.grid()
-        fname = f'/edge-on/edge_on_view_20_{t}_{beta}'
+        fname = f'/edge-on/edge_on_view_20_radial_{t}_{beta}'
         plt.savefig(plots + fname)
         plt.show()
 

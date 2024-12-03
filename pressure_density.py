@@ -8,10 +8,11 @@ from math import pi
 from scipy.spatial import cKDTree
 from matplotlib.colors import Normalize
 
-run_20 = './output/run_disk_comb_20.hdf5'
-run_20_beta = '/home/lwatan/data/SPH-EXA-fork/output/run_disk_comb_20_beta.hdf5'
-run_20_mom = './output/run_disk_mom_20.hdf5'
-run_20_mom_beta = './output/run_disk_mom_20_beta.hdf5'
+run_20 = './output/runs/run_disk_comb_20.hdf5'
+run_20_beta = '/home/lwatan/data/SPH-EXA-fork/output/runs/run_disk_comb_20_beta.hdf5'
+run_20_mom = './output/runs/run_disk_mom_20.hdf5'
+run_20_mom_beta = './output/runs/run_disk_mom_20_beta.hdf5'
+run_radial = './output/runs/run_disk_radial_20.hdf5'
 plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/pressure-density/'
 
 # constants
@@ -107,12 +108,12 @@ def plot_radial_density_multiple_timesteps(timesteps, r, densities, disk_mask, s
 
         plt.plot(bin_centers, average_densities, label=f'Timestep {t}', marker='.')
 
-    plt.title(f'Average Particle Density at Radius R (beta={beta}, only momentum')
+    plt.title(f'Average Particle Density at Radius R (beta={beta}, 1/3 distance')
     plt.xlabel('Radius')
     plt.ylabel('Average density')
     plt.grid()
     plt.legend()
-    fname = f'radial_density_avg_multiple_timesteps_20_momentum_{beta}.png'
+    fname = f'radial_density_avg_multiple_timesteps_20_radial_{beta}.png'
     plt.savefig(plots + fname)  
     plt.show()
 
@@ -144,19 +145,19 @@ def plot_radial_pressure_multiple_timesteps(timesteps, r, pressures, disk_mask, 
 
         plt.plot(bin_centers, average_pressures, label=f'Timestep {t}', marker='.')
 
-    plt.title(f'Average Particle Pressure at Radius R (beta = {beta}, only momentum)')
+    plt.title(f'Average Particle Pressure at Radius R (beta = {beta}, 1/3 distance)')
     plt.xlabel('Radius')
     plt.ylabel('Average Pressure')
     plt.grid()
     plt.legend()
-    fname = f'radial_pressure_avg_multiple_timesteps_20_momentum_{beta}.png'
+    fname = f'radial_pressure_avg_multiple_timesteps_20_radial_{beta}.png'
     plt.savefig(plots + fname) 
     plt.show()
 
 if __name__ == '__main__':
 
     stride=1
-    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_20_mom,stride)
+    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_radial,stride)
     r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
-    plot_radial_density_multiple_timesteps([10, 5000, 10000, 15000], r, d, disk_particles, stride, "inf", 100)
-    plot_radial_pressure_multiple_timesteps([10, 5000, 10000, 15000], r, p, disk_particles, stride, "inf", 100)
+    plot_radial_density_multiple_timesteps([10, 5000, 10000, 15000, 20000], r, d, disk_particles, stride, "inf", 100)
+    plot_radial_pressure_multiple_timesteps([10, 5000, 10000, 15000, 20000], r, p, disk_particles, stride, "inf", 100)

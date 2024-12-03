@@ -7,11 +7,12 @@ import h5py
 import re
 from scipy.optimize import minimize 
 
-run_20 = './output/run_disk_comb_20.hdf5'
-run_20_beta = './output/run_disk_comb_20_beta.hdf5'
-run_20_mom = './output/run_disk_mom_20.hdf5'
-run_20_mom_beta = './output/run_disk_mom_20_beta.hdf5'
-plots = './output/plots/'
+run_20 = './output/runs/run_disk_comb_20.hdf5'
+run_20_beta = './output/runs/run_disk_comb_20_beta.hdf5'
+run_20_mom = './output/runs/run_disk_mom_20.hdf5'
+run_20_mom_beta = './output/runs/run_disk_mom_20_beta.hdf5'
+run_radial = './output/runs/run_disk_radial_20.hdf5'
+plots = './output/plots/mass-accretion/'
 
 # constants
 G = 1.0 
@@ -146,11 +147,11 @@ def plot_data(masses, c, c_half, c_double, c_combined, time, accretion_rates, do
     plt.tight_layout()
     plt.show()
 
-def plot_mass_accretion(masses, accretion_rates, analytical_rates, time, file_loc):
+def plot_mass_accretion(masses, accretion_rates, time, file_loc):
     plt.figure(figsize=(10, 10))
     
     # plot mass evolution 
-    plt.subplot(2, 1, 1)
+    #plt.subplot(2, 1, 1)
     plt.scatter(time, masses, label='Mass of Star', color='blue', marker='.')  # Cumulative sum of minDt
     plt.title('Mass Over Time')
     plt.xlabel('Time (yr/2pi)')
@@ -158,17 +159,17 @@ def plot_mass_accretion(masses, accretion_rates, analytical_rates, time, file_lo
     plt.grid()
     plt.legend()
 
-    plt.subplot(2, 1, 2)
-    plt.scatter(time[1:], accretion_rates, label='Mass Accretion Rate', color='blue',marker='.' )
-    plt.scatter(time[1:], analytical_rates, label=f'Analytical Mass Accretion Rate, alpha = {alpha}', color='deeppink', marker='.', alpha=0.8)
-    plt.title('Mass Accretion Rate Compared to Analytical')
-    plt.xlabel('Time (yr/2pi)')
-    plt.ylabel('Mass Accretion Rate (solar masses)')
+    #plt.subplot(2, 1, 2)
+    #plt.scatter(time[1:], accretion_rates, label='Mass Accretion Rate', color='blue',marker='.' )
+    #plt.scatter(time[1:], analytical_rates, label=f'Analytical Mass Accretion Rate, alpha = {alpha}', color='deeppink', marker='.', alpha=0.8)
+    #plt.title('Mass Accretion Rate Compared to Analytical')
+    #plt.xlabel('Time (yr/2pi)')
+    #plt.ylabel('Mass Accretion Rate (solar masses)')
     # plt.ylim(0, 0.002)
-    plt.grid()
-    plt.legend()
+   # plt.grid()
+    #plt.legend()
 
-    fname = f'cloud_accretion.png'
+    fname = f'radial_accretion.png'
     plt.savefig(file_loc + fname)
     plt.tight_layout()
     plt.show()
@@ -180,11 +181,11 @@ def plot_fit(observed_rates, sound_speeds, best_alpha, time, file_loc, beta, G=1
     plt.plot(time, analytical_rates, label=f"Analytical Rates (alpha={best_alpha:.3f})", color="red", lw=2)
     plt.xlabel("Time (yr/2pi)")
     plt.ylabel("Accretion Rate")
-    plt.ylim(0, 0.002)
+    #plt.ylim(0, 0.002)
     plt.legend()
     plt.grid()
-    plt.title(f"Observed vs Analytical Accretion Rates (beta={beta}, only momentum)")
-    fname = f'analytical_accretion_{beta}.png'
+    plt.title(f"Observed vs Analytical Accretion Rates (beta={beta}, only 1/3 distance)")
+    fname = f'analytical_accretion_{beta}_radial.png'
     plt.savefig(file_loc + fname)
     plt.tight_layout()
     plt.show()
@@ -192,14 +193,19 @@ def plot_fit(observed_rates, sound_speeds, best_alpha, time, file_loc, beta, G=1
 if __name__ == "__main__":
     comb_m_20, comb_c_20, comb_t_20 = read_hdf5_data_2(run_20_mom)
     comb_m_20_beta, comb_c_20_beta, comb_t_20_beta = read_hdf5_data_2(run_20_mom_beta)
+    rad_m_20, rad_c_20, rad_t_20= read_hdf5_data_2(run_radial)
     print("length of comb_20_t: ", len(comb_t_20))
     print("length of comb_20_m: ", len(comb_m_20))
     comb_acc_20 = calc_mass_accretion(comb_m_20, comb_t_20)
     comb_acc_20_beta = calc_mass_accretion(comb_m_20_beta, comb_t_20_beta)
+    acc_rad = calc_mass_accretion(rad_m_20, rad_t_20)
     best_alpha_20 = alpha_estimation(np.array(comb_acc_20), np.array(comb_c_20))
     best_alpha_20_beta = alpha_estimation(np.array(comb_acc_20_beta), np.array(comb_c_20_beta))
+    best_alpha_rad = alpha_estimation(np.array(acc_rad),np.array(rad_c_20))
 
 
     # Plot the results
-    plot_fit(comb_acc_20, comb_c_20, best_alpha_20, comb_t_20, plots, "inf")
-    plot_fit(comb_acc_20_beta, comb_c_20_beta, best_alpha_20_beta, comb_t_20_beta, plots, "2pi")
+    #plot_fit(comb_acc_20, comb_c_20, best_alpha_20, comb_t_20, plots, "inf")
+    #plot_fit(comb_acc_20_beta, comb_c_20_beta, best_alpha_20_beta, comb_t_20_beta, plots, "2pi")
+    plot_fit(acc_rad, rad_c_20, best_alpha_rad, rad_t_20, plots, "inf")
+    plot_mass_accretion(rad_m_20, acc_rad, rad_t_20, plots)
