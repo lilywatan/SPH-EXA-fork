@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=disk_radial_20_beta       # Job name    (default: sbatch)
-#SBATCH --output=disk_radial_20_beta.out        # Output file (default: slurm-%j.out)
+#SBATCH --output=disk_radial_20_beta_%j.out        # Output file (default: slurm-%j.out)
 #SBATCH --error=disk_radial_20_beta_%j.err         # Error file  (default: slurm-%j.out)
 #SBATCH --cpus-per-task=1         # Number of CPUs per task
 #SBATCH --ntasks=1                # Number of tasks
