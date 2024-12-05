@@ -10,6 +10,7 @@ module load cmake
 rm -rf build-release
 mkdir build-release
 
+# specify compilers CC and CXX 
 cmake -B/home/lwatan/data/SPH-EXA-fork/build-release -S/home/lwatan/data/SPH-EXA-fork -DSPH_EXA_WITH_GRACKLE=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_VERBOSE_MAKEFILE=ON 
 
 pwd
