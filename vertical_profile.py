@@ -13,7 +13,8 @@ run_20_beta = '/home/lwatan/data/SPH-EXA-fork/output/runs/run_disk_comb_20_beta.
 run_20_mom = './output/runs/run_disk_mom_20.hdf5'
 run_20_mom_beta = './output/runs/run_disk_mom_20_beta.hdf5'
 run_radial = './output/runs/run_disk_radial_20.hdf5'
-plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/vertical-profile/'
+run_5 = '/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/output/runs/run_disk_1J_5000.hdf5'
+plots = './output/plots/vertical-profile'
 
 # constants
 G = 1.0
@@ -83,6 +84,48 @@ def calc_scale_height(c_s, r, m_s):
     angular_vel = np.sqrt(G * m_s / r**3)
     scale_height = c_s / angular_vel
     return scale_height
+
+def scale_height_rms(m, z): 
+    if len(m) == 0:  # avoid division by zero for empty bins
+        return 0
+    return np.sqrt(np.sum(m * z**2) / np.sum(m))
+
+def plot_scale_height_rms(timesteps, r, z, m, disk_mask, stride, num_bins, beta): 
+    radial_bins = None
+    plt.figure()
+    for t in timesteps: 
+        index = int(t/(10*stride))
+        r_disk = r[index][disk_mask[index]]
+        z_disk = z[index][disk_mask[index]]
+        m_disk = m[index][disk_mask[index]]
+
+        # Define radial bins only once
+        if radial_bins is None:
+            r_min, r_max = np.min(r_disk), np.max(r_disk)
+            radial_bins = np.linspace(r_min, r_max, num_bins + 1)
+            bin_centers = 0.5 * (radial_bins[:-1] + radial_bins[1:])
+
+        # Compute RMS scale height for each radial bin
+        rms_values = []
+        for i in range(len(radial_bins) - 1):
+            mask = (r_disk >= radial_bins[i]) & (r_disk < radial_bins[i+1])
+            m_selected = m_disk[mask]
+            z_selected = z_disk[mask]
+            
+            rms = scale_height_rms(m_selected, z_selected)
+            rms_values.append(rms)
+        
+        # Plot line for this timestep
+        plt.plot(bin_centers, rms_values, marker='o', label=f'Timestep {t}')
+
+    plt.xlabel('Radius')
+    plt.ylabel('Scale Height RMS')
+    plt.title(f'Scale Height RMS vs Radius, beta={beta}')
+    plt.grid()
+    plt.legend(loc='upper right', fontsize='small')
+    fname = f'/scale-height-rms/scale_height_rms_{beta}.png'
+    plt.savefig(plots + fname)
+    plt.show()
 
 def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_r_bins, num_z_bins, beta):
     all_r_bin_centers = None  # Will hold radial bin centers (assume they're consistent across timesteps)
@@ -289,9 +332,10 @@ def plot_edge_on_view(timesteps, x, z, disk_mask, stride, beta):
 
 if __name__ == '__main__':
     stride=1
-    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_20,stride)
+    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_5,stride)
     r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
-    plot_aspect_ratio([0, 5000, 10000, 15000, 20000], c_s, r, sm, disk_particles, stride, 100, "inf")
-    plot_vertical_density([0, 5000, 10000, 15000, 20000], z, d, disk_particles, stride, "inf", 100)
-    plot_edge_on_view([10, 5000, 10000, 15000, 20000], x, z, disk_particles, stride, "inf" )
-    plot_scale_height_density([5000, 10000, 15000, 20000], r, z, d, disk_particles, stride, 20, 40, "inf")
+    #plot_aspect_ratio([0, 5000, 10000, 15000, 20000], c_s, r, sm, disk_particles, stride, 100, "inf")
+    #plot_vertical_density([0, 5000, 10000, 15000, 20000], z, d, disk_particles, stride, "inf", 100)
+    #plot_edge_on_view([10, 5000, 10000, 15000, 20000], x, z, disk_particles, stride, "inf" )
+    #plot_scale_height_density([5000, 10000, 15000, 20000], r, z, d, disk_particles, stride, 20, 40, "inf")
+    plot_scale_height_rms([1, 1000, 2500, 5000], r, z, m, disk_particles, stride, 20, "inf")
