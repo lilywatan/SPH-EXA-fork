@@ -14,7 +14,7 @@
 
 #include "sph/particles_data.hpp"
 
-#include "accretion_impl_angmom.hpp"
+#include "accretion_impl_subgrid.hpp"
 #include "accretion_gpu.hpp"
 #include "fieldListExclude.hpp"
 
@@ -22,14 +22,14 @@ namespace planet
 {
 
 //! @brief Flag particles for removal. Overwrites keys.
-template<typename Dataset, typename StarData>
-void computeAccretionConditionAngMom(size_t first, size_t last, Dataset& d, StarData& star)
+template<typename Dataset, typename DiskData, typename StarData>
+void computeAccretionConditionSubGridDisk(size_t first, size_t last, Dataset& d, DiskData& disk, StarData& star)
 {
     if constexpr (cstone::HaveGpu<typename Dataset::AcceleratorType>{})
     {
         computeAccretionConditionGPU(first, last, d, star);
     }
-    else { computeAccretionConditionImplAngMom(first, last, d, star); }
+    else { computeAccretionConditionImplSubGridDisk(first, last, d, disk, star); }
 }
 
 //! @brief Exchange accreted mass and momentum between ranks and add to star.
@@ -76,5 +76,4 @@ void exchangeAndAccreteOnStar(StarData& star, double minDt_m1, int rank)
     MPI_Bcast(star.position_m1.data(), 3, MpiType<double>{}, 0, MPI_COMM_WORLD);
     MPI_Bcast(&star.m, 1, MpiType<double>{}, 0, MPI_COMM_WORLD);
 }
-
 } // namespace planet

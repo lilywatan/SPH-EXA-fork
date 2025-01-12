@@ -79,7 +79,7 @@ def particle_radii2(x, y, z, m, star_x, star_y, star_z, star_m, timesteps):
     return radii, disk_particles
 
 # Kernel function according to paper
-def W(r, h, sigma=10/7*pi):
+def W(r, h, sigma=10/(7*pi)):
     q = r/h 
     if 0 <= q <= 1: 
         return (sigma / h**2) * (1 - 1.5 * q**2 + 0.75 * q**3)

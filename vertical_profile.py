@@ -113,13 +113,13 @@ def plot_scale_height_rms(timesteps, r, z, m, disk_mask, stride, num_bins, beta)
             z_selected = z_disk[mask]
             
             rms = scale_height_rms(m_selected, z_selected)
-            rms_values.append(rms)
+            rms_values.append(rms/bin_centers[i])
         
         # Plot line for this timestep
         plt.plot(bin_centers, rms_values, marker='o', label=f'Timestep {t}')
 
     plt.xlabel('Radius')
-    plt.ylabel('Scale Height RMS')
+    plt.ylabel('Scale Height RMS / Radius')
     plt.title(f'Scale Height RMS vs Radius, beta={beta}')
     plt.grid()
     plt.legend(loc='upper right', fontsize='small')
