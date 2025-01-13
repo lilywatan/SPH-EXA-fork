@@ -19,6 +19,7 @@
 #include "subgrid_disk_data.hpp"
 #include "subGridDisk.hpp"
 #include "accretion_subgrid.hpp"
+#include "subGridAccreteOnStar.hpp"
 #include "betaCooling.hpp"
 
 #include "ipropagator.hpp"
@@ -91,6 +92,7 @@ public:
         }
     }
     void save(IFileWriter* writer) override { star.loadOrStoreAttributes(writer); }
+    void save(IFileWriter* writer) override { disk.loadOrStoreAttributes(writer); }
 
     void activateFields(DataType& simData) override
     {
@@ -195,14 +197,17 @@ public:
         planet::computeAndExchangeStarPosition(star, d.minDt, d.minDt_m1, Base::rank_);
         timer.step("computeAndExchangeStarPosition");
 
-        planet::computeAccretionConditionSubGridDisk(first, last, d, disk, star);
-        timer.step("computeAccretionCondition");
+        //planet::computeAccretionConditionSubGridDisk(first, last, d, disk, star);
+        //timer.step("computeAccretionCondition");
 
         planet::SubGridDiskBoundary(first, last, d, disk, star); 
         timer.step("SubGridDiskBoundary");
 
-        planet::exchangeAndAccreteOnStar(star, d.minDt_m1, Base::rank_);
-        timer.step("exchangeAndAccreteOnStar");
+        planet::SubGridDiskAccreteOnStar(d, disk, star, d.minDt_m1, Base::rank_);
+        timer.step("SubGridDiskAccreteOnStar");
+
+        //planet::exchangeAndAccreteOnStar(star, d.minDt_m1, Base::rank_);
+        //timer.step("exchangeAndAccreteOnStar");
 
         if (Base::rank_ == 0)
         {

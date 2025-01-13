@@ -24,16 +24,17 @@ void SubGridDiskBoundary(size_t first, size_t last, Dataset& d, DiskData& disk, 
     double boundary_temperature{}; 
     double boundary_sigma{};
     double boundary_mass{};
+    double boundary_sound_speed{};
     size_t n_boundary_particles{};
 
     // sum density, temperature & mass of particles at the boundary of the disk, count number of particles
-    // squared & multiplied by mass for mass weighted mean calculation
-    auto add_parameters = [&d](size_t i, double& rho_sum, double& temp_sum, double& sigma_sum, double& mass_sum, size_t& n_boundary) 
+    auto add_parameters = [&d](size_t i, double& rho_sum, double& temp_sum, double& sigma_sum, double& mass_sum, double& sound_speed_sum, size_t& n_boundary) 
     {
         d.keys[i] = cstone::removeKey<typename Dataset::KeyType>::value;
-        rho_sum += d.rho[i]*d.rho[i]*d.m[i];
-        temp_sum += d.temp[i]*d.temp[i]*d.m[i];
+        rho_sum += d.rho[i];
+        temp_sum += d.temp[i];
         mass_sum += d.m[i];
+        sound_speed_sum += d.c[i];
         n_boundary++;
     };
 
@@ -52,7 +53,7 @@ void SubGridDiskBoundary(size_t first, size_t last, Dataset& d, DiskData& disk, 
         }
     };
 
-#pragma omp parallel for reduction(+ : boundary_density, boundary_temperature, boundary_sigma, boundary_mass, n_boundary_particles)
+#pragma omp parallel for reduction(+ : boundary_density, boundary_temperature, boundary_sigma, boundary_mass, boundary_sound_speed, n_boundary_particles)
     for (size_t i = first; i < last; i++)
     {
         const double dx    = d.x[i] - star.position[0];
@@ -67,15 +68,19 @@ void SubGridDiskBoundary(size_t first, size_t last, Dataset& d, DiskData& disk, 
         }
     }
 
-    // mass weighted mean of density and temperature at disk boundary 
+    // mean of density, temperature, and sound speed at disk boundary 
     if (boundary_mass > 0) {
-        disk.rho_boundary_local = std::sqrt(boundary_density / boundary_mass);
-        disk.temp_boundary_local = std::sqrt(boundary_temperature / boundary_mass);
+        disk.m_accreted_local_subdisk = boundary_mass;
+        disk.rho_boundary_local = boundary_density / n_boundary_particles;
+        disk.temp_boundary_local = boundary_temperature / n_boundary_particles;
+        disk.sound_speed_boundary_local = boundary_sound_speed / n_boundary_particles;
     } 
     // if no mass then set to 0 
     else {
+        disk.m_accreted_local_subdisk = 0;
         disk.rho_boundary_local = 0;
         disk.temp_boundary_local = 0;
+        disk.sound_speed_boundary_local = 0;
     }
 
     disk.n_boundary_local = n_boundary_particles;
