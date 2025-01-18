@@ -18,7 +18,7 @@
 #include "star_data.hpp"
 #include "subgrid_disk_data.hpp"
 #include "subGridDisk.hpp"
-#include "accretion_subgrid.hpp"
+//#include "accretion_subgrid.hpp"
 #include "subGridAccreteOnStar.hpp"
 #include "betaCooling.hpp"
 

@@ -11,7 +11,7 @@ struct DiskData
 {
     double                m{0.};
     double                c{0.}; // sound speed of the disk
-    double                H{0.}; // disk scale height
+    double                H_r{0.5}; // disk H/r ratio
     //double                r_in{1e-5}; // inner radius of the disk
     //double                r_out{1.}; // outer radius of the disk -> should be 2 or 3 times h 
     std::vector<double>   surface_density_profile{};
@@ -58,12 +58,7 @@ struct DiskData
 
     // Local to Rank
 
-    size_t                n_accreted_local_subdisk{};
-    size_t                n_removed_local_subdisk{};
     double                m_accreted_local_subdisk{};
-    double                m_removed_local_subdisk{};
-    std::array<double, 3> p_accreted_local_subdisk{};
-    std::array<double, 3> p_removed_local_subdisk{};
     double                rho_boundary_local{};
     double                temp_boundary_local{}; 
     double                sigma_boundary_local{};
