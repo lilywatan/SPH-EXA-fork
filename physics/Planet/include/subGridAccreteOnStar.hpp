@@ -16,15 +16,17 @@ void SubGridDiskAccreteOnStar(Dataset& d, DiskData& disk, StarData& star, double
 {
     double alpha = 0.1; 
     double m_accreted_global{};
-    double c_global_avg{}; 
+    double c_global_avg{}
     MPI_Reduce(&disk.m_accreted_local_subdisk, m_accreted_global, 1, MpiType<double>{}, MPI_SUM, 0, MPI_COMM_WORLD);
     MPI_Reduce(&disk.sound_speed_boundary_local, c_global_avg, 1, MpiType<double>{}, MPI_AVG, 0, MPI_COMM_WORLD);
 
-    auto M_dot = [&d](double nu, double sigma)
+    auto M_dot = [&star, &disk](double nu, double sigma)
     {
-        return 3 * M_PI * nu * sigma;
+        double denominator = 1 - std::sqrt(star.inner_size / disk.r_out);
+        return (3 * M_PI * nu * disk.sigma_0 * sigma) / denominator;
     };
 
+    auto sigma_norm = []
     // TO-DO: determine which radius to use for scale height calculation
     if (rank == 0){
         double mw_c_boundary = c_global_avg*c_global_avg*m_accreted_global;
