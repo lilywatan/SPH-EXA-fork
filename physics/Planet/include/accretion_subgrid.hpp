@@ -15,6 +15,7 @@
 #include "sph/particles_data.hpp"
 
 #include "accretion_impl_subgrid.hpp"
+#include "subGridDisk.hpp"
 #include "accretion_gpu.hpp"
 #include "fieldListExclude.hpp"
 
@@ -29,7 +30,7 @@ void computeAccretionConditionSubGridDisk(size_t first, size_t last, Dataset& d,
     {
         computeAccretionConditionGPU(first, last, d, star);
     }
-    else { computeAccretionConditionImplSubGridDisk(first, last, d, disk, star); }
+    else { SubGridDiskBoundary(first, last, d, disk, star); }
 }
 
 //! @brief Exchange accreted mass and momentum between ranks and add to star.

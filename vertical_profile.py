@@ -124,7 +124,7 @@ def plot_scale_height_rms(timesteps, r, z, m, disk_mask, stride, num_bins, beta)
     plt.title(f'Scale Height RMS vs Radius, beta={beta}')
     plt.grid()
     plt.legend(loc='upper right', fontsize='small')
-    fname = f'/scale-height-rms/scale_height_rms_{beta}.png'
+    fname = f'/scale-height-rms/scale_height_rms_50_mom{beta}.png'
     plt.savefig(plots + fname)
     plt.show()
 
@@ -222,10 +222,10 @@ def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_r_bin
         plt.plot(all_r_bin_centers, all_scale_heights[t], marker='o', label=f"Timestep {t}")
     plt.xlabel("Radius (r)")
     plt.ylabel("Scale Height")
-    plt.title(f"Scale Height vs Radius, beta = {beta}, 1/3 distance")
+    plt.title(f"Scale Height vs Radius, beta = {beta}")
     plt.grid()
     plt.legend()
-    fname_scale = f'/scale-height/scale_heights_rho_radial_{beta}.png'
+    fname_scale = f'/scale-height/scale_heights_rho_50_mom_{beta}.png'
     plt.savefig(plots + fname_scale)
     plt.show()
 
@@ -235,10 +235,10 @@ def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_r_bin
         plt.plot(all_r_bin_centers, all_aspect_ratios[t], marker='o', label=f"Timestep {t}")
     plt.xlabel("Radius (r)")
     plt.ylabel("Aspect Ratio (H(r)/r)")
-    plt.title(f"Aspect Ratio vs Radius, beta = {beta}, 1/3 distance")
+    plt.title(f"Aspect Ratio vs Radius, beta = {beta}")
     plt.grid()
     plt.legend()
-    fname_aspect = f'/ar-rho/aspect_ratios_rho_radial_{beta}.png'
+    fname_aspect = f'/ar-rho/aspect_ratios_rho_50_mom_{beta}.png'
     plt.savefig(plots + fname_aspect)
     plt.show()
 
@@ -322,11 +322,11 @@ def plot_edge_on_view(timesteps, x, z, disk_mask, stride, beta):
         z_disk = z[index][disk_mask[index]]
         x_disk = x[index][disk_mask[index]]
         plt.scatter(x_disk, z_disk, marker='.')
-        plt.title(f'Edge-On View at Timestep {t}, beta={beta}, 1/3 distance')
+        plt.title(f'Edge-On View at Timestep {t}, beta={beta}')
         plt.xlabel('x-coordinate')
         plt.ylabel('z-coordinate')
         plt.grid()
-        fname = f'/edge-on/edge_on_view_20_radial_{t}_{beta}'
+        fname = f'/edge-on/edge_on_view_50_mom_{t}_{beta}'
         plt.savefig(plots + fname)
         plt.show()
 

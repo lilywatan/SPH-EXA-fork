@@ -139,10 +139,10 @@ def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, grid
     plt.hexbin(x_disk, y_disk, C=surface_density, gridsize=200, cmap='viridis', norm=norm)
     plt.hist2d(x_disk, y_disk, weights=surface_density, bins=grid_size, cmap='viridis', norm=norm)
     plt.colorbar(label='Surface Density')  # Show color scale
-    plt.title(f'Surface Density at Timestep {t} (beta={beta}, 1/3 distance)')
+    plt.title(f'Surface Density at Timestep {t} (beta={beta}')
     plt.xlabel('X Position')
     plt.ylabel('Y Position')
-    fname = f'surface_density_20_radial_{t}_{beta}.png'
+    fname = f'surface_density_50_mom_{t}_{beta}.png'
     plt.savefig(plots + fname)
     plt.show()
     
