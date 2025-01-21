@@ -100,3 +100,4 @@ std::vector<typename Cooler<T>::FieldVariant> Cooler<T>::getParameters()
 template struct Cooler<double>;
 
 } // namespace cooling
+

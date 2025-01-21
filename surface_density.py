@@ -14,6 +14,7 @@ run_J_20 = './output/runs/run_disk_mom_20.hdf5'
 run_J_20_beta = './output/runs/run_disk_mom_20_beta.hdf5'
 run_radial = './output/runs/run_disk_radial_20.hdf5'
 plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/surface-density/'
+run_50_beta = './output/runs/run_disk_mom_50_beta.hdf5'
 
 # constants
 G = 1.0
@@ -147,18 +148,20 @@ def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, grid
     
 if __name__ == '__main__':
     stride=1
-    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_radial,stride)
+    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_50_beta,stride)
     r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
+    sig_50k = surface_density(50000, d, x, y, h, m, disk_particles, stride)
+    sig_40k = surface_density(40000, d, x, y, h, m, disk_particles, stride)
+    sig_30k = surface_density(30000, d, x, y, h, m, disk_particles, stride)
     sig_20k = surface_density(20000, d, x, y, h, m, disk_particles, stride)
-    sig_15k = surface_density(15000, d, x, y, h, m, disk_particles, stride)
     sig_10k = surface_density(10000, d, x, y, h, m, disk_particles, stride)
-    sig_5k = surface_density(5000, d, x, y, h, m, disk_particles, stride)
     sig_10 = surface_density(10, d, x, y, h, m, disk_particles, stride)
 
-    compute_global_min_max([sig_20k, sig_15k, sig_10k, sig_5k, sig_10])
+    compute_global_min_max([sig_50k, sig_40k, sig_30k, sig_20k, sig_10k, sig_10])
 
-    plot_surface_density(20000, x, y, sig_20k, disk_particles, stride, "inf")
-    plot_surface_density(15000, x, y, sig_15k, disk_particles, stride, "inf")
-    plot_surface_density(10000, x, y, sig_10k, disk_particles, stride, "inf")
-    plot_surface_density(5000, x, y, sig_5k, disk_particles, stride, "inf")
-    plot_surface_density(10, x, y, sig_10, disk_particles, stride, "inf")
+    plot_surface_density(50000, x, y, sig_50k, disk_particles, stride, "2pi")
+    plot_surface_density(40000, x, y, sig_40k, disk_particles, stride, "2pi")
+    plot_surface_density(30000, x, y, sig_30k, disk_particles, stride, "2pi")
+    plot_surface_density(20000, x, y, sig_20k, disk_particles, stride, "2pi")
+    plot_surface_density(10000, x, y, sig_10k, disk_particles, stride, "2pi")
+    plot_surface_density(10, x, y, sig_10, disk_particles, stride, "2pi")

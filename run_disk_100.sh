@@ -10,8 +10,10 @@
 
 module load openmpi
 module load hdf5
+pmix_info
+srun --mpi=list
 
 OMP_NUM_THREADS=8
 
-srun build-release/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5.hdf5' --prop std-angmom -s 100 -w 10 -f m,c,x,y,z,rho,p,vx,vy,vz,h -o '/home/lwatan/data/SPH-EXA-fork/output/runs/run_disk_comb_100.hdf5' --nthreads=$OMP_NUM_THREADS --mpi=pmix
+srun --mpi=pmix_v5  build-release/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5.hdf5' --prop std-angmom -s 100 -w 10 -f m,c,x,y,z,rho,p,vx,vy,vz,h -o '/home/lwatan/data/SPH-EXA-fork/output/runs/run_disk_comb_100.hdf5' --nthreads=$OMP_NUM_THREADS --mpi=pmix
 

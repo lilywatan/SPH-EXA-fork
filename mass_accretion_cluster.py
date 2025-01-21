@@ -12,6 +12,7 @@ run_20_beta = './output/runs/run_disk_comb_20_beta.hdf5'
 run_20_mom = './output/runs/run_disk_mom_20.hdf5'
 run_20_mom_beta = './output/runs/run_disk_mom_20_beta.hdf5'
 run_radial = './output/runs/run_disk_radial_20.hdf5'
+run_50_beta = './output/runs/run_disk_mom_50_beta.hdf5'
 plots = './output/plots/mass-accretion/'
 
 # constants
@@ -203,9 +204,12 @@ if __name__ == "__main__":
     best_alpha_20_beta = alpha_estimation(np.array(comb_acc_20_beta), np.array(comb_c_20_beta))
     best_alpha_rad = alpha_estimation(np.array(acc_rad),np.array(rad_c_20))
 
+    mom_m_50_beta, mom_c_50_beta, mom_t_50_beta = read_hdf5_data_2(run_50_beta)
+    mom_acc_50_beta = calc_mass_accretion(mom_m_50_beta, mom_t_50_beta)
+    best_alpha_50_beta = alpha_estimation(np.array(mom_acc_50_beta), np.array(mom_c_50_beta))
 
     # Plot the results
     #plot_fit(comb_acc_20, comb_c_20, best_alpha_20, comb_t_20, plots, "inf")
     #plot_fit(comb_acc_20_beta, comb_c_20_beta, best_alpha_20_beta, comb_t_20_beta, plots, "2pi")
-    plot_fit(acc_rad, rad_c_20, best_alpha_rad, rad_t_20, plots, "inf")
-    plot_mass_accretion(rad_m_20, acc_rad, rad_t_20, plots)
+    plot_fit(mom_acc_50_beta, mom_c_50_beta, best_alpha_50_beta, mom_t_50_beta, plots, "2pi")
+    # plot_mass_accretion(rad_m_20, acc_rad, rad_t_20, plots)

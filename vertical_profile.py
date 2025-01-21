@@ -13,6 +13,7 @@ run_20_beta = '/home/lwatan/data/SPH-EXA-fork/output/runs/run_disk_comb_20_beta.
 run_20_mom = './output/runs/run_disk_mom_20.hdf5'
 run_20_mom_beta = './output/runs/run_disk_mom_20_beta.hdf5'
 run_radial = './output/runs/run_disk_radial_20.hdf5'
+run_50_beta = './output/runs/run_disk_mom_50_beta.hdf5'
 run_5 = '/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/output/runs/run_disk_1J_5000.hdf5'
 plots = './output/plots/vertical-profile'
 
@@ -332,10 +333,10 @@ def plot_edge_on_view(timesteps, x, z, disk_mask, stride, beta):
 
 if __name__ == '__main__':
     stride=1
-    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_5,stride)
+    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_50_beta,stride)
     r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
     #plot_aspect_ratio([0, 5000, 10000, 15000, 20000], c_s, r, sm, disk_particles, stride, 100, "inf")
     #plot_vertical_density([0, 5000, 10000, 15000, 20000], z, d, disk_particles, stride, "inf", 100)
-    #plot_edge_on_view([10, 5000, 10000, 15000, 20000], x, z, disk_particles, stride, "inf" )
-    #plot_scale_height_density([5000, 10000, 15000, 20000], r, z, d, disk_particles, stride, 20, 40, "inf")
-    plot_scale_height_rms([1, 1000, 2500, 5000], r, z, m, disk_particles, stride, 20, "inf")
+    plot_edge_on_view([10, 10000, 20000, 30000, 40000, 50000], x, z, disk_particles, stride, "2pi" )
+    plot_scale_height_density([10, 10000, 20000, 30000, 40000, 50000], r, z, d, disk_particles, stride, 20, 40, "2pi")
+    plot_scale_height_rms([10, 10000, 20000, 30000, 40000, 50000], r, z, m, disk_particles, stride, 20, "2pi")
