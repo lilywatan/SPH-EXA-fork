@@ -12,3 +12,4 @@ echo "mass accretion done"
 
 python vertical_profile.py
 echo "vertical profile done"
+

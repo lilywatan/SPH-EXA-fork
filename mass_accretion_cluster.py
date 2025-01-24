@@ -14,6 +14,9 @@ run_20_mom_beta = './output/runs/run_disk_mom_20_beta.hdf5'
 run_radial = './output/runs/run_disk_radial_20.hdf5'
 run_50_beta = './output/runs/run_disk_mom_50_beta.hdf5'
 plots = './output/plots/mass-accretion/'
+run_100_beta = '/home/lwatan/scratch/run_disk_mom_100_beta.hdf5'
+run_100_comb_beta = '/home/lwatan/scratch/run_disk_comb_100_beta.hdf5'
+run_100_radial_beta = '/home/lwatan/scratch/run_disk_radial_100_beta.hdf5'
 
 # constants
 G = 1.0 
@@ -185,8 +188,8 @@ def plot_fit(observed_rates, sound_speeds, best_alpha, time, file_loc, beta, G=1
     plt.ylim(0, 0.002)
     plt.legend()
     plt.grid()
-    plt.title(f"Observed vs Analytical Accretion Rates (beta={beta}")
-    fname = f'analytical_accretion_{beta}_50_mom.png'
+    plt.title(f"Observed vs Analytical Accretion Rates, combined criteria, (beta={beta}")
+    fname = f'analytical_accretion_{beta}_100_comb.png'
     plt.savefig(file_loc + fname)
     plt.tight_layout()
     plt.show()
@@ -204,12 +207,16 @@ if __name__ == "__main__":
     #best_alpha_20_beta = alpha_estimation(np.array(comb_acc_20_beta), np.array(comb_c_20_beta))
     #best_alpha_rad = alpha_estimation(np.array(acc_rad),np.array(rad_c_20))
 
-    mom_m_50_beta, mom_c_50_beta, mom_t_50_beta = read_hdf5_data_2(run_50_beta)
-    mom_acc_50_beta = calc_mass_accretion(mom_m_50_beta, mom_t_50_beta)
-    best_alpha_50_beta = alpha_estimation(np.array(mom_acc_50_beta), np.array(mom_c_50_beta))
+    #mom_m_50_beta, mom_c_50_beta, mom_t_50_beta = read_hdf5_data_2(run_50_beta)
+    #mom_acc_50_beta = calc_mass_accretion(mom_m_50_beta, mom_t_50_beta)
+    #best_alpha_50_beta = alpha_estimation(np.array(mom_acc_50_beta), np.array(mom_c_50_beta))
+
+    rad_m_100_beta, rad_c_100_beta, rad_t_100_beta = read_hdf5_data_2(run_100_comb_beta)
+    rad_acc_100_beta = calc_mass_accretion(rad_m_100_beta, rad_t_100_beta)
+    best_alpha_100_beta = alpha_estimation(np.array(rad_acc_100_beta), np.array(rad_c_100_beta))
 
     # Plot the results
     #plot_fit(comb_acc_20, comb_c_20, best_alpha_20, comb_t_20, plots, "inf")
     #plot_fit(comb_acc_20_beta, comb_c_20_beta, best_alpha_20_beta, comb_t_20_beta, plots, "2pi")
-    plot_fit(mom_acc_50_beta, mom_c_50_beta, best_alpha_50_beta, mom_t_50_beta, plots, "2pi")
+    plot_fit(rad_acc_100_beta, rad_c_100_beta, best_alpha_100_beta, rad_t_100_beta, plots, "2pi")
     # plot_mass_accretion(rad_m_20, acc_rad, rad_t_20, plots)

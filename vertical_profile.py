@@ -16,6 +16,9 @@ run_radial = './output/runs/run_disk_radial_20.hdf5'
 run_50_beta = './output/runs/run_disk_mom_50_beta.hdf5'
 run_5 = '/Users/lilywatanabe/Desktop/eth/thesis/SPH-EXA-fork/output/runs/run_disk_1J_5000.hdf5'
 plots = './output/plots/vertical-profile'
+run_100_beta = '/home/lwatan/scratch/run_disk_mom_100_beta.hdf5'
+run_100_comb_beta = '/home/lwatan/scratch/run_disk_comb_100_beta.hdf5'
+run_100_radial_beta = '/home/lwatan/scratch/run_disk_radial_100_beta.hdf5'
 
 # constants
 G = 1.0
@@ -121,10 +124,10 @@ def plot_scale_height_rms(timesteps, r, z, m, disk_mask, stride, num_bins, beta)
 
     plt.xlabel('Radius')
     plt.ylabel('Scale Height RMS / Radius')
-    plt.title(f'Scale Height RMS vs Radius, beta={beta}')
+    plt.title(f'Scale Height RMS vs Radius, distance criterion, beta={beta}')
     plt.grid()
     plt.legend(loc='upper right', fontsize='small')
-    fname = f'/scale-height-rms/scale_height_rms_50_mom{beta}.png'
+    fname = f'/scale-height-rms/scale_height_rms_100_radial_{beta}.png'
     plt.savefig(plots + fname)
     plt.show()
 
@@ -222,10 +225,10 @@ def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_r_bin
         plt.plot(all_r_bin_centers, all_scale_heights[t], marker='o', label=f"Timestep {t}")
     plt.xlabel("Radius (r)")
     plt.ylabel("Scale Height")
-    plt.title(f"Scale Height vs Radius, beta = {beta}")
+    plt.title(f"Scale Height vs Radius, distance criterion, beta = {beta}")
     plt.grid()
     plt.legend()
-    fname_scale = f'/scale-height/scale_heights_rho_50_mom_{beta}.png'
+    fname_scale = f'/scale-height/scale_heights_rho_100_radial_{beta}.png'
     plt.savefig(plots + fname_scale)
     plt.show()
 
@@ -235,10 +238,10 @@ def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_r_bin
         plt.plot(all_r_bin_centers, all_aspect_ratios[t], marker='o', label=f"Timestep {t}")
     plt.xlabel("Radius (r)")
     plt.ylabel("Aspect Ratio (H(r)/r)")
-    plt.title(f"Aspect Ratio vs Radius, beta = {beta}")
+    plt.title(f"Aspect Ratio vs Radius, distance criterion, beta = {beta}")
     plt.grid()
     plt.legend()
-    fname_aspect = f'/ar-rho/aspect_ratios_rho_50_mom_{beta}.png'
+    fname_aspect = f'/ar-rho/aspect_ratios_rho_100_radial_{beta}.png'
     plt.savefig(plots + fname_aspect)
     plt.show()
 
@@ -322,21 +325,21 @@ def plot_edge_on_view(timesteps, x, z, disk_mask, stride, beta):
         z_disk = z[index][disk_mask[index]]
         x_disk = x[index][disk_mask[index]]
         plt.scatter(x_disk, z_disk, marker='.')
-        plt.title(f'Edge-On View at Timestep {t}, beta={beta}')
+        plt.title(f'Edge-On View at Timestep {t}, distance criterion, beta={beta}')
         plt.xlabel('x-coordinate')
         plt.ylabel('z-coordinate')
         plt.grid()
-        fname = f'/edge-on/edge_on_view_50_mom_{t}_{beta}'
+        fname = f'/edge-on/edge_on_view_100_radial_{t}_{beta}'
         plt.savefig(plots + fname)
         plt.show()
 
 
 if __name__ == '__main__':
     stride=1
-    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_50_beta,stride)
+    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_100_radial_beta,stride)
     r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
     #plot_aspect_ratio([0, 5000, 10000, 15000, 20000], c_s, r, sm, disk_particles, stride, 100, "inf")
     #plot_vertical_density([0, 5000, 10000, 15000, 20000], z, d, disk_particles, stride, "inf", 100)
-    plot_edge_on_view([10, 10000, 20000, 30000, 40000, 50000], x, z, disk_particles, stride, "2pi" )
-    plot_scale_height_density([10, 10000, 20000, 30000, 40000, 50000], r, z, d, disk_particles, stride, 20, 40, "2pi")
-    plot_scale_height_rms([10, 10000, 20000, 30000, 40000, 50000], r, z, m, disk_particles, stride, 20, "2pi")
+    plot_edge_on_view([10, 25000, 50000, 75000, 100000], x, z, disk_particles, stride, "2pi" )
+    plot_scale_height_density([10, 25000, 50000, 75000, 100000], r, z, d, disk_particles, stride, 20, 40, "2pi")
+    plot_scale_height_rms([10, 25000, 50000, 75000, 100000], r, z, m, disk_particles, stride, 20, "2pi")

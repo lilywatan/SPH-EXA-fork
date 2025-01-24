@@ -15,6 +15,9 @@ run_J_20_beta = './output/runs/run_disk_mom_20_beta.hdf5'
 run_radial = './output/runs/run_disk_radial_20.hdf5'
 plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/surface-density/'
 run_50_beta = './output/runs/run_disk_mom_50_beta.hdf5'
+run_100_beta = '/home/lwatan/scratch/run_disk_mom_100_beta.hdf5'
+run_100_comb_beta = '/home/lwatan/scratch/run_disk_comb_100_beta.hdf5'
+run_100_radial_beta = '/home/lwatan/scratch/run_disk_radial_100_beta.hdf5'
 
 # constants
 G = 1.0
@@ -125,43 +128,67 @@ def compute_global_min_max(surface_densities):
     global_surface_density_min = np.min(all_values)
     global_surface_density_max = np.max(all_values)
     
-def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, grid_size=200): 
+def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, grid_size=200, fixed_scale=True): 
+    # Global min/max for fixed scale
     global surface_density_min, surface_density_max
-    
-    norm = Normalize(vmin=global_surface_density_min, vmax=global_surface_density_max)
-    index = int(t/(10*stride))
 
+    # Determine normalization based on fixed or dynamic scale
+    if fixed_scale:
+        norm = Normalize(vmin=surface_density_min, vmax=surface_density_max)
+    else:
+        # Dynamic scale: Compute vmin and vmax for the current timestep
+        current_min = surface_density.min()
+        current_max = surface_density.max()
+        norm = Normalize(vmin=current_min, vmax=current_max)
+
+    # Index calculation for the given timestep
+    index = int(t / (10 * stride))
     x_disk = x[index][disk_mask[index]]
     y_disk = y[index][disk_mask[index]]
-    # Scatter plot, with color representing the surface density
+    
+    # Create the plot
     plt.figure(figsize=(8, 6))
-    #scatter = plt.scatter(x_disk, y_disk, c=surface_density, cmap="viridis", s=20, norm=norm)
-    plt.hexbin(x_disk, y_disk, C=surface_density, gridsize=200, cmap='viridis', norm=norm)
-    plt.hist2d(x_disk, y_disk, weights=surface_density, bins=grid_size, cmap='viridis', norm=norm)
-    plt.colorbar(label='Surface Density')  # Show color scale
-    plt.title(f'Surface Density at Timestep {t} (beta={beta}')
+    plt.hexbin(x_disk, y_disk, C=surface_density, gridsize=grid_size, cmap='viridis', norm=norm)
+    plt.colorbar(label='Surface Density')
+    
+    # Title for fixed or varying scale
+    scale_type = "Fixed" if fixed_scale else "Dynamic"
+    plt.title(f'Surface Density at Timestep {t}, combined criteria (beta={beta}, {scale_type} Scale)')
     plt.xlabel('X Position')
     plt.ylabel('Y Position')
-    fname = f'surface_density_50_mom_{t}_{beta}.png'
-    plt.savefig(plots + fname)
+    
+    # Save the plot with scale type in filename
+    fname = f'surface_density_100_comb_hexbin_{t}_{beta}_{scale_type.lower()}.png'
+    plt.savefig(plots + fname, bbox_inches='tight', dpi=300)
     plt.show()
+
     
 if __name__ == '__main__':
     stride=1
-    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_50_beta,stride)
+    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_100_radial_beta,stride)
     r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
+    # Compute surface density for the specified timesteps
+    sig_100k = surface_density(100000, d, x, y, h, m, disk_particles, stride)
+    sig_75k = surface_density(75000, d, x, y, h, m, disk_particles, stride)
     sig_50k = surface_density(50000, d, x, y, h, m, disk_particles, stride)
-    sig_40k = surface_density(40000, d, x, y, h, m, disk_particles, stride)
-    sig_30k = surface_density(30000, d, x, y, h, m, disk_particles, stride)
-    sig_20k = surface_density(20000, d, x, y, h, m, disk_particles, stride)
-    sig_10k = surface_density(10000, d, x, y, h, m, disk_particles, stride)
+    sig_25k = surface_density(25000, d, x, y, h, m, disk_particles, stride)
     sig_10 = surface_density(10, d, x, y, h, m, disk_particles, stride)
 
-    compute_global_min_max([sig_50k, sig_40k, sig_30k, sig_20k, sig_10k, sig_10])
+    # Compute global min/max for the fixed color scale
+    compute_global_min_max([sig_100k, sig_75k, sig_50k, sig_25k, sig_10])
 
-    plot_surface_density(50000, x, y, sig_50k, disk_particles, stride, "2pi")
-    plot_surface_density(40000, x, y, sig_40k, disk_particles, stride, "2pi")
-    plot_surface_density(30000, x, y, sig_30k, disk_particles, stride, "2pi")
-    plot_surface_density(20000, x, y, sig_20k, disk_particles, stride, "2pi")
-    plot_surface_density(10000, x, y, sig_10k, disk_particles, stride, "2pi")
-    plot_surface_density(10, x, y, sig_10, disk_particles, stride, "2pi")
+    # Generate plots with a fixed color scale
+    plot_surface_density(100000, x, y, sig_100k, disk_particles, stride, "2pi", fixed_scale=True)
+    plot_surface_density(75000, x, y, sig_75k, disk_particles, stride, "2pi", fixed_scale=True)
+    plot_surface_density(50000, x, y, sig_50k, disk_particles, stride, "2pi", fixed_scale=True)
+    plot_surface_density(25000, x, y, sig_25k, disk_particles, stride, "2pi", fixed_scale=True)
+    plot_surface_density(10, x, y, sig_10, disk_particles, stride, "2pi", fixed_scale=True)
+
+    # Generate plots with a dynamic color scale
+    plot_surface_density(100000, x, y, sig_100k, disk_particles, stride, "2pi", fixed_scale=False)
+    plot_surface_density(75000, x, y, sig_75k, disk_particles, stride, "2pi", fixed_scale=False)
+    plot_surface_density(50000, x, y, sig_50k, disk_particles, stride, "2pi", fixed_scale=False)
+    plot_surface_density(25000, x, y, sig_25k, disk_particles, stride, "2pi", fixed_scale=False)
+    plot_surface_density(10, x, y, sig_10, disk_particles, stride, "2pi", fixed_scale=False)
+
+
