@@ -17,8 +17,7 @@
 #include "computeCentralForce.hpp"
 #include "star_data.hpp"
 #include "subgrid_disk_data.hpp"
-#include "subGridDisk.hpp"
-//#include "accretion_subgrid.hpp"
+#include "accretion_subgrid.hpp"
 #include "subGridAccreteOnStar.hpp"
 #include "betaCooling.hpp"
 
@@ -32,7 +31,7 @@ using namespace sph;
 using util::FieldList;
 
 template<class DomainType, class DataType>
-class AngMomProp : public HydroProp<DomainType, DataType>
+class SubGridProp : public HydroProp<DomainType, DataType>
 {
 protected:
     using Base = HydroProp<DomainType, DataType>; // Propagator<DomainType, DataType>;
@@ -194,14 +193,12 @@ public:
         updateSmoothingLength(groups_.view(), d);
         timer.step("UpdateQuantities");
 
+        // to-do: how to handle star position? 
         planet::computeAndExchangeStarPosition(star, d.minDt, d.minDt_m1, Base::rank_);
         timer.step("computeAndExchangeStarPosition");
 
-        //planet::computeAccretionConditionSubGridDisk(first, last, d, disk, star);
-        //timer.step("computeAccretionCondition");
-
-        planet::SubGridDiskBoundary(first, last, d, disk, star); 
-        timer.step("SubGridDiskBoundary");
+        planet::computeAccretionConditionSubGridDisk(first, last, d, disk, star);
+        timer.step("computeAccretionCondition");
 
         planet::SubGridDiskAccreteOnStar(d, disk, star, d.minDt_m1, Base::rank_);
         timer.step("SubGridDiskAccreteOnStar");
@@ -214,7 +211,7 @@ public:
             // additional output file for star mass
             std::ofstream outputFile("../output/cloud_01.txt", std::ios::app);  // append mode
             if (!outputFile.is_open()) {
-                std::cerr << "Could not open output file." << std::endl;
+                std::cerr << "integrate" << std::endl;
             } else {
                 printf("star position: %lf\t%lf\t%lf\n", star.position[0], star.position[1], star.position[2]);
                 printf("star mass: %lf\n", star.m);

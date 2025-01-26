@@ -15,7 +15,6 @@
 #include "sph/particles_data.hpp"
 
 #include "accretion_impl_subgrid.hpp"
-#include "subGridDisk.hpp"
 #include "accretion_gpu.hpp"
 #include "fieldListExclude.hpp"
 
@@ -30,12 +29,12 @@ void computeAccretionConditionSubGridDisk(size_t first, size_t last, Dataset& d,
     {
         computeAccretionConditionGPU(first, last, d, star);
     }
-    else { SubGridDiskBoundary(first, last, d, disk, star); }
+    else { computeAccretionConditionImplSubGridDisk(first, last, d, disk, star); }
 }
 
 //! @brief Exchange accreted mass and momentum between ranks and add to star.
 template<typename StarData>
-void exchangeAndAccreteOnStar(StarData& star, double minDt_m1, int rank)
+void exchangeAndAccreteOnStarSubGrid(StarData& star, double minDt_m1, int rank)
 {
     double                m_accreted_global{};
     std::array<double, 3> p_accreted_global{};
