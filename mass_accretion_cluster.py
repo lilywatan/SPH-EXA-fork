@@ -188,8 +188,8 @@ def plot_fit(observed_rates, sound_speeds, best_alpha, time, file_loc, beta, G=1
     plt.ylim(0, 0.002)
     plt.legend()
     plt.grid()
-    plt.title(f"Observed vs Analytical Accretion Rates, combined criteria, (beta={beta}")
-    fname = f'analytical_accretion_{beta}_100_comb.png'
+    plt.title(f"Observed vs Analytical Accretion Rates, momentum criterion, (beta={beta}")
+    fname = f'analytical_accretion_{beta}_100_mom.png'
     plt.savefig(file_loc + fname)
     plt.tight_layout()
     plt.show()
@@ -211,7 +211,7 @@ if __name__ == "__main__":
     #mom_acc_50_beta = calc_mass_accretion(mom_m_50_beta, mom_t_50_beta)
     #best_alpha_50_beta = alpha_estimation(np.array(mom_acc_50_beta), np.array(mom_c_50_beta))
 
-    rad_m_100_beta, rad_c_100_beta, rad_t_100_beta = read_hdf5_data_2(run_100_comb_beta)
+    rad_m_100_beta, rad_c_100_beta, rad_t_100_beta = read_hdf5_data_2(run_100_beta)
     rad_acc_100_beta = calc_mass_accretion(rad_m_100_beta, rad_t_100_beta)
     best_alpha_100_beta = alpha_estimation(np.array(rad_acc_100_beta), np.array(rad_c_100_beta))
 

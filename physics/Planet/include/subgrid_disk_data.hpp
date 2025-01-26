@@ -12,15 +12,10 @@ struct DiskData
     double                m{0.};
     double                c{0.}; // sound speed of the disk
     double                H_r{0.5}; // disk H/r ratio
-    //double                r_in{1e-5}; // inner radius of the disk
-    double                r_out{1.}; // outer radius of the disk -> should be 2 or 3 times h 
-    std::vector<double>   surface_density_profile{};
-    std::vector<double>   temperature_profile{};
-    size_t                num_radial_bins{100};
-    //double r_step         {(r_out - r_in) / num_radial_bins};
+    double                r0{1.}; // outer radius of the disk -> should be 2 or 3 times h 
     double                rho_boundary{0.}; // density at outer boundary of disk
     double                T_boundary{0.}; // temperature at outer boundary of disk
-    double                sigma_0{0.}; // surface density at outer boundary of disk (sigma naught)
+    double                sigma0{0.}; // surface density at outer boundary of disk (sigma naught)
 
 
     // Q: can use this as such even if nothing will be in input file? Or how else to initialize? 
@@ -45,23 +40,22 @@ struct DiskData
         };
         optionalIO("disk::m", &m, 1);
         optionalIO("disk::c", &c 1);
-        optionalIO("disk::H", &H, 1);
-        optionalIO("disk::num_radial_bins", &num_radial_bins, 1);
-        optionalIO("disk::r_out", &r_out, 1);
-        optionalIO("disk::surface_density_profile", surface_density_profile.data(), num_radial_bins);
-        optionalIO("disk::temperature_profile", temperature_profile.data(), num_radial_bins); 
+        optionalIO("disk::H_r", &H_r, 1);
+        optionalIO("disk::r0", &r0, 1);
         optionalIO("disk::rho_boundary", &rho_boundary, 1);
         optionalIO("disk::T_boundary", &T_boundary, 1);
-        optionalIO("disk::sigma_0", &sigma_0, 1);
+        optionalIO("disk::sigma0", &sigma0, 1);
         
     }; 
 
     // Local to Rank
 
     double                m_accreted_local_subdisk{};
+    double                c_accreted_local{};
+    double                n_accreted_local{};   
     double                rho_boundary_local{};
-    double                temp_boundary_local{}; 
-    double                sigma_0_local{};
-    double                sound_speed_boundary_local{}; 
-    size_t                n_boundary_particles{};
+    double                T_boundary_local{}; 
+    double                sigma0_local{}; 
+    size_t                n_boundary_local{};
+    double                r0_local{};
 };

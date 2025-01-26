@@ -8,15 +8,14 @@ from math import pi
 from scipy.spatial import cKDTree
 from matplotlib.colors import Normalize
 
-run_20 = './output/runs/run_disk_comb_20.hdf5'
-run_20_beta = '/home/lwatan/data/SPH-EXA-fork/output/runs/run_disk_comb_20_beta.hdf5'
+run_20 = './output/runs/run_disk_rad_20.hdf5'
+run_20_beta = '/home/lwatan/data/SPH-EXA-fork/output/runs/run_disk_rad_20_beta.hdf5'
 run_J_20 = './output/runs/run_disk_mom_20.hdf5'
 run_J_20_beta = './output/runs/run_disk_mom_20_beta.hdf5'
 run_radial = './output/runs/run_disk_radial_20.hdf5'
 plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/surface-density/'
 run_50_beta = './output/runs/run_disk_mom_50_beta.hdf5'
 run_100_beta = '/home/lwatan/scratch/run_disk_mom_100_beta.hdf5'
-run_100_comb_beta = '/home/lwatan/scratch/run_disk_comb_100_beta.hdf5'
 run_100_radial_beta = '/home/lwatan/scratch/run_disk_radial_100_beta.hdf5'
 
 # constants
@@ -153,19 +152,19 @@ def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, grid
     
     # Title for fixed or varying scale
     scale_type = "Fixed" if fixed_scale else "Dynamic"
-    plt.title(f'Surface Density at Timestep {t}, combined criteria (beta={beta}, {scale_type} Scale)')
+    plt.title(f'Surface Density at Timestep {t}, momentum criterion (beta={beta}, {scale_type} Scale)')
     plt.xlabel('X Position')
     plt.ylabel('Y Position')
     
     # Save the plot with scale type in filename
-    fname = f'surface_density_100_comb_hexbin_{t}_{beta}_{scale_type.lower()}.png'
+    fname = f'surface_density_100_mom_hexbin_{t}_{beta}_{scale_type.lower()}.png'
     plt.savefig(plots + fname, bbox_inches='tight', dpi=300)
     plt.show()
 
     
 if __name__ == '__main__':
     stride=1
-    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_100_radial_beta,stride)
+    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_100_beta,stride)
     r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
     # Compute surface density for the specified timesteps
     sig_100k = surface_density(100000, d, x, y, h, m, disk_particles, stride)
