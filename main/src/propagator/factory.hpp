@@ -47,6 +47,7 @@
 #include "turb_ve.hpp"
 #include "std_planet.hpp"
 #include "std_angmom.hpp"
+#include "std_subgrid.hpp"
 
 namespace sphexa
 {

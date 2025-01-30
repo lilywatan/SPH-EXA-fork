@@ -11,7 +11,7 @@ struct DiskData
 {
     // set disk parameters 
     double                H_r{0.25}; // disk H/r ratio
-    double                nu{2.239E-17}; // disk kinematic viscosity
+    double                nu{0.004}; // disk kinematic viscosity
     double                alpha{0.232}; // disk alpha parameter
 
     // variable disk parameters
@@ -46,7 +46,7 @@ struct DiskData
         optionalIO("disk::nu", &nu, 1);
         optionalIO("disk::alpha", &alpha, 1);
         optionalIO("disk::m", &m, 1);
-        optionalIO("disk::c_boundary", &c 1);
+        optionalIO("disk::c_boundary", &c_boundary, 1);
         optionalIO("disk::r0", &r0, 1);
         optionalIO("disk::rho_boundary", &rho_boundary, 1);
         optionalIO("disk::T_boundary", &T_boundary, 1);
@@ -56,7 +56,7 @@ struct DiskData
 
     // Local to Rank
 
-    double                m_accreted_local_subdisk{};
+    double                m_accreted_local{};
     double                n_accreted_local{};   
     double                c_boundary_local{};
     double                rho_boundary_local{};

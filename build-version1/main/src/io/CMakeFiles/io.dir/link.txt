@@ -1,0 +1,2 @@
+/usr/bin/ar qc libio.a CMakeFiles/io.dir/ifile_io_ascii.cpp.o CMakeFiles/io.dir/ifile_io_hdf5.cpp.o
+/usr/bin/ranlib libio.a

@@ -17,6 +17,7 @@ plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/surface-density/'
 run_50_beta = './output/runs/run_disk_mom_50_beta.hdf5'
 run_100_beta = '/home/lwatan/scratch/run_disk_mom_100_beta.hdf5'
 run_100_radial_beta = '/home/lwatan/scratch/run_disk_radial_100_beta.hdf5'
+run_500_beta = '/home/lwatan/scratch/run_disk_mom_500_beta.hdf5'
 
 # constants
 G = 1.0
@@ -93,7 +94,8 @@ def W(r, h, sigma=10/(7*pi)):
 
 # calculate surface density at timestep t for all particles 
 def surface_density(t, rho, x, y, h, m, disk_mask, stride): 
-    index = int(t/(10*stride))
+    index = int(t/(500*stride))
+    print(len(rho))
     rho_disk = rho[index][disk_mask[index]]
     h_disk = h[index][disk_mask[index]]
     x_disk = x[index][disk_mask[index]]
@@ -141,7 +143,7 @@ def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, grid
         norm = Normalize(vmin=current_min, vmax=current_max)
 
     # Index calculation for the given timestep
-    index = int(t / (10 * stride))
+    index = int(t / (500 * stride))
     x_disk = x[index][disk_mask[index]]
     y_disk = y[index][disk_mask[index]]
     
@@ -157,37 +159,43 @@ def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, grid
     plt.ylabel('Y Position')
     
     # Save the plot with scale type in filename
-    fname = f'surface_density_100_mom_hexbin_{t}_{beta}_{scale_type.lower()}.png'
+    fname = f'surface_density_500_mom_hexbin_{t}_{beta}_{scale_type.lower()}.png'
     plt.savefig(plots + fname, bbox_inches='tight', dpi=300)
     plt.show()
 
     
 if __name__ == '__main__':
     stride=1
-    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_100_beta,stride)
+    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_500_beta,stride)
     r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
     # Compute surface density for the specified timesteps
-    sig_100k = surface_density(100000, d, x, y, h, m, disk_particles, stride)
-    sig_75k = surface_density(75000, d, x, y, h, m, disk_particles, stride)
-    sig_50k = surface_density(50000, d, x, y, h, m, disk_particles, stride)
-    sig_25k = surface_density(25000, d, x, y, h, m, disk_particles, stride)
-    sig_10 = surface_density(10, d, x, y, h, m, disk_particles, stride)
+    # Define the step interval
+    step_interval = 100000
+    max_step = 500000  # Adjust this to the maximum step in your simulation
+
+    # Prepare an empty list to store surface density arrays for computing global min/max
+    surface_densities = []
+
+    # Loop through steps in increments of 100,000
+    for step in range(step_interval, max_step + step_interval, step_interval):
+        # Compute surface density for the current step
+        sig = surface_density(step, d, x, y, h, m, disk_particles, stride)
+        surface_densities.append(sig)
 
     # Compute global min/max for the fixed color scale
-    compute_global_min_max([sig_100k, sig_75k, sig_50k, sig_25k, sig_10])
+    compute_global_min_max(surface_densities)
 
-    # Generate plots with a fixed color scale
-    plot_surface_density(100000, x, y, sig_100k, disk_particles, stride, "2pi", fixed_scale=True)
-    plot_surface_density(75000, x, y, sig_75k, disk_particles, stride, "2pi", fixed_scale=True)
-    plot_surface_density(50000, x, y, sig_50k, disk_particles, stride, "2pi", fixed_scale=True)
-    plot_surface_density(25000, x, y, sig_25k, disk_particles, stride, "2pi", fixed_scale=True)
-    plot_surface_density(10, x, y, sig_10, disk_particles, stride, "2pi", fixed_scale=True)
+    # Loop again to generate plots after computing global min/max
+    for step, sig in zip(range(step_interval, max_step + step_interval, step_interval), surface_densities):
+        # Generate plot for the current step with a fixed color scale
+        plot_surface_density(step, x, y, sig, disk_particles, stride, "2pi", fixed_scale=True)
+
 
     # Generate plots with a dynamic color scale
-    plot_surface_density(100000, x, y, sig_100k, disk_particles, stride, "2pi", fixed_scale=False)
-    plot_surface_density(75000, x, y, sig_75k, disk_particles, stride, "2pi", fixed_scale=False)
-    plot_surface_density(50000, x, y, sig_50k, disk_particles, stride, "2pi", fixed_scale=False)
-    plot_surface_density(25000, x, y, sig_25k, disk_particles, stride, "2pi", fixed_scale=False)
-    plot_surface_density(10, x, y, sig_10, disk_particles, stride, "2pi", fixed_scale=False)
+    #plot_surface_density(100000, x, y, sig_100k, disk_particles, stride, "2pi", fixed_scale=False)
+    #plot_surface_density(75000, x, y, sig_75k, disk_particles, stride, "2pi", fixed_scale=False)
+    #plot_surface_density(50000, x, y, sig_50k, disk_particles, stride, "2pi", fixed_scale=False)
+    #plot_surface_density(25000, x, y, sig_25k, disk_particles, stride, "2pi", fixed_scale=False)
+    #plot_surface_density(10, x, y, sig_10, disk_particles, stride, "2pi", fixed_scale=False)
 
 

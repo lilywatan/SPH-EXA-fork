@@ -1,0 +1,1 @@
+/apps/opt/spack/linux-ubuntu20.04-x86_64/gcc-9.3.0/gcc-13.2.0-hgptpx2eoraipaxlrxijwyj5jxznibqq/bin/g++ -O3 -march=native -DNDEBUG CMakeFiles/sedov_solution.dir/sedov_solution.cpp.o CMakeFiles/sedov_solution.dir/main.cpp.o -o sedov_solution  -lstdc++fs

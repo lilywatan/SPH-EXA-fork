@@ -90,9 +90,10 @@ public:
             printf("star mass: %lf\n", star.m);
         }
     }
-    void save(IFileWriter* writer) override { star.loadOrStoreAttributes(writer); }
-    void save(IFileWriter* writer) override { disk.loadOrStoreAttributes(writer); }
-
+    void save(IFileWriter* writer) override { 
+        star.loadOrStoreAttributes(writer); 
+        disk.loadOrStoreAttributes(writer);
+    }
     void activateFields(DataType& simData) override
     {
         auto& d = simData.hydro;

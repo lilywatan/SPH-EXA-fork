@@ -29,7 +29,7 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
     double boundary_rho{};
     double boundary_T{};
     double boundary_sigma0{};
-    double n_boundary{};
+    size_t n_boundary{};
 
     auto remove_and_sum = [&d](size_t i, double& mass_sum, size_t& n_sum)
     {
@@ -46,7 +46,7 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
         rho_boundary += d.rho[i]*d.rho[i];
         T_boundary += d.u[i]*d.u[i];
         c_boundary += d.c[i]*d.c[i];
-        double sigma0 = d.m[i]/(M_PI*d.h[i]*d.h[i])
+        double sigma0 = d.m[i]/(M_PI*d.h[i]*d.h[i]);
         sigma0_boundary += sigma0 * sigma0;
         n_boundary++;
     };
@@ -64,7 +64,7 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
         // radial criterion based on smoothing length -> accrete onto disk: 
         if (dist2 < 2*d.h[i]) { remove_and_sum(i, accr_mass, n_accreted); }
         // radial criterion for boundary -> 2h < r < 3h & minimum number of neighbors 
-        else if (dist2 > 2*d.h[i] && dist2 < 3*d.h[i] && d.nc >= 150) { add_to_boundary(i, boundary_mass, n_boundary, 
+        else if (dist2 > 2*d.h[i] && dist2 < 3*d.h[i] && d.nc[i] >= 150) { add_to_boundary(i, boundary_mass, n_boundary, 
             boundary_r0, boundary_rho, boundary_T, dist2, boundary_sigma0, boundary_c); }
         
         // Q: does the disk also need a removal limit? 

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libH5Part.a CMakeFiles/H5Part.dir/H5Part.c.o CMakeFiles/H5Part.dir/h5tools_type.c.o
+/usr/bin/ranlib libH5Part.a
