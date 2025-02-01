@@ -11,6 +11,7 @@ from matplotlib.patches import Circle
 import surface_density
 
 run_subgrid_100 = '/home/lwatan/scratch/run_subgrid_100_beta.hdf5'
+run_subgrid_1e6 = '/home/lwatan/scratch/run_subgrid_1e6_beta.hdf5'
 surface_density_min = None
 surface_density_max = None
 
@@ -73,7 +74,8 @@ def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, r0, 
         norm = Normalize(vmin=current_min, vmax=current_max)
 
     # Index calculation for the given timestep
-    index = int(t / (1 * stride))
+    print("length x_disk: ", len(x), "\n")
+    index = int(t / (1000 * stride))
     x_disk = x[index][disk_mask[index]]
     y_disk = y[index][disk_mask[index]]
     
@@ -94,24 +96,24 @@ def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, r0, 
     plt.ylabel('Y Position')
     
     # Save the plot with scale type in filename
-    fname = f'surface_density_100_subgrid_hexbin_{t}_{beta}_{scale_type.lower()}.png'
+    fname = f'surface_density_1e6_subgrid_hexbin_{t}_{beta}_{scale_type.lower()}.png'
     plt.savefig(surface_density.plots + fname, bbox_inches='tight', dpi=300)
     plt.show()
 
 if __name__ == '__main__':
     stride=1
-    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm, r0 = read_hdf5_data_subgrid(run_subgrid_100,stride)
-    print_radii(r0)
+    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm, r0 = read_hdf5_data_subgrid(run_subgrid_1e6,stride)
+    print_radii(r0[800])
     r, disk_particles = surface_density.particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
     # Compute surface density for the specified timesteps
-    sig_1 = surface_density.surface_density(1, d, x, y, h, m, disk_particles, stride)
-    sig_10 = surface_density.surface_density(10, d, x, y, h, m, disk_particles, stride)
-    sig_100 = surface_density.surface_density(100, d, x, y, h, m, disk_particles, stride)
+    #sig_1 = surface_density.surface_density(1, d, x, y, h, m, disk_particles, stride)
+    #sig_10 = surface_density.surface_density(10, d, x, y, h, m, disk_particles, stride)
+    sig_800 = surface_density.surface_density(800, d, x, y, h, m, disk_particles, stride)
 
     # Compute global min/max for the fixed color scale
-    surface_density.compute_global_min_max([sig_100, sig_10, sig_1])
+    surface_density.compute_global_min_max([sig_800])
 
     # Generate plots with a fixed color scale
-    plot_surface_density(1, x, y, sig_1, disk_particles, stride, r0, sx, sy, "2pi", fixed_scale=True)
-    plot_surface_density(10, x, y, sig_10, disk_particles, stride, "2pi", fixed_scale=True)
-    plot_surface_density(100, x, y, sig_100, disk_particles, stride, "2pi", fixed_scale=True)
+    #plot_surface_density(1, x, y, sig_1, disk_particles, stride, r0, sx, sy, "2pi", fixed_scale=True)
+    #plot_surface_density(10, x, y, sig_10, disk_particles, stride, "2pi", fixed_scale=True)
+    plot_surface_density(800000, x, y, sig_800, disk_particles, stride, "2pi", r0, sx, sy, fixed_scale=True)

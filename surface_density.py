@@ -18,6 +18,7 @@ run_50_beta = './output/runs/run_disk_mom_50_beta.hdf5'
 run_100_beta = '/home/lwatan/scratch/run_disk_mom_100_beta.hdf5'
 run_100_radial_beta = '/home/lwatan/scratch/run_disk_radial_100_beta.hdf5'
 run_500_beta = '/home/lwatan/scratch/run_disk_mom_500_beta.hdf5'
+run_1e6_beta = '/home/lwatan/scratch/run_disk_mom_1e6_beta.hdf5'
 
 # constants
 G = 1.0
@@ -94,7 +95,7 @@ def W(r, h, sigma=10/(7*pi)):
 
 # calculate surface density at timestep t for all particles 
 def surface_density(t, rho, x, y, h, m, disk_mask, stride): 
-    index = int(t/(500*stride))
+    index = int(t/(1000*stride))
     print(len(rho))
     rho_disk = rho[index][disk_mask[index]]
     h_disk = h[index][disk_mask[index]]
@@ -143,7 +144,7 @@ def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, grid
         norm = Normalize(vmin=current_min, vmax=current_max)
 
     # Index calculation for the given timestep
-    index = int(t / (500 * stride))
+    index = int(t / (1000 * stride))
     x_disk = x[index][disk_mask[index]]
     y_disk = y[index][disk_mask[index]]
     
@@ -159,7 +160,7 @@ def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, grid
     plt.ylabel('Y Position')
     
     # Save the plot with scale type in filename
-    fname = f'surface_density_500_mom_hexbin_{t}_{beta}_{scale_type.lower()}.png'
+    fname = f'surface_density_1e6_mom_hexbin_{t}_{beta}_{scale_type.lower()}.png'
     plt.savefig(plots + fname, bbox_inches='tight', dpi=300)
     plt.show()
 
@@ -171,7 +172,7 @@ if __name__ == '__main__':
     # Compute surface density for the specified timesteps
     # Define the step interval
     step_interval = 100000
-    max_step = 500000  # Adjust this to the maximum step in your simulation
+    max_step = 800000  # Adjust this to the maximum step in your simulation
 
     # Prepare an empty list to store surface density arrays for computing global min/max
     surface_densities = []

@@ -27,5 +27,5 @@ OMP_NUM_THREADS=32
 export OMP_NUM_THREADS
 EXEC_PATH="/home/lwatan/data/SPH-EXA-fork/build-version1/main/src/sphexa/sphexa"
 
-srun $EXEC_PATH --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-subgrid -s 1e6 -w 1000 -f m,c,x,y,z,rho,p,vx,vy,vz,h -o '/home/lwatan/scratch/run_subgrid_1e6_beta.hdf5'
+srun $EXEC_PATH --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-subgrid -s e6 -w 1000 -f m,c,x,y,z,rho,p,vx,vy,vz,h -o '/home/lwatan/scratch/run_subgrid_1e6_beta.hdf5'
 
