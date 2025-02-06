@@ -89,12 +89,13 @@ def calc_scale_height(c_s, r, m_s):
     scale_height = c_s / angular_vel
     return scale_height
 
-def scale_height_rms(m, z): 
+def scale_height_rms(m, z, star_z): 
     if len(m) == 0:  # avoid division by zero for empty bins
         return 0
-    return np.sqrt(np.sum(m * z**2) / np.sum(m))
+    dz = z - star_z; 
+    return np.sqrt(np.sum(m * dz**2) / np.sum(m))
 
-def plot_scale_height_rms(timesteps, r, z, m, disk_mask, stride, num_bins, beta): 
+def plot_scale_height_rms(timesteps, r, z, m, sz, disk_mask, stride, num_bins, beta): 
     radial_bins = None
     plt.figure()
     for t in timesteps: 
@@ -102,6 +103,7 @@ def plot_scale_height_rms(timesteps, r, z, m, disk_mask, stride, num_bins, beta)
         r_disk = r[index][disk_mask[index]]
         z_disk = z[index][disk_mask[index]]
         m_disk = m[index][disk_mask[index]]
+        star_z = sz[index]
 
         # Define radial bins only once
         if radial_bins is None:
@@ -116,7 +118,7 @@ def plot_scale_height_rms(timesteps, r, z, m, disk_mask, stride, num_bins, beta)
             m_selected = m_disk[mask]
             z_selected = z_disk[mask]
             
-            rms = scale_height_rms(m_selected, z_selected)
+            rms = scale_height_rms(m_selected, z_selected, star_z)
             rms_values.append(rms/bin_centers[i])
         
         # Plot line for this timestep
@@ -342,4 +344,4 @@ if __name__ == '__main__':
     #plot_vertical_density([0, 5000, 10000, 15000, 20000], z, d, disk_particles, stride, "inf", 100)
     plot_edge_on_view([10, 25000, 50000, 75000, 100000], x, z, disk_particles, stride, "2pi" )
     plot_scale_height_density([10, 25000, 50000, 75000, 100000], r, z, d, disk_particles, stride, 20, 40, "2pi")
-    plot_scale_height_rms([10, 25000, 50000, 75000, 100000], r, z, m, disk_particles, stride, 20, "2pi")
+    plot_scale_height_rms([10, 25000, 50000, 75000, 100000], r, z, m, sz, disk_particles, stride, 20, "2pi")

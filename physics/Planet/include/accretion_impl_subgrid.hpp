@@ -30,6 +30,7 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
     double boundary_T{};
     double boundary_sigma0{};
     size_t n_boundary{};
+    double boundary_H2{};
 
     auto remove_and_sum = [&d](size_t i, double& mass_sum, size_t& n_sum)
     {
@@ -38,8 +39,8 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
         n_sum++;
     };
 
-    auto add_to_boundary = [&d](size_t i, double& mass_boundary, size_t& n_boundary, double& r0_boundary, 
-        double& rho_boundary, double& T_boundary, double dist2, double& sigma0_boundary, double& c_boundary)
+    auto add_to_boundary = [&d, &dz](size_t i, double& mass_boundary, size_t& n_boundary, double& r0_boundary, 
+        double& rho_boundary, double& T_boundary, double dist2, double& sigma0_boundary, double& c_boundary, double& H2_boundary)
     {
         mass_boundary += d.m[i];
         r0_boundary += dist2;
@@ -49,11 +50,12 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
         double sigma0 = d.m[i]/(M_PI*d.h[i]*d.h[i]);
         sigma0_boundary += sigma0 * sigma0;
         n_boundary++;
+        H2_boundary += d.m[i] * dz * dz;
     };
 
 #pragma omp parallel for reduction(+ : accr_mass) reduction(+ : boundary_c) reduction(+ : n_accreted)              \
     reduction(+ : boundary_mass) reduction(+ : n_boundary) reduction(+ : boundary_r0) reduction(+ : boundary_rho)    \
-    reduction(+ : boundary_T) reduction(+ : boundary_sigma0)
+    reduction(+ : boundary_T) reduction(+ : boundary_sigma0) reduction(+ : boundary_H2)
     for (size_t i = first; i < last; i++)
     {
         const double dx    = d.x[i] - star.position[0];
@@ -65,7 +67,7 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
         if (dist2 < 2*d.h[i]) { remove_and_sum(i, accr_mass, n_accreted); }
         // radial criterion for boundary -> 2h < r < 3h & minimum number of neighbors 
         else if (dist2 > 2*d.h[i] && dist2 < 3*d.h[i] && d.nc[i] >= 150) { add_to_boundary(i, boundary_mass, n_boundary, 
-            boundary_r0, boundary_rho, boundary_T, dist2, boundary_sigma0, boundary_c); }
+            boundary_r0, boundary_rho, boundary_T, dist2, boundary_sigma0, boundary_c, boundary_H2); }
         
         // Q: does the disk also need a removal limit? 
         //else if (d.h[i] > star.removal_limit_h) { remove_and_sum(i, removed_mass, removed_mom, n_removed); }
@@ -81,6 +83,7 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
     disk.rho_boundary_local  = boundary_rho;
     disk.T_boundary_local    = boundary_T;
     disk.sigma0_local        = boundary_sigma0;
+    disk.H2_boundary_local   = boundary_H2;
 
     
 }

@@ -11,8 +11,7 @@ struct DiskData
 {
     // set disk parameters 
     double                H_r{0.25}; // disk H/r ratio
-    double                nu{0.004}; // disk kinematic viscosity
-    double                alpha{0.232}; // disk alpha parameter
+    double                alpha{0.01}; // disk alpha parameter
 
     // variable disk parameters
     double                m{0.};
@@ -21,6 +20,7 @@ struct DiskData
     double                rho_boundary{0.}; // density at outer boundary of disk
     double                T_boundary{0.}; // temperature at outer boundary of disk
     double                sigma0{0.}; // surface density at outer boundary of disk (sigma naught)
+    double                Hr_boundary{0.}; // kinematic viscosity of the disk
 
 
     template<typename Archive>
@@ -43,7 +43,6 @@ struct DiskData
             }
         };
         optionalIO("disk::H_r", &H_r, 1);
-        optionalIO("disk::nu", &nu, 1);
         optionalIO("disk::alpha", &alpha, 1);
         optionalIO("disk::m", &m, 1);
         optionalIO("disk::c_boundary", &c_boundary, 1);
@@ -51,6 +50,7 @@ struct DiskData
         optionalIO("disk::rho_boundary", &rho_boundary, 1);
         optionalIO("disk::T_boundary", &T_boundary, 1);
         optionalIO("disk::sigma0", &sigma0, 1);
+        optionalIO("disk::Hr_boundary", &Hr_boundary, 1);
         
     }; 
 
@@ -64,4 +64,5 @@ struct DiskData
     double                sigma0_local{}; 
     size_t                n_boundary_local{};
     double                r0_local{};
+    double                Hr_boundary_local{};
 };
