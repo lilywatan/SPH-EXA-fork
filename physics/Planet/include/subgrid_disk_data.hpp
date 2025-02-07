@@ -64,5 +64,5 @@ struct DiskData
     double                sigma0_local{}; 
     size_t                n_boundary_local{};
     double                r0_local{};
-    double                Hr_boundary_local{};
+    double                H2_boundary_local{};
 };

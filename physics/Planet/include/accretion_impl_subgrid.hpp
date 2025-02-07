@@ -39,8 +39,8 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
         n_sum++;
     };
 
-    auto add_to_boundary = [&d, &dz](size_t i, double& mass_boundary, size_t& n_boundary, double& r0_boundary, 
-        double& rho_boundary, double& T_boundary, double dist2, double& sigma0_boundary, double& c_boundary, double& H2_boundary)
+    auto add_to_boundary = [&d](size_t i, double& mass_boundary, size_t& n_boundary, double& r0_boundary, 
+        double& rho_boundary, double& T_boundary, double dist2, double& sigma0_boundary, double& c_boundary, double& H2_boundary, double dz)
     {
         mass_boundary += d.m[i];
         r0_boundary += dist2;
@@ -67,7 +67,7 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
         if (dist2 < 2*d.h[i]) { remove_and_sum(i, accr_mass, n_accreted); }
         // radial criterion for boundary -> 2h < r < 3h & minimum number of neighbors 
         else if (dist2 > 2*d.h[i] && dist2 < 3*d.h[i] && d.nc[i] >= 150) { add_to_boundary(i, boundary_mass, n_boundary, 
-            boundary_r0, boundary_rho, boundary_T, dist2, boundary_sigma0, boundary_c, boundary_H2); }
+            boundary_r0, boundary_rho, boundary_T, dist2, boundary_sigma0, boundary_c, boundary_H2, dz); }
         
         // Q: does the disk also need a removal limit? 
         //else if (d.h[i] > star.removal_limit_h) { remove_and_sum(i, removed_mass, removed_mom, n_removed); }

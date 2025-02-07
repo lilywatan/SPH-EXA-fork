@@ -1,6 +1,7 @@
 # Ignore the build and lib dirs
 build
 build-release
+build-no-accretion
 lib/*
 
 # Ignore any executables

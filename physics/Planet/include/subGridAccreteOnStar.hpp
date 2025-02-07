@@ -44,7 +44,7 @@ void SubGridDiskAccreteOnStar(Dataset& d, DiskData& disk, StarData& star, double
         double nu_0 = disk.alpha * disk.c_boundary * disk.Hr_boundary * disk.r0;
         double star_r = 1 - std::sqrt(star.inner_size / r);
         double star_r0 = 1 - std::sqrt(star.inner_size / disk.r0);
-        double sigma = disk.sigma0 * ((nu_0 * star_r) / (nu * star_r0));
+        double sigma = disk.sigma0 * ((nu_0 * star_r) / (nu_0 * star_r0));
         return (3 * M_PI * nu_0 * disk.sigma0 * sigma) / star_r;
     };
 
