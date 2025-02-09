@@ -13,12 +13,13 @@ run_20_beta = '/home/lwatan/data/SPH-EXA-fork/output/runs/run_disk_rad_20_beta.h
 run_J_20 = './output/runs/run_disk_mom_20.hdf5'
 run_J_20_beta = './output/runs/run_disk_mom_20_beta.hdf5'
 run_radial = './output/runs/run_disk_radial_20.hdf5'
-plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/surface-density/'
+plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/'
 run_50_beta = './output/runs/run_disk_mom_50_beta.hdf5'
 run_100_beta = '/home/lwatan/scratch/run_disk_mom_100_beta.hdf5'
 run_100_radial_beta = '/home/lwatan/scratch/run_disk_radial_100_beta.hdf5'
 run_500_beta = '/home/lwatan/scratch/run_disk_mom_500_beta.hdf5'
 run_1e6_beta = '/home/lwatan/scratch/run_disk_mom_1e6_beta.hdf5'
+run_calibration = './output/runs/run_disk_cal_1e6_beta_2.hdf5'
 
 # constants
 G = 1.0
@@ -155,41 +156,60 @@ def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, grid
     
     # Title for fixed or varying scale
     scale_type = "Fixed" if fixed_scale else "Dynamic"
-    plt.title(f'Surface Density at Timestep {t}, momentum criterion (beta={beta}, {scale_type} Scale)')
+    plt.title(f'Surface Density at Timestep {t}, no accretion (beta={beta}, {scale_type} Scale)')
     plt.xlabel('X Position')
     plt.ylabel('Y Position')
     
     # Save the plot with scale type in filename
-    fname = f'surface_density_1e6_mom_hexbin_{t}_{beta}_{scale_type.lower()}.png'
+    fname = f'surface_density_1e6_cal_hexbin_{t}_{beta}_{scale_type.lower()}.png'
+    plt.savefig(plots + fname, bbox_inches='tight', dpi=300)
+    plt.show()
+
+def plot_particles(t, x, y, disk_mask, stride, beta="2pi"):
+    index = int(t / (1000 * stride))
+    x_disk = x[index][disk_mask[index]]
+    y_disk = y[index][disk_mask[index]]
+
+    plt.figure(figsize=(8, 6))
+    plt.scatter(x_disk, y_disk, marker='.')
+    
+    # Title for fixed or varying scale
+    plt.title(f'Particles at timestep {t}, no accretion (beta={beta})')
+    plt.xlabel('X Position')
+    plt.ylabel('Y Position')
+    
+    # Save the plot with scale type in filename
+    fname = f'particles_1e6_cal_hexbin_{t}_{beta}.png'
     plt.savefig(plots + fname, bbox_inches='tight', dpi=300)
     plt.show()
 
     
 if __name__ == '__main__':
     stride=1
-    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_500_beta,stride)
+    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_calibration,stride)
     r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
     # Compute surface density for the specified timesteps
     # Define the step interval
-    step_interval = 100000
-    max_step = 800000  # Adjust this to the maximum step in your simulation
+    step_interval = 1000
+    max_step = 40000  # Adjust this to the maximum step in your simulation
 
     # Prepare an empty list to store surface density arrays for computing global min/max
     surface_densities = []
 
     # Loop through steps in increments of 100,000
-    for step in range(step_interval, max_step + step_interval, step_interval):
+    #for step in range(step_interval, max_step + step_interval, step_interval):
         # Compute surface density for the current step
-        sig = surface_density(step, d, x, y, h, m, disk_particles, stride)
-        surface_densities.append(sig)
+        #sig = surface_density(step, d, x, y, h, m, disk_particles, stride)
+        #surface_densities.append(sig)
 
     # Compute global min/max for the fixed color scale
-    compute_global_min_max(surface_densities)
+    #compute_global_min_max(surface_densities)
 
     # Loop again to generate plots after computing global min/max
-    for step, sig in zip(range(step_interval, max_step + step_interval, step_interval), surface_densities):
+    for step in range(20000, max_step + step_interval, step_interval):
         # Generate plot for the current step with a fixed color scale
-        plot_surface_density(step, x, y, sig, disk_particles, stride, "2pi", fixed_scale=True)
+        #plot_surface_density(step, x, y, sig, disk_particles, stride, "2pi", fixed_scale=True)
+        plot_particles(step, x, y, disk_particles, stride, "2pi")
 
 
     # Generate plots with a dynamic color scale
