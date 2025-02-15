@@ -15,8 +15,10 @@ struct DiskData
 
     // variable disk parameters
     double                m{0.};
+    double                r{0.}; // outer radius of the disk 
+    double                h{0.}; // smoothing length of recently accreted particles
     double                c_boundary{0.}; // sound speed of the disk
-    double                r0{1.}; // outer radius of the disk -> should be 2 or 3 times h 
+    double                r0{1.}; // radius of the boundary layer -> should be 2 or 3 times h 
     double                rho_boundary{0.}; // density at outer boundary of disk
     double                T_boundary{0.}; // temperature at outer boundary of disk
     double                sigma0{0.}; // surface density at outer boundary of disk (sigma naught)
@@ -57,7 +59,9 @@ struct DiskData
     // Local to Rank
 
     double                m_accreted_local{};
-    double                n_accreted_local{};   
+    double                n_accreted_local{};  
+    double                h_accreted_local{};
+    double                r_accreted_local{}; 
     double                c_boundary_local{};
     double                rho_boundary_local{};
     double                T_boundary_local{}; 
@@ -65,4 +69,5 @@ struct DiskData
     size_t                n_boundary_local{};
     double                r0_local{};
     double                H2_boundary_local{};
+    
 };

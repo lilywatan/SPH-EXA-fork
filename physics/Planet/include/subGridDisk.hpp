@@ -62,7 +62,7 @@ void SubGridDiskBoundary(size_t first, size_t last, Dataset& d, DiskData& disk, 
         const double dist2 = dx * dx + dy * dy + dz * dz;
 
         // TO-DO: implement some sort of radial boundary (interval) -> 2-3 times h currently 
-        if (dist2 > (2 * d.h[i]) * (2 * d.h[i]) && dist2 < (3 * d.h[i])(3 * d.h[i])) {
+        if (dist2 > (2 * d.h[i]) * (2 * d.h[i]) && dist2 < (3 * d.h[i])*(3 * d.h[i])) {
             add_parameters(i, boundary_density, boundary_temperature, boundary_sigma, boundary_mass, n_boundary_particles); 
             
         }

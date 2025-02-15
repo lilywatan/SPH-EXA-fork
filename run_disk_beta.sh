@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=disk_calibration_beta         # Job name    (default: sbatch)
-#SBATCH --output=disk_calibration_beta.out        # Output file (default: slurm-%j.out)
-#SBATCH --error=disk_calibration_beta_%j.err         # Error file  (default: slurm-%j.err)
+#SBATCH --job-name=disk_calibration_beta_planet         # Job name    (default: sbatch)
+#SBATCH --output=disk_calibration_beta_planet.out        # Output file (default: slurm-%j.out)
+#SBATCH --error=disk_calibration_beta_planet_%j.err         # Error file  (default: slurm-%j.err)
 #SBATCH --cpus-per-task=32       # Number of CPUs per task
 #SBATCH --ntasks=1                # Number of tasks
 #SBATCH --ntasks-per-node=1      # Number of tasks per node§
@@ -26,5 +26,6 @@ echo "libmpi.so.40 found and accessible."
 OMP_NUM_THREADS=32
 export OMP_NUM_THREADS
 
-srun build-no-accretion/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-planet -s 1e6 -w 1000 -f m,c,x,y,z,rho,p,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/data/SPH-EXA-fork/output/runs/run_disk_cal_1e6_beta_2.hdf5'
+srun build-no-accretion/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-planet -s 1e6 -w 1000 -f m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/data/SPH-EXA-fork/output/runs/run_disk_cal_1e6_beta_planet.hdf5'
+# srun build-no-accretion/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-hydro -s 1e6 -w 1000 -f m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/data/SPH-EXA-fork/output/runs/run_disk_cal_1e6_beta_hydro.hdf5'
 

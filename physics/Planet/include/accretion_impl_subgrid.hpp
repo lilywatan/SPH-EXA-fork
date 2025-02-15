@@ -22,6 +22,8 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
 
     double accr_mass{};
     size_t n_accreted{};
+    double removed_h{}; 
+    double removed_r{}; 
 
     double boundary_c{}; 
     double boundary_mass{}; 
@@ -32,10 +34,12 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
     size_t n_boundary{};
     double boundary_H2{};
 
-    auto remove_and_sum = [&d](size_t i, double& mass_sum, size_t& n_sum)
+    auto remove_and_sum = [&d](size_t i, double& mass_sum, size_t& n_sum, double& h_sum, double& r_sum, double dist2)
     {
         d.keys[i] = cstone::removeKey<typename Dataset::KeyType>::value;
         mass_sum += d.m[i];
+        h_sum += d.h[i]*d.h[i];
+        r_sum += dist2;
         n_sum++;
     };
 
@@ -64,9 +68,9 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
         const double dist2 = dx * dx + dy * dy + dz * dz;
 
         // radial criterion based on smoothing length -> accrete onto disk: 
-        if (dist2 < 2*d.h[i]) { remove_and_sum(i, accr_mass, n_accreted); }
+        if (dist2 < (2*d.h[i])*(2*d.h[i])) { remove_and_sum(i, accr_mass, n_accreted, removed_h, removed_r, dist2); }
         // radial criterion for boundary -> 2h < r < 3h & minimum number of neighbors 
-        else if (dist2 > 2*d.h[i] && dist2 < 3*d.h[i] && d.nc[i] >= 150) { add_to_boundary(i, boundary_mass, n_boundary, 
+        else if (dist2 > (2*d.h[i])*(2*d.h[i]) && dist2 < (3*d.h[i])*(3*d.h[i])) { add_to_boundary(i, boundary_mass, n_boundary, 
             boundary_r0, boundary_rho, boundary_T, dist2, boundary_sigma0, boundary_c, boundary_H2, dz); }
         
         // Q: does the disk also need a removal limit? 
@@ -77,6 +81,8 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
     disk.m_accreted_local    = accr_mass;
     disk.r0_local            = boundary_r0;
     disk.n_accreted_local    = n_accreted;
+    disk.h_accreted_local    = removed_h;
+    disk.r_accreted_local    = removed_r;
 
     disk.c_boundary_local    = boundary_c;
     disk.n_boundary_local    = n_boundary;

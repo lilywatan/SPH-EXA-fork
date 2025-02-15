@@ -189,10 +189,10 @@ public:
         planet::computeAndExchangeStarPosition(star, d.minDt, d.minDt_m1, Base::rank_);
         timer.step("computeAndExchangeStarPosition");
 
-        planet::computeAccretionCondition(first, last, d, star);
+        //planet::computeAccretionCondition(first, last, d, star);
         timer.step("computeAccretionCondition");
 
-        planet::exchangeAndAccreteOnStar(star, d.minDt_m1, Base::rank_);
+        //planet::exchangeAndAccreteOnStar(star, d.minDt_m1, Base::rank_);
         timer.step("exchangeAndAccreteOnStar");
 
         if (Base::rank_ == 0)
