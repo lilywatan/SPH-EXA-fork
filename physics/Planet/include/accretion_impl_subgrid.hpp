@@ -69,11 +69,10 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
 
         // radial criterion based on smoothing length -> accrete onto disk: 
         if (dist2 < (2*d.h[i])*(2*d.h[i])) { remove_and_sum(i, accr_mass, n_accreted, removed_h, removed_r, dist2); }
-        // radial criterion for boundary -> 2h < r < 3h & minimum number of neighbors 
+        // radial criterion for boundary -> 2h < r < 3h 
         else if (dist2 > (2*d.h[i])*(2*d.h[i]) && dist2 < (3*d.h[i])*(3*d.h[i])) { add_to_boundary(i, boundary_mass, n_boundary, 
             boundary_r0, boundary_rho, boundary_T, dist2, boundary_sigma0, boundary_c, boundary_H2, dz); }
         
-        // Q: does the disk also need a removal limit? 
         //else if (d.h[i] > star.removal_limit_h) { remove_and_sum(i, removed_mass, removed_mom, n_removed); }
     }
 
