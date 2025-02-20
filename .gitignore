@@ -52,3 +52,5 @@ test/constants.txt
 output/runs
 output/plots/local
 *.err
+neighbor_debug*.log
+neighbor_summary.log

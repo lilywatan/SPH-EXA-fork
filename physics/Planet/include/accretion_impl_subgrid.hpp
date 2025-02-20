@@ -34,6 +34,8 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
     size_t n_boundary{};
     double boundary_H2{};
 
+    double smoothing_length{};
+
     auto remove_and_sum = [&d](size_t i, double& mass_sum, size_t& n_sum, double& h_sum, double& r_sum, double dist2)
     {
         d.keys[i] = cstone::removeKey<typename Dataset::KeyType>::value;
@@ -59,7 +61,8 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
 
 #pragma omp parallel for reduction(+ : accr_mass) reduction(+ : boundary_c) reduction(+ : n_accreted)              \
     reduction(+ : boundary_mass) reduction(+ : n_boundary) reduction(+ : boundary_r0) reduction(+ : boundary_rho)    \
-    reduction(+ : boundary_T) reduction(+ : boundary_sigma0) reduction(+ : boundary_H2)
+    reduction(+ : boundary_T) reduction(+ : boundary_sigma0) reduction(+ : boundary_H2) reduction(+: removed_h) \
+    reduction(+ :  removed_r) reduction(+ : smoothing_length) 
     for (size_t i = first; i < last; i++)
     {
         const double dx    = d.x[i] - star.position[0];
@@ -67,16 +70,25 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
         const double dz    = d.z[i] - star.position[2];
         const double dist2 = dx * dx + dy * dy + dz * dz;
 
+        smoothing_length += d.h[i];
+        const double min_h = 2; 
+        const double max_h = 3;
         // radial criterion based on smoothing length -> accrete onto disk: 
-        if (dist2 < (2*d.h[i])*(2*d.h[i])) { remove_and_sum(i, accr_mass, n_accreted, removed_h, removed_r, dist2); }
-        // radial criterion for boundary -> 2h < r < 3h & minimum number of neighbors 
-        else if (dist2 > (2*d.h[i])*(2*d.h[i]) && dist2 < (3*d.h[i])*(3*d.h[i])) { add_to_boundary(i, boundary_mass, n_boundary, 
+        if (dist2 < (min_h*d.h[i])*(min_h*d.h[i])) { 
+            remove_and_sum(i, accr_mass, n_accreted, removed_h, removed_r, dist2); }
+        // radial criterion for boundary -> 2h < r < 3h 
+        else if (dist2 > (min_h*d.h[i])*(min_h*d.h[i]) && dist2 < (max_h*d.h[i])*(max_h*d.h[i])) { add_to_boundary(i, boundary_mass, n_boundary, 
             boundary_r0, boundary_rho, boundary_T, dist2, boundary_sigma0, boundary_c, boundary_H2, dz); }
         
-        // Q: does the disk also need a removal limit? 
+        /* if (dist2 < 2 * 2 && d.h[i] < 2.0) { 
+            remove_and_sum(i, accr_mass, n_accreted, removed_h, removed_r, dist2); } 
+
+        else if (dist2 > 2 * 2 && dist2 < 3 * 3 && d.h[i] < 2.0) { add_to_boundary(i, boundary_mass, n_boundary, 
+            boundary_r0, boundary_rho, boundary_T, dist2, boundary_sigma0, boundary_c, boundary_H2, dz); }
+            */
         //else if (d.h[i] > star.removal_limit_h) { remove_and_sum(i, removed_mass, removed_mom, n_removed); }
     }
-
+    std::cout << "Smoothing length: " << smoothing_length / d.numParticlesGlobal << std::endl;
 
     disk.m_accreted_local    = accr_mass;
     disk.r0_local            = boundary_r0;

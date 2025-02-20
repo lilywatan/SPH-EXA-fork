@@ -43,4 +43,7 @@ with h5py.File(input_subgrid, 'a') as sub, \
                 del sub_obj[key]  # Remove existing dataset if it exists
             beta_obj.copy(key, sub_obj, name=key)
 
+    # set iteration to 0: 
+    sub['Step#0'].attrs['iteration'] = 0
+
     print("All attributes and datasets copied successfully from 'Step#25' to 'Step#0'.")
