@@ -27,6 +27,7 @@ void SubGridDiskAccreteOnStar(Dataset& d, DiskData& disk, StarData& star, double
     double n_boundary_global{};
     double H2_boundary_global{};
 
+    std::array<double, 3> p_accreted_global{};
     // Reductions on disk parameters
     MPI_Reduce(&disk.m_accreted_local, &m_accreted_global, 1, MpiType<double>{}, MPI_SUM, 0, MPI_COMM_WORLD);
     MPI_Reduce(&disk.h_accreted_local, &h_accreted_global, 1, MpiType<double>{}, MPI_SUM, 0, MPI_COMM_WORLD);
@@ -39,6 +40,9 @@ void SubGridDiskAccreteOnStar(Dataset& d, DiskData& disk, StarData& star, double
     MPI_Reduce(&disk.sigma0_local, &sigma0_global, 1, MpiType<double>{}, MPI_SUM, 0, MPI_COMM_WORLD);
     MPI_Reduce(&disk.n_boundary_local, &n_boundary_global, 1, MpiType<size_t>{}, MPI_SUM, 0, MPI_COMM_WORLD);
     MPI_Reduce(&disk.H2_boundary_local, &H2_boundary_global, 1, MpiType<double>{}, MPI_SUM, 0, MPI_COMM_WORLD);
+
+    MPI_Reduce(star.p_accreted_local.data(), p_accreted_global.data(), 3, MpiType<double>{}, MPI_SUM, 0,
+               MPI_COMM_WORLD);
 
     // function to calculate mass accretion rate
     // nu is set disk kinematic viscosity 
@@ -64,6 +68,8 @@ void SubGridDiskAccreteOnStar(Dataset& d, DiskData& disk, StarData& star, double
         sigma0_global = std::sqrt(sigma0_global / n_boundary_global);
         r0_global = std::sqrt(r0_global / n_boundary_global);
 
+        
+
         // set disk parameters to new values
         disk.h = h_accreted_global;
         disk.r = r_disk_global;
@@ -77,8 +83,21 @@ void SubGridDiskAccreteOnStar(Dataset& d, DiskData& disk, StarData& star, double
         // calculate mass accretion rate and new masses of star and disk 
         double m_star_new = star.m + M_dot(disk.r) * dt; 
         double m_disk_new = disk.m + m_accreted_global - M_dot(disk.r) * dt; 
+
+        std::array<double, 3> p_star;
+        for (size_t i = 0; i < 3; i++)
+        {
+            p_star[i] = (star.position_m1[i] / minDt_m1) * star.m;
+            p_star[i] += p_accreted_global[i];
+            star.position_m1[i] = p_star[i] / m_star_new * minDt_m1;
+        }
+
         star.m = m_star_new;
         disk.m = m_disk_new;
+
+        printf("star mass: %g\n", star.m);
+        printf("accreted mass: %g\tdisk mass: %g\n", m_accreted_global, disk.m);
+
     }
 
     MPI_Bcast(&star.m, 1, MpiType<double>{}, 0, MPI_COMM_WORLD);
@@ -90,6 +109,8 @@ void SubGridDiskAccreteOnStar(Dataset& d, DiskData& disk, StarData& star, double
     MPI_Bcast(&disk.sigma0, 1, MpiType<double>{}, 0, MPI_COMM_WORLD);
     MPI_Bcast(&disk.r0, 1, MpiType<double>{}, 0, MPI_COMM_WORLD);
     MPI_Bcast(&disk.Hr_boundary, 1, MpiType<double>{}, 0, MPI_COMM_WORLD);
+    MPI_Bcast(star.position_m1.data(), 3, MpiType<double>{}, 0, MPI_COMM_WORLD);
+
 
 
 }

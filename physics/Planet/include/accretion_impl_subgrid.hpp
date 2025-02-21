@@ -21,6 +21,7 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
 {
 
     double accr_mass{};
+    double accr_mom[3]{};
     size_t n_accreted{};
     double removed_h{}; 
     double removed_r{}; 
@@ -36,10 +37,13 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
 
     double smoothing_length{};
 
-    auto remove_and_sum = [&d](size_t i, double& mass_sum, size_t& n_sum, double& h_sum, double& r_sum, double dist2)
+    auto remove_and_sum = [&d](size_t i, double& mass_sum, double(&mom_sum)[3], size_t& n_sum, double& h_sum, double& r_sum, double dist2)
     {
         d.keys[i] = cstone::removeKey<typename Dataset::KeyType>::value;
         mass_sum += d.m[i];
+        mom_sum[0] += d.m[i] * d.vx[i];
+        mom_sum[1] += d.m[i] * d.vy[i];
+        mom_sum[2] += d.m[i] * d.vz[i];
         h_sum += d.h[i]*d.h[i];
         r_sum += dist2;
         n_sum++;
@@ -75,7 +79,7 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
         const double max_h = 3;
         // radial criterion based on smoothing length -> accrete onto disk: 
         if (dist2 < (min_h*d.h[i])*(min_h*d.h[i])) { 
-            remove_and_sum(i, accr_mass, n_accreted, removed_h, removed_r, dist2); }
+            remove_and_sum(i, accr_mass, accr_mom, removed_h, removed_r, dist2); }
         // radial criterion for boundary -> 2h < r < 3h 
         else if (dist2 > (min_h*d.h[i])*(min_h*d.h[i]) && dist2 < (max_h*d.h[i])*(max_h*d.h[i])) { add_to_boundary(i, boundary_mass, n_boundary, 
             boundary_r0, boundary_rho, boundary_T, dist2, boundary_sigma0, boundary_c, boundary_H2, dz); }
@@ -95,6 +99,9 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
     disk.n_accreted_local    = n_accreted;
     disk.h_accreted_local    = removed_h;
     disk.r_accreted_local    = removed_r;
+    star.p_accreted_local[0] = accr_mom[0];
+    star.p_accreted_local[1] = accr_mom[1];
+    star.p_accreted_local[2] = accr_mom[2];
 
     disk.c_boundary_local    = boundary_c;
     disk.n_boundary_local    = n_boundary;
