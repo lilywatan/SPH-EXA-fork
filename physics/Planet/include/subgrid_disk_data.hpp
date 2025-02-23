@@ -59,7 +59,7 @@ struct DiskData
     // Local to Rank
 
     double                m_accreted_local{};
-    double                n_accreted_local{};  
+    size_t                n_accreted_local{};  
     double                h_accreted_local{};
     double                r_accreted_local{}; 
     double                c_boundary_local{};

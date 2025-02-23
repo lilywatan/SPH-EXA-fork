@@ -2,6 +2,7 @@
 build
 build-release
 build-no-accretion
+build-*
 lib/*
 
 # Ignore any executables

@@ -63,7 +63,7 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
         H2_boundary += d.m[i] * dz * dz;
     };
 
-#pragma omp parallel for reduction(+ : accr_mass) reduction(+ : boundary_c) reduction(+ : n_accreted)              \
+#pragma omp parallel for reduction(+ : accr_mass) reduction(+ : accr_mom[ : 3]) reduction(+ : boundary_c) reduction(+ : n_accreted) \
     reduction(+ : boundary_mass) reduction(+ : n_boundary) reduction(+ : boundary_r0) reduction(+ : boundary_rho)    \
     reduction(+ : boundary_T) reduction(+ : boundary_sigma0) reduction(+ : boundary_H2) reduction(+: removed_h) \
     reduction(+ :  removed_r) reduction(+ : smoothing_length) 
@@ -79,7 +79,7 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
         const double max_h = 3;
         // radial criterion based on smoothing length -> accrete onto disk: 
         if (dist2 < (min_h*d.h[i])*(min_h*d.h[i])) { 
-            remove_and_sum(i, accr_mass, accr_mom, removed_h, removed_r, dist2); }
+            remove_and_sum(i, accr_mass, accr_mom, n_accreted, removed_h, removed_r, dist2); }
         // radial criterion for boundary -> 2h < r < 3h 
         else if (dist2 > (min_h*d.h[i])*(min_h*d.h[i]) && dist2 < (max_h*d.h[i])*(max_h*d.h[i])) { add_to_boundary(i, boundary_mass, n_boundary, 
             boundary_r0, boundary_rho, boundary_T, dist2, boundary_sigma0, boundary_c, boundary_H2, dz); }

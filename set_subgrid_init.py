@@ -25,10 +25,7 @@ with h5py.File(input_subgrid, 'a') as sub, \
 
     ### Copy only those Attributes that exist in the beta file.
     for attr in beta_obj.attrs.keys():
-        if attr in cal_obj.attrs:
-            sub_obj.attrs[attr] = cal_obj.attrs[attr]
-        else:
-            sub_obj.attrs[attr] = beta_obj.attrs[attr]
+        sub_obj.attrs[attr] = beta_obj.attrs[attr]
 
     ### Copy Datasets (Keys) from `no_acc` to `input_subgrid`
     for key in cal_obj.keys():

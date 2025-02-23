@@ -199,7 +199,7 @@ public:
         timer.step("computeAndExchangeStarPosition");
 
         planet::computeAccretionConditionSubGridDisk(first, last, d, disk, star);
-        timer.step("computeAccretionCondition");
+        timer.step("computeAccretionConditionSubGridDisk");
 
         planet::SubGridDiskAccreteOnStar(d, disk, star, d.minDt_m1, Base::rank_);
         timer.step("SubGridDiskAccreteOnStar");
