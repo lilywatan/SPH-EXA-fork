@@ -47,7 +47,7 @@ void computeAccretionConditionImpl(size_t first, size_t last, Dataset& d, StarDa
         const double dist2 = dx * dx + dy * dy + dz * dz;
 
         if (dist2 < (1/3 * star_size2)) { remove_and_sum(i, accr_mass, accr_mom, n_accreted); }
-        else if (d.h[i] > star.removal_limit_h) { remove_and_sum(i, removed_mass, removed_mom, n_removed); }
+        //else if (d.h[i] > star.removal_limit_h) { remove_and_sum(i, removed_mass, removed_mom, n_removed); }
     }
 
     star.m_accreted_local    = accr_mass;
