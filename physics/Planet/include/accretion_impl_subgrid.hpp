@@ -37,6 +37,7 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
 
     double smoothing_length{};
 
+
     auto remove_and_sum = [&d](size_t i, double& mass_sum, double(&mom_sum)[3], size_t& n_sum, double& h_sum, double& r_sum, double dist2)
     {
         d.keys[i] = cstone::removeKey<typename Dataset::KeyType>::value;
@@ -90,7 +91,7 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
         else if (dist2 > 2 * 2 && dist2 < 3 * 3 && d.h[i] < 2.0) { add_to_boundary(i, boundary_mass, n_boundary, 
             boundary_r0, boundary_rho, boundary_T, dist2, boundary_sigma0, boundary_c, boundary_H2, dz); }
             */
-        //else if (d.h[i] > star.removal_limit_h) { remove_and_sum(i, removed_mass, removed_mom, n_removed); }
+        else if (d.h[i] > star.removal_limit_h) { d.keys[i] = cstone::removeKey<typename Dataset::KeyType>::value;}
     }
     std::cout << "Smoothing length: " << smoothing_length / d.numParticlesGlobal << std::endl;
 

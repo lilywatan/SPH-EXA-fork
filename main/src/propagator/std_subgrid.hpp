@@ -204,7 +204,7 @@ public:
         planet::SubGridDiskAccreteOnStar(d, disk, star, d.minDt_m1, Base::rank_);
         timer.step("SubGridDiskAccreteOnStar");
 
-        planet::exchangeAndAccreteOnStarSubGrid(star, d.minDt_m1, Base::rank_);
+        //planet::exchangeAndAccreteOnStarSubGrid(star, d.minDt_m1, Base::rank_);
         timer.step("exchangeAndAccreteOnStar");
 
         if (Base::rank_ == 0)

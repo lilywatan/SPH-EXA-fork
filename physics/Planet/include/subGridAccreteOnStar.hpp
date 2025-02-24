@@ -120,6 +120,12 @@ void SubGridDiskAccreteOnStar(Dataset& d, DiskData& disk, StarData& star, double
         printf("star mass: %g\n", star.m);
         printf("accreted mass: %g\tdisk mass: %g\n", m_accreted_global, disk.m);
         printf("n_accreted: %zu\tn_boundary: %zu\n", n_accreted_global, n_boundary_global);
+        printf("accreted momentum x: %g\tstar momentum x: %g\n",
+            p_accreted_global[0], p_star[0]);
+        printf("accreted momentum y: %g\tstar momentum y: %g\n",
+            p_accreted_global[1], p_star[1]);
+        printf("accreted momentum z: %g\tstar momentum z: %g\n", 
+            p_accreted_global[2], p_star[2]);
 
     }
 

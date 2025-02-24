@@ -22,7 +22,7 @@ run_100_radial_beta = '/home/lwatan/scratch/run_disk_radial_100_beta.hdf5'
 run_500_beta = '/home/lwatan/scratch/run_disk_mom_500_beta.hdf5'
 run_1e6_beta = '/home/lwatan/scratch/run_disk_mom_1e6_beta.hdf5'
 run_calibration = './output/runs/run_disk_cal_1e6_beta_2.hdf5'
-run_cal_planet = './output/runs/run_disk_cal_1e6_beta_planet.hdf5'
+run_cal_planet = '/home/lwatan/scratch/run_disk_cal_1e6_beta_planet_3.hdf5'
 
 # constants
 G = 1.0
@@ -184,23 +184,23 @@ def plot_particles(t, x, y, h, disk_mask, stride, beta="2pi"):
     
     # Plot circles for each particle using its own smoothing length
     # Only add labels once for the legend (for the first instance of each)
-    first_2h = True
-    first_3h = True
-    for xi, yi, hi in zip(x_disk, y_disk, h_disk):
-        circle_2h = Circle(
-            (xi, yi), 2 * hi, 
-            color='red', fill=False, linestyle='--', linewidth=1,
-            label='2h' if first_2h else None
-        )
-        circle_3h = Circle(
-            (xi, yi), 3 * hi, 
-            color='blue', fill=False, linestyle='--', linewidth=1,
-            label='3h' if first_3h else None
-        )
-        ax.add_patch(circle_2h)
-        ax.add_patch(circle_3h)
-        first_2h = False
-        first_3h = False
+    #first_2h = True
+    #first_3h = True
+    #for xi, yi, hi in zip(x_disk, y_disk, h_disk):
+    #    circle_2h = Circle(
+    #        (xi, yi), 2 * hi, 
+    #        color='red', fill=False, linestyle='--', linewidth=1,
+    #        label='2h' if first_2h else None
+    #    )
+    #    circle_3h = Circle(
+    #        (xi, yi), 3 * hi, 
+    #        color='blue', fill=False, linestyle='--', linewidth=1,
+    #        label='3h' if first_3h else None
+    #    )
+    #    ax.add_patch(circle_2h)
+    #    ax.add_patch(circle_3h)
+    #    first_2h = False
+    #   first_3h = False
     
     # Set title and axis labels
     plt.title(f'Particles at timestep {t}, no accretion (beta={beta})')
@@ -211,7 +211,7 @@ def plot_particles(t, x, y, h, disk_mask, stride, beta="2pi"):
     plt.legend()
     
     # Save the plot (make sure 'plots' variable is defined with a valid directory path)
-    fname = f'particles_1e6_cal_planet_hexbin_{t}_{beta}.png'
+    fname = f'particles_1e6_cal_planet_3_{t}_{beta}.png'
     plt.savefig(plots + fname, bbox_inches='tight', dpi=300)
     plt.show()
 
@@ -222,8 +222,8 @@ if __name__ == '__main__':
     r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
     # Compute surface density for the specified timesteps
     # Define the step interval
-    step_interval = 1000
-    max_step = 20000  # Adjust this to the maximum step in your simulation
+    step_interval = 10000
+    max_step = 70000  # Adjust this to the maximum step in your simulation
 
     # Prepare an empty list to store surface density arrays for computing global min/max
     surface_densities = []

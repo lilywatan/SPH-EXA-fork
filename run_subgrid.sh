@@ -25,7 +25,7 @@ echo "libmpi.so.40 found and accessible."
 
 OMP_NUM_THREADS=32
 export OMP_NUM_THREADS
-EXEC_PATH="/home/lwatan/data/SPH-EXA-fork/build-release/main/src/sphexa/sphexa"
+EXEC_PATH="/home/lwatan/data/SPH-EXA-fork/build-subgrid/main/src/sphexa/sphexa"
 
 rm -f '/home/lwatan/scratch/run_subgrid_beta_planet_debug_14.hdf5'
 
