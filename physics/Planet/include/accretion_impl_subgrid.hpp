@@ -37,7 +37,7 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
 
     double smoothing_length{};
 
-
+    // removal function for disk particles
     auto remove_and_sum = [&d](size_t i, double& mass_sum, double(&mom_sum)[3], size_t& n_sum, double& h_sum, double& r_sum, double dist2)
     {
         d.keys[i] = cstone::removeKey<typename Dataset::KeyType>::value;
@@ -50,6 +50,7 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
         n_sum++;
     };
 
+    // function to calculate boundary parameter values, does not remove particles from the simulation
     auto add_to_boundary = [&d](size_t i, double& mass_boundary, size_t& n_boundary, double& r0_boundary, 
         double& rho_boundary, double& T_boundary, double dist2, double& sigma0_boundary, double& c_boundary, double& H2_boundary, double dz)
     {
@@ -64,10 +65,10 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
         H2_boundary += d.m[i] * dz * dz;
     };
 
-#pragma omp parallel for reduction(+ : accr_mass) reduction(+ : accr_mom[ : 3]) reduction(+ : boundary_c) reduction(+ : n_accreted) \
+/*#pragma omp parallel for reduction(+ : accr_mass) reduction(+ : accr_mom[ : 3]) reduction(+ : boundary_c) reduction(+ : n_accreted) \
     reduction(+ : boundary_mass) reduction(+ : n_boundary) reduction(+ : boundary_r0) reduction(+ : boundary_rho)    \
     reduction(+ : boundary_T) reduction(+ : boundary_sigma0) reduction(+ : boundary_H2) reduction(+: removed_h) \
-    reduction(+ :  removed_r) reduction(+ : smoothing_length) 
+    reduction(+ :  removed_r) reduction(+ : smoothing_length) */
     for (size_t i = first; i < last; i++)
     {
         const double dx    = d.x[i] - star.position[0];

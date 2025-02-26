@@ -22,7 +22,8 @@ run_100_radial_beta = '/home/lwatan/scratch/run_disk_radial_100_beta.hdf5'
 run_500_beta = '/home/lwatan/scratch/run_disk_mom_500_beta.hdf5'
 run_1e6_beta = '/home/lwatan/scratch/run_disk_mom_1e6_beta.hdf5'
 run_calibration = './output/runs/run_disk_cal_1e6_beta_2.hdf5'
-run_cal_planet = '/home/lwatan/scratch/run_disk_cal_1e6_beta_planet_3.hdf5'
+run_cal_planet_3 = '/home/lwatan/scratch/run_disk_cal_1e6_beta_planet_3.hdf5'
+run_cal_planet_2 = '/home/lwatan/scratch/run_disk_cal_1e6_beta_planet_2.hdf5'
 
 # constants
 G = 1.0
@@ -211,19 +212,19 @@ def plot_particles(t, x, y, h, disk_mask, stride, beta="2pi"):
     plt.legend()
     
     # Save the plot (make sure 'plots' variable is defined with a valid directory path)
-    fname = f'particles_1e6_cal_planet_3_{t}_{beta}.png'
+    fname = f'particles_1e6_cal_planet_2_{t}_{beta}.png'
     plt.savefig(plots + fname, bbox_inches='tight', dpi=300)
     plt.show()
 
     
 if __name__ == '__main__':
     stride=1
-    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_cal_planet,stride)
+    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_cal_planet_2,stride)
     r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
     # Compute surface density for the specified timesteps
     # Define the step interval
-    step_interval = 10000
-    max_step = 70000  # Adjust this to the maximum step in your simulation
+    step_interval = 50000
+    max_step = 290000  # Adjust this to the maximum step in your simulation
 
     # Prepare an empty list to store surface density arrays for computing global min/max
     surface_densities = []
@@ -238,7 +239,7 @@ if __name__ == '__main__':
     #compute_global_min_max(surface_densities)
 
     # Loop again to generate plots after computing global min/max
-    for step in range(10000, max_step + step_interval, step_interval):
+    for step in range(40000, max_step + step_interval, step_interval):
         # Generate plot for the current step with a fixed color scale
         #plot_surface_density(step, x, y, sig, disk_particles, stride, "2pi", fixed_scale=True)
         plot_particles(step, x, y, h, disk_particles, stride, "2pi")

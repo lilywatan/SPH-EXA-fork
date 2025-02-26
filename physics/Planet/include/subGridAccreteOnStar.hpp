@@ -14,7 +14,6 @@ namespace planet
 template<typename Dataset, typename DiskData, typename StarData>
 void SubGridDiskAccreteOnStar(Dataset& d, DiskData& disk, StarData& star, double dt, int rank)
 {
-    // adjust calculations for sigma & mass accretion rate
     double m_accreted_global{};
     double h_accreted_global{};
     double r_disk_global{};
@@ -44,26 +43,25 @@ void SubGridDiskAccreteOnStar(Dataset& d, DiskData& disk, StarData& star, double
     MPI_Reduce(star.p_accreted_local.data(), p_accreted_global.data(), 3, MpiType<double>{}, MPI_SUM, 0,
                MPI_COMM_WORLD);
 
-    // function to calculate mass accretion rate
-    // nu is set disk kinematic viscosity 
+    // function to calculate mass accretion rate according to formula from lecture notes
+    // nu is disk kinematic viscosity:  alpha * c * H 
     // r is the radius at which to evaluate the function 
     auto M_dot = [&star, &disk](double r)
     {
         double nu_0 = disk.alpha * disk.c_boundary * disk.Hr_boundary * disk.r0;
-        printf("nu_0: %g\n", nu_0);
+        //printf("nu_0: %g\n", nu_0);
         double nu = disk.alpha * disk.c_boundary * disk.Hr_boundary * r;
-        printf("nu: %g\n", nu);
+        //printf("nu: %g\n", nu);
         double star_r = 1 - std::sqrt(star.inner_size / r);
-        printf("star_r: %g\n", star_r);
+        //printf("star_r: %g\n", star_r);
         double star_r0 = 1 - std::sqrt(star.inner_size / disk.r0);
-        printf("star_r0: %g\n", star_r0);
+        //printf("star_r0: %g\n", star_r0);
         double sigma = disk.sigma0 * ((nu_0 * star_r) / (nu * star_r0));
-        printf("sigma: %g\n", sigma);
+        //printf("sigma: %g\n", sigma);
         return (3 * M_PI * nu * disk.sigma0 * sigma) / star_r;
     };
 
     if (rank == 0){
-        // change the disk.c thing
         // calculate rms of parameters
         if(n_accreted_global > 0)
         {
@@ -76,11 +74,14 @@ void SubGridDiskAccreteOnStar(Dataset& d, DiskData& disk, StarData& star, double
 
         if(n_boundary_global > 0)
         {
+            // sqrt of sum of squares divided by n
             c_boundary_global_avg = std::sqrt(c_boundary_global_avg / n_boundary_global);
             rho_boundary_global_avg = std::sqrt(rho_boundary_global_avg / n_boundary_global);
             T_boundary_global_avg = std::sqrt(T_boundary_global_avg / n_boundary_global);
             sigma0_global = std::sqrt(sigma0_global / n_boundary_global);
             r0_global = std::sqrt(r0_global / n_boundary_global);
+
+            // set disk values to updated values
             disk.c_boundary = c_boundary_global_avg;
             printf("disk c: %g\n", disk.c_boundary);
             disk.rho_boundary = rho_boundary_global_avg;
@@ -90,7 +91,7 @@ void SubGridDiskAccreteOnStar(Dataset& d, DiskData& disk, StarData& star, double
             printf("disk r0: %g\n", disk.r0);
         }
 
-        // set disk parameters to new values
+        // boundary aspect ratio: sqrt((Δz^2*m)/m) / r0
         disk.Hr_boundary =  std::sqrt(H2_boundary_global / m_accreted_global)/r0_global;
 
         double m_star_new = star.m;
@@ -106,6 +107,7 @@ void SubGridDiskAccreteOnStar(Dataset& d, DiskData& disk, StarData& star, double
 
         printf("dt: %g\n", dt);
 
+        // momentum update of star, same as in std-planet
         std::array<double, 3> p_star;
         for (size_t i = 0; i < 3; i++)
         {

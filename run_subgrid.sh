@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=disk_subgrid_beta_planet_debug         # Job name    (default: sbatch)
-#SBATCH --output=disk_subgrid_beta_planet_debug.out        # Output file (default: slurm-%j.out)
-#SBATCH --error=disk_subgrid_beta_planet_debug.err         # Error file  (default: slurm-%j.err)
+#SBATCH --job-name=disk_subgrid_beta_planet_debug_no_SAS         # Job name    (default: sbatch)
+#SBATCH --output=disk_subgrid_beta_planet_debug_no_SAS.out        # Output file (default: slurm-%j.out)
+#SBATCH --error=disk_subgrid_beta_planet_debug_no_SAS.err         # Error file  (default: slurm-%j.err)
 #SBATCH --cpus-per-task=32       # Number of CPUs per task
 #SBATCH --ntasks=1                # Number of tasks
 #SBATCH --ntasks-per-node=1      # Number of tasks per node§
@@ -27,7 +27,7 @@ OMP_NUM_THREADS=32
 export OMP_NUM_THREADS
 EXEC_PATH="/home/lwatan/data/SPH-EXA-fork/build-subgrid/main/src/sphexa/sphexa"
 
-rm -f '/home/lwatan/scratch/run_subgrid_beta_planet_debug_14.hdf5'
+#rm -f '/home/lwatan/scratch/run_subgrid_beta_planet_debug_no_SAS_14.hdf5'
 
-srun $EXEC_PATH --init '/home/lwatan/data/SPH-EXA-fork/subgrid_init_planet.hdf5' --prop std-subgrid -s 10 -w 1000 -f m,c,x,y,z,rho,p,vx,vy,vz,h -o '/home/lwatan/scratch/run_subgrid_beta_planet_debug_14.hdf5'
+srun $EXEC_PATH --init '/home/lwatan/data/SPH-EXA-fork/subgrid_init_planet.hdf5' --prop std-subgrid -s 10 -w 10 -f m,c,x,y,z,rho,p,vx,vy,vz,h -o '/home/lwatan/scratch/run_subgrid_beta_planet_debug_no_SAS.hdf5'
 

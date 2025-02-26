@@ -10,10 +10,10 @@
 struct DiskData
 {
     // set disk parameters 
-    double                H_r{0.25}; // disk H/r ratio
     double                alpha{0.01}; // disk alpha parameter
 
     // variable disk parameters
+    double                H_r{0.25}; // disk H/r ratio
     double                m{0.};
     double                r{0.}; // outer radius of the disk 
     double                h{0.}; // smoothing length of recently accreted particles
