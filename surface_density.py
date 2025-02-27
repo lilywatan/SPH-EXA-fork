@@ -223,8 +223,8 @@ if __name__ == '__main__':
     r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
     # Compute surface density for the specified timesteps
     # Define the step interval
-    step_interval = 50000
-    max_step = 290000  # Adjust this to the maximum step in your simulation
+    step_interval = 1000
+    max_step = 20000  # Adjust this to the maximum step in your simulation
 
     # Prepare an empty list to store surface density arrays for computing global min/max
     surface_densities = []
@@ -239,7 +239,7 @@ if __name__ == '__main__':
     #compute_global_min_max(surface_densities)
 
     # Loop again to generate plots after computing global min/max
-    for step in range(40000, max_step + step_interval, step_interval):
+    for step in range(10000, max_step + step_interval, step_interval):
         # Generate plot for the current step with a fixed color scale
         #plot_surface_density(step, x, y, sig, disk_particles, stride, "2pi", fixed_scale=True)
         plot_particles(step, x, y, h, disk_particles, stride, "2pi")
