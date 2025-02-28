@@ -53,7 +53,8 @@ with h5py.File(input_subgrid, 'a') as sub, \
     sub['Step#0'].attrs['iteration'] = 0
     sub['Step#0'].attrs['star::x'] = 0
     sub['Step#0'].attrs['star::y'] = 0
-    print(sub['Step#0']['x'].shape)
+    sub['Step#0'].attrs['numParticlesGlobal'] = len(sub['Step#0']['x'][0:])
+    print(len(sub['Step#0']['x'][0:]))
     # sub['Step#0'].attrs['star::removal_limit_h'] 
     del sub['Step#0'].attrs['star::inner_size'] 
 
