@@ -1,8 +1,8 @@
 import h5py
 
 # File paths
-no_acc = '/home/lwatan/scratch/run_disk_cal_1e6_beta_planet_2.hdf5'  # Calibration file
-input_subgrid = '/home/lwatan/data/SPH-EXA-fork/subgrid_init_planet_2.hdf5'  # Sub-grid file (empty)
+no_acc = '/home/lwatan/scratch/run_disk_cal_1e6_beta_planet_star0.hdf5'  # Calibration file
+input_subgrid = '/home/lwatan/data/SPH-EXA-fork/subgrid_init_planet_star0.hdf5'  # Sub-grid file (empty)
 beta = '/home/lwatan/data/disk5_beta.hdf5'
 
 # Open all three files
@@ -53,6 +53,7 @@ with h5py.File(input_subgrid, 'a') as sub, \
     sub['Step#0'].attrs['iteration'] = 0
     sub['Step#0'].attrs['star::x'] = 0
     sub['Step#0'].attrs['star::y'] = 0
+    print(sub['Step#0']['x'].shape)
     # sub['Step#0'].attrs['star::removal_limit_h'] 
     del sub['Step#0'].attrs['star::inner_size'] 
 
