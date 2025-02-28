@@ -19,6 +19,9 @@ plots = './output/plots/vertical-profile'
 run_100_beta = '/home/lwatan/scratch/run_disk_mom_100_beta.hdf5'
 run_100_comb_beta = '/home/lwatan/scratch/run_disk_comb_100_beta.hdf5'
 run_100_radial_beta = '/home/lwatan/scratch/run_disk_radial_100_beta.hdf5'
+run_mom_1e6 = '/home/lwatan/scratch/run_disk_mom_1e6_beta.hdf5'
+run_comb_1e6 = '/home/lwatan/scratch/run_disk_comb_1e6_2.hdf5'
+run_rad_1e6 = '/home/lwatan/scratch/run_disk_radial_1e6_beta.hdf5'
 
 # constants
 G = 1.0
@@ -95,9 +98,13 @@ def scale_height_rms(m, z, star_z):
     dz = z - star_z; 
     return np.sqrt(np.sum(m * dz**2) / np.sum(m))
 
-def plot_scale_height_rms(timesteps, r, z, m, sz, disk_mask, stride, num_bins, beta): 
+def plot_scale_height_rms(timesteps, r, z, m, sz, disk_mask, stride, num_bins, beta, run): 
     radial_bins = None
+    scale_height_data = {}  # Store H(r) values per timestep
+    aspect_ratio_data = {}  # Store H(r)/r values per timestep
+
     plt.figure()
+    
     for t in timesteps: 
         index = int(t/(10*stride))
         r_disk = r[index][disk_mask[index]]
@@ -112,28 +119,49 @@ def plot_scale_height_rms(timesteps, r, z, m, sz, disk_mask, stride, num_bins, b
             bin_centers = 0.5 * (radial_bins[:-1] + radial_bins[1:])
 
         # Compute RMS scale height for each radial bin
-        rms_values = []
+        rms_values_H = []
+        rms_values_ar = []
         for i in range(len(radial_bins) - 1):
             mask = (r_disk >= radial_bins[i]) & (r_disk < radial_bins[i+1])
             m_selected = m_disk[mask]
             z_selected = z_disk[mask]
             
             rms = scale_height_rms(m_selected, z_selected, star_z)
-            rms_values.append(rms/bin_centers[i])
+            rms_values_H.append(rms)
+            rms_values_ar.append(rms / bin_centers[i] if bin_centers[i] != 0 else np.nan)  # Avoid division by zero
         
-        # Plot line for this timestep
-        plt.plot(bin_centers, rms_values, marker='o', label=f'Timestep {t}')
+        # Store results for this timestep
+        scale_height_data[t] = rms_values_H
+        aspect_ratio_data[t] = rms_values_ar
 
-    plt.xlabel('Radius')
-    plt.ylabel('Scale Height RMS / Radius')
-    plt.title(f'Scale Height RMS vs Radius, distance criterion, beta={beta}')
+    #  scale height
+    plt.figure(figsize=(8,6))
+    for t in timesteps: 
+        plt.plot(bin_centers, scale_height_data[t], marker='o', label=f'Timestep {t}')
+    plt.xlabel(r'Radius (r) $\left[ AU \right]$')
+    plt.ylabel(r"Scale Height (H) $\left[ AU \right]$")
+    plt.title(f'Scale Height vs Radius, beta={beta}')
     plt.grid()
     plt.legend(loc='upper right', fontsize='small')
-    fname = f'/scale-height-rms/scale_height_rms_100_radial_{beta}.png'
+    fname = f'/scale-height-rms/scale_height_rms_1e6_{run}_{beta}.pdf'
     plt.savefig(plots + fname)
     plt.show()
 
-def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_r_bins, num_z_bins, beta):
+    # aspect ratio
+    plt.figure(figsize=(8,6))
+    for t in timesteps: 
+        plt.plot(bin_centers, aspect_ratio_data[t], marker='o', label=f'Timestep {t}')
+    plt.xlabel(r'Radius (r) $\left[ AU \right]$')
+    plt.ylabel("Aspect Ratio (H(r)/r)")
+    plt.title(f'Aspect Ratio vs Radius, beta={beta}')
+    plt.grid()
+    plt.legend(loc='upper right', fontsize='small')
+    fname = f'/ar-rms/ar_rms_1e6_{run}_{beta}.pdf'
+    plt.savefig(plots + fname)
+    plt.show()
+
+
+def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_r_bins, num_z_bins, beta, run):
     all_r_bin_centers = None  # Will hold radial bin centers (assume they're consistent across timesteps)
     all_scale_heights = {}    # Dictionary to store scale heights for each timestep
     all_aspect_ratios = {}    # Dictionary to store aspect ratios for each timestep
@@ -225,12 +253,12 @@ def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_r_bin
     plt.figure(figsize=(8, 6))
     for t in timesteps:
         plt.plot(all_r_bin_centers, all_scale_heights[t], marker='o', label=f"Timestep {t}")
-    plt.xlabel("Radius (r)")
-    plt.ylabel("Scale Height")
-    plt.title(f"Scale Height vs Radius, distance criterion, beta = {beta}")
+    plt.xlabel(r"Radius (r) $\left[ AU \right]$")
+    plt.ylabel(r"Scale Height (H) $\left[ AU \right]$")
+    plt.title(f"Scale Height vs Radius, beta = {beta}")
     plt.grid()
     plt.legend()
-    fname_scale = f'/scale-height/scale_heights_rho_100_radial_{beta}.png'
+    fname_scale = f'/scale-height/scale_heights_rho_1e6_{run}_{beta}.pdf'
     plt.savefig(plots + fname_scale)
     plt.show()
 
@@ -238,16 +266,16 @@ def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_r_bin
     plt.figure(figsize=(8, 6))
     for t in timesteps:
         plt.plot(all_r_bin_centers, all_aspect_ratios[t], marker='o', label=f"Timestep {t}")
-    plt.xlabel("Radius (r)")
+    plt.xlabel(r"Radius (r) $\left[ AU \right]$")
     plt.ylabel("Aspect Ratio (H(r)/r)")
-    plt.title(f"Aspect Ratio vs Radius, distance criterion, beta = {beta}")
+    plt.title(f"Aspect Ratio vs Radius, beta = {beta}")
     plt.grid()
     plt.legend()
-    fname_aspect = f'/ar-rho/aspect_ratios_rho_100_radial_{beta}.png'
+    fname_aspect = f'/ar-rho/aspect_ratios_rho_1e6_{run}_{beta}.pdf'
     plt.savefig(plots + fname_aspect)
     plt.show()
 
-def plot_aspect_ratio(timesteps, c_s, r, m_s, disk_mask, stride, num_bins, beta): 
+def plot_aspect_ratio(timesteps, c_s, r, m_s, disk_mask, stride, num_bins, beta, run): 
     plt.figure()
     for t in timesteps: 
         index = int(t/(10*stride))
@@ -274,12 +302,12 @@ def plot_aspect_ratio(timesteps, c_s, r, m_s, disk_mask, stride, num_bins, beta)
         average_ratio[counts == 0] = np.nan  # set bins with no particles to NaN for better plotting
 
         plt.plot(bin_centers, average_ratio, label=f'Timestep {t}', marker='.')
-        plt.title(f'Aspect Ratio of Disk at Radius r, beta={beta}, 1/3 distance')
-        plt.xlabel('Radius')
+        plt.title(f'Aspect Ratio of Disk at Radius r, beta={beta}')
+        plt.xlabel(r'Radius $\left[ AU \right]$')
         plt.ylabel('H(r)/r')
         plt.grid()
         plt.legend()
-        fname = f'/ar-cs/aspect_ratios_cs_radial_{beta}.png'
+        fname = f'/ar-cs/aspect_ratios_cs_1e6_{run}_{beta}.pdf'
         plt.savefig(plots + fname)  
         plt.show()
 
@@ -338,10 +366,22 @@ def plot_edge_on_view(timesteps, x, z, disk_mask, stride, beta):
 
 if __name__ == '__main__':
     stride=1
-    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_100_radial_beta,stride)
-    r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
-    #plot_aspect_ratio([0, 5000, 10000, 15000, 20000], c_s, r, sm, disk_particles, stride, 100, "inf")
-    #plot_vertical_density([0, 5000, 10000, 15000, 20000], z, d, disk_particles, stride, "inf", 100)
-    plot_edge_on_view([10, 25000, 50000, 75000, 100000], x, z, disk_particles, stride, "2pi" )
-    plot_scale_height_density([10, 25000, 50000, 75000, 100000], r, z, d, disk_particles, stride, 20, 40, "2pi")
-    plot_scale_height_rms([10, 25000, 50000, 75000, 100000], r, z, m, sz, disk_particles, stride, 20, "2pi")
+    runs = {
+    "run_mom_1e6": run_mom_1e6,
+    "run_comb_1e6": run_comb_1e6,
+    "run_rad_1e6": run_rad_1e6
+    }  
+    for run_name, run_value in runs.items(): 
+        run_type = run_name.split('_')[1]
+        ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_value,stride)
+        r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
+
+        min_step = 0
+        step_interval = 100000
+        max_step = len(x) * 1000 
+        for step in range(min_step, max_step, step_interval):
+            #plot_aspect_ratio(step, c_s, r, sm, disk_particles, stride, 100, "2π")
+        #plot_vertical_density([0, 5000, 10000, 15000, 20000], z, d, disk_particles, stride, "inf", 100)
+        #plot_edge_on_view([10, 25000, 50000, 75000, 100000], x, z, disk_particles, stride, "2pi" )
+            plot_scale_height_density(step, r, z, d, disk_particles, stride, 20, 40, "2π", run_type)
+            plot_scale_height_rms(step, r, z, m, sz, disk_particles, stride, 20, "2π", run_type)

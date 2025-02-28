@@ -17,6 +17,9 @@ plots = './output/plots/mass-accretion/'
 run_100_beta = '/home/lwatan/scratch/run_disk_mom_100_beta.hdf5'
 run_100_comb_beta = '/home/lwatan/scratch/run_disk_comb_100_beta.hdf5'
 run_100_radial_beta = '/home/lwatan/scratch/run_disk_radial_100_beta.hdf5'
+run_mom_1e6 = '/home/lwatan/scratch/run_disk_mom_1e6_beta.hdf5'
+run_comb_1e6 = '/home/lwatan/scratch/run_disk_comb_1e6_2.hdf5'
+run_rad_1e6 = '/home/lwatan/scratch/run_disk_radial_1e6_beta.hdf5'
 
 # constants
 G = 1.0 
@@ -112,8 +115,8 @@ def plot_data(masses, c, c_half, c_double, c_combined, time, accretion_rates, do
     plt.scatter(time[1:], accretion_rates, label='Mass Accretion Rate', color='blue',marker='.' )
     plt.scatter(time, analytical_rates, label=f'Analytical Mass Accretion Rate, alpha = {alpha:.3f}', color='deeppink', marker='.', alpha=0.8)
     plt.title('Mass Accretion Rate Compared to Analytical')
-    plt.xlabel('Time (yr/2pi)')
-    plt.ylabel('Mass Accretion Rate (solar masses)')
+    plt.xlabel(r'Time $\frac{{\left[ yr \right]}}{{\left[ 2\pi \right]}}$')
+    plt.ylabel(r'Mass Accretion Rate $\left[ M_{{\odot}} \right]$')
     plt.ylim(0, 0.002)
     plt.grid()
     plt.legend()
@@ -178,18 +181,18 @@ def plot_mass_accretion(masses, accretion_rates, time, file_loc):
     plt.tight_layout()
     plt.show()
 
-def plot_fit(observed_rates, sound_speeds, best_alpha, time, file_loc, beta, G=1):
+def plot_fit(observed_rates, sound_speeds, best_alpha, time, file_loc, beta, run, G=1):
     analytical_rates = best_alpha * (sound_speeds**3) / G
     plt.figure(figsize=(10, 5))
-    plt.scatter(time[1:], observed_rates, label="Observed Accretion Rates", color="blue", alpha=0.7, marker='.')
+    plt.scatter(time[1:], observed_rates, label="Modeled Accretion Rates", color="blue", alpha=0.7, marker='.')
     plt.plot(time, analytical_rates, label=f"Analytical Rates (alpha={best_alpha:.3f})", color="red", lw=2)
-    plt.xlabel("Time (yr/2pi)")
-    plt.ylabel("Accretion Rate")
-    plt.ylim(0, 0.002)
+    plt.xlabel(r"Time $\frac{{\left[ yr \right]}}{{\left[ 2\pi \right]}}$")
+    plt.ylabel(r"Mass Accretion Rate $\frac{{\left[ 2\pi \cdot M_{{\odot}} \right]}}{{\left[ yr \right]}}$")
+    plt.ylim(0, 0.0003)
     plt.legend()
     plt.grid()
-    plt.title(f"Observed vs Analytical Accretion Rates, momentum criterion, (beta={beta}")
-    fname = f'analytical_accretion_{beta}_100_mom.png'
+    plt.title(f"Modeled vs Analytical Accretion Rates (beta={beta})")
+    fname = f'analytical_accretion_{beta}_1e6_{run}.pdf'
     plt.savefig(file_loc + fname)
     plt.tight_layout()
     plt.show()
@@ -211,12 +214,19 @@ if __name__ == "__main__":
     #mom_acc_50_beta = calc_mass_accretion(mom_m_50_beta, mom_t_50_beta)
     #best_alpha_50_beta = alpha_estimation(np.array(mom_acc_50_beta), np.array(mom_c_50_beta))
 
-    rad_m_100_beta, rad_c_100_beta, rad_t_100_beta = read_hdf5_data_2(run_100_beta)
-    rad_acc_100_beta = calc_mass_accretion(rad_m_100_beta, rad_t_100_beta)
-    best_alpha_100_beta = alpha_estimation(np.array(rad_acc_100_beta), np.array(rad_c_100_beta))
+    runs = {
+    "run_mom_1e6": run_mom_1e6,
+    #"run_comb_1e6": run_comb_1e6,
+    "run_rad_1e6": run_rad_1e6
+    }   
+    for run_name, run_value in runs.items(): 
+        run_type = run_name.split('_')[1]
+        m, c, t = read_hdf5_data_2(run_value)
+        acc = calc_mass_accretion(m, t)
+        best_alpha = alpha_estimation(np.array(acc), np.array(c))
 
     # Plot the results
     #plot_fit(comb_acc_20, comb_c_20, best_alpha_20, comb_t_20, plots, "inf")
     #plot_fit(comb_acc_20_beta, comb_c_20_beta, best_alpha_20_beta, comb_t_20_beta, plots, "2pi")
-    plot_fit(rad_acc_100_beta, rad_c_100_beta, best_alpha_100_beta, rad_t_100_beta, plots, "2pi")
+        plot_fit(acc, c, best_alpha, t, plots, "2π", run_type)
     # plot_mass_accretion(rad_m_20, acc_rad, rad_t_20, plots)

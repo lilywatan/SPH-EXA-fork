@@ -187,6 +187,8 @@ public:
         size_t last  = domain.endIndex();
         auto&  d     = simData.hydro;
 
+        printf("minDt: %lf\n", d.minDt);
+
         computeTimestep(first, last, d, star.t_du);
         timer.step("Timestep");
 
@@ -198,10 +200,10 @@ public:
         planet::computeAndExchangeStarPosition(star, d.minDt, d.minDt_m1, Base::rank_);
         timer.step("computeAndExchangeStarPosition");
 
-        planet::computeAccretionConditionSubGridDisk(first, last, d, disk, star);
+        //planet::computeAccretionConditionSubGridDisk(first, last, d, disk, star);
         timer.step("computeAccretionConditionSubGridDisk");
 
-        //planet::SubGridDiskAccreteOnStar(d, disk, star, d.minDt_m1, Base::rank_);
+        planet::SubGridDiskAccreteOnStar(d, disk, star, d.minDt_m1, Base::rank_);
         timer.step("SubGridDiskAccreteOnStar");
 
         //planet::exchangeAndAccreteOnStarSubGrid(star, d.minDt_m1, Base::rank_);

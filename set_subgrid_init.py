@@ -53,5 +53,8 @@ with h5py.File(input_subgrid, 'a') as sub, \
     sub['Step#0'].attrs['iteration'] = 0
     sub['Step#0'].attrs['star::x'] = 0
     sub['Step#0'].attrs['star::y'] = 0
+    # sub['Step#0'].attrs['star::removal_limit_h'] 
+    del sub['Step#0'].attrs['star::inner_size'] 
+
 
     print("All attributes and datasets copied successfully from 'Step#25' to 'Step#0'.")
