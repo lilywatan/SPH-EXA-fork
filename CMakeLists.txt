@@ -26,6 +26,7 @@ endif()
 find_package(MPI)
 find_package(OpenMP)
 
+
 # if INTERFACE_LINK_OPTIONS for OpenMP_CXX is not set, we set
 # INTERFACE_LINK_OPTIONS = INTERFACE_COMPILE_OPTIONS
 # i.e. we add e.g. the -fopenmp flag to the linker
