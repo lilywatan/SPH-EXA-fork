@@ -1,1 +1,0 @@
-/apps/opt/spack/linux-ubuntu20.04-x86_64/gcc-9.3.0/gcc-13.2.0-hgptpx2eoraipaxlrxijwyj5jxznibqq/bin/g++ -O3 -march=native -DNDEBUG CMakeFiles/global_upsweep_cpu.dir/global_upsweep_cpu.cpp.o -o global_upsweep_cpu  /apps/opt/spack/linux-ubuntu20.04-x86_64/gcc-9.3.0/openmpi-4.1.3-efaqdqjshm5pznecwekvbmt42qbwhinl/lib/libmpi.so

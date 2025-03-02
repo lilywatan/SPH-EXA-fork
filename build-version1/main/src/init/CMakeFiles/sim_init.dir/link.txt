@@ -1,2 +1,0 @@
-/usr/bin/ar qc libsim_init.a CMakeFiles/sim_init.dir/sim_init.cpp.o
-/usr/bin/ranlib libsim_init.a

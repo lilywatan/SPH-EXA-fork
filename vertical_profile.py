@@ -50,13 +50,13 @@ def read_hdf5_data(file, stride=1):
         # extract all star mass and sound speed data
         for step_key in selected_keys:
             densities.append(np.array(f[step_key]['rho']))
-            pressures.append(np.array(f[step_key]['p']))
+            #pressures.append(np.array(f[step_key]['p']))
             masses.append(np.array(f[step_key]['m']))
             x_pos.append(np.array(f[step_key]['x']))
             y_pos.append(np.array(f[step_key]['y']))
             z_pos.append(np.array(f[step_key]['z']))
             h.append(np.array(f[step_key]['h']))
-            c.append(np.array(f[step_key]['c']))
+            #c.append(np.array(f[step_key]['c']))
             times.append(np.array(f[step_key].attrs['time']))
             star_x.append(np.array(f[step_key].attrs['star::x']))
             star_y.append(np.array(f[step_key].attrs['star::y']))
@@ -79,7 +79,7 @@ def particle_radii2(x, y, z, m, star_x, star_y, star_z, star_m, timesteps):
         # calculate the radii for each particle at this step
         step_radii[:] = np.sqrt((x[step] - star_x[step])**2 + 
                                  (y[step] - star_y[step])**2)
-        threshold_radius = 7.5
+        threshold_radius = 50.0
         step_disk_particles[:] = step_radii < threshold_radius
 
         radii.append(step_radii)
@@ -106,7 +106,7 @@ def plot_scale_height_rms(timesteps, r, z, m, sz, disk_mask, stride, num_bins, b
     plt.figure()
     
     for t in timesteps: 
-        index = int(t/(10*stride))
+        index = int(t/(1000*stride))
         r_disk = r[index][disk_mask[index]]
         z_disk = z[index][disk_mask[index]]
         m_disk = m[index][disk_mask[index]]
@@ -143,7 +143,7 @@ def plot_scale_height_rms(timesteps, r, z, m, sz, disk_mask, stride, num_bins, b
     plt.title(f'Scale Height vs Radius, beta={beta}')
     plt.grid()
     plt.legend(loc='upper right', fontsize='small')
-    fname = f'/scale-height-rms/scale_height_rms_1e6_{run}_{beta}.pdf'
+    fname = f'/scale-height-rms/scale_height_rms_1e6_{run}_{beta}_r1.pdf'
     plt.savefig(plots + fname)
     plt.show()
 
@@ -156,7 +156,7 @@ def plot_scale_height_rms(timesteps, r, z, m, sz, disk_mask, stride, num_bins, b
     plt.title(f'Aspect Ratio vs Radius, beta={beta}')
     plt.grid()
     plt.legend(loc='upper right', fontsize='small')
-    fname = f'/ar-rms/ar_rms_1e6_{run}_{beta}.pdf'
+    fname = f'/ar-rms/ar_rms_1e6_{run}_{beta}_r1.pdf'
     plt.savefig(plots + fname)
     plt.show()
 
@@ -166,7 +166,7 @@ def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_r_bin
     all_scale_heights = {}    # Dictionary to store scale heights for each timestep
     all_aspect_ratios = {}    # Dictionary to store aspect ratios for each timestep
     for t in timesteps:
-        index = int(t/(10*stride))
+        index = int(t/(1000*stride))
         r_disk = r[index][disk_mask[index]]
         z_disk = z[index][disk_mask[index]]
         rho_disk = rho[index][disk_mask[index]]
@@ -258,7 +258,7 @@ def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_r_bin
     plt.title(f"Scale Height vs Radius, beta = {beta}")
     plt.grid()
     plt.legend()
-    fname_scale = f'/scale-height/scale_heights_rho_1e6_{run}_{beta}.pdf'
+    fname_scale = f'/scale-height/scale_heights_rho_1e6_{run}_{beta}_r1.pdf'
     plt.savefig(plots + fname_scale)
     plt.show()
 
@@ -271,7 +271,7 @@ def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_r_bin
     plt.title(f"Aspect Ratio vs Radius, beta = {beta}")
     plt.grid()
     plt.legend()
-    fname_aspect = f'/ar-rho/aspect_ratios_rho_1e6_{run}_{beta}.pdf'
+    fname_aspect = f'/ar-rho/aspect_ratios_rho_1e6_{run}_{beta}_r1.pdf'
     plt.savefig(plots + fname_aspect)
     plt.show()
 
@@ -307,7 +307,7 @@ def plot_aspect_ratio(timesteps, c_s, r, m_s, disk_mask, stride, num_bins, beta,
         plt.ylabel('H(r)/r')
         plt.grid()
         plt.legend()
-        fname = f'/ar-cs/aspect_ratios_cs_1e6_{run}_{beta}.pdf'
+        fname = f'/ar-cs/aspect_ratios_cs_1e6_{run}_{beta}_r1.pdf'
         plt.savefig(plots + fname)  
         plt.show()
 
@@ -377,11 +377,14 @@ if __name__ == '__main__':
         r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
 
         min_step = 0
-        step_interval = 100000
-        max_step = len(x) * 1000 
+        step_interval = 50000
+        max_step = 260000
+        steps = []
         for step in range(min_step, max_step, step_interval):
+            steps.append(step)
             #plot_aspect_ratio(step, c_s, r, sm, disk_particles, stride, 100, "2π")
         #plot_vertical_density([0, 5000, 10000, 15000, 20000], z, d, disk_particles, stride, "inf", 100)
         #plot_edge_on_view([10, 25000, 50000, 75000, 100000], x, z, disk_particles, stride, "2pi" )
-            plot_scale_height_density(step, r, z, d, disk_particles, stride, 20, 40, "2π", run_type)
-            plot_scale_height_rms(step, r, z, m, sz, disk_particles, stride, 20, "2π", run_type)
+        print(steps)
+        plot_scale_height_density(steps, r, z, d, disk_particles, stride, 20, 40, "2π", run_type)
+        plot_scale_height_rms(steps, r, z, m, sz, disk_particles, stride, 20, "2π", run_type)

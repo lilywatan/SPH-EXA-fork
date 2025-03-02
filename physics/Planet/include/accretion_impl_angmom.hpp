@@ -23,7 +23,7 @@ void computeAccretionConditionImplAngMom(size_t first, size_t last, Dataset& d, 
 {
     const double star_size2 = star.inner_size * star.inner_size;
     const double J_circ2 = d.g * star.m *  star.inner_size; // angular momentum limit based on circular orbit
-    const double frac = 1.0; // fraction of escape angular momentum to consider
+    const double frac = 0.5; // fraction of escape angular momentum to consider
     const double J_esc2 = frac * J_circ2; // based on escape velocity
 
     double accr_mass{};

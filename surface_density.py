@@ -89,7 +89,7 @@ def particle_radii2(x, y, z, m, star_x, star_y, star_z, star_m, timesteps):
         # calculate the radii for each particle at this step
         step_radii[:] = np.sqrt((x[step] - star_x[step])**2 + 
                                  (y[step] - star_y[step])**2 )
-        threshold_radius = 7.5
+        threshold_radius = 50.0
         step_disk_particles[:] = step_radii < threshold_radius
 
         radii.append(step_radii)
@@ -121,7 +121,8 @@ def surface_density(t, rho, x, y, h, m, disk_mask, stride):
     positions = np.column_stack((x_disk, y_disk))
     tree = cKDTree(positions)
 
-    for j in range(1, num_particles):
+    print("num_particles: ", num_particles)
+    for j in range(num_particles):
         density = 0.0
 
         indices = tree.query_ball_point(positions[j], h_disk[j])
@@ -131,6 +132,7 @@ def surface_density(t, rho, x, y, h, m, disk_mask, stride):
                 W_ij = W(r_ij, h_disk[i])
                 density += m_disk[i] * W_ij
         surface_density[j] = density
+    print("length sd: ", len(surface_density))
     return surface_density
 
 surface_density_min = None
@@ -174,7 +176,7 @@ def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, run,
     plt.ylabel('Y Position')
     
     # Save the plot with scale type in filename
-    fname = f'surface_density_1e6_{run}_hexbin_{t}_{beta}_{scale_type.lower()}.pdf'
+    fname = f'surface_density_1e6_{run}_hexbin_{t}_{beta}_{scale_type.lower()}_r1.pdf'
     plt.savefig(plots + fname, bbox_inches='tight', dpi=300)
     plt.show()
 
@@ -221,7 +223,7 @@ def plot_particles(t, x, y, h, disk_mask, stride, beta, run):
     plt.legend()
     
     # Save the plot (make sure 'plots' variable is defined with a valid directory path)
-    fname = f'particles_1e6_cal_{run}_{t}_{beta}.pdf'
+    fname = f'particles_1e6_{run}_{t}_{beta}_r1.pdf'
     plt.savefig(plots + fname, bbox_inches='tight', dpi=300)
     plt.show()
 
@@ -241,8 +243,8 @@ if __name__ == '__main__':
     #     # Compute surface density for the specified timesteps
     #     # Define the step interval
     #     min_step = 0
-    #     step_interval = 100000
-    #     max_step = len(x) * 1000  # Adjust this to the maximum step in your simulation
+    #     step_interval = 50000
+    #     max_step = 250000  # Adjust this to the maximum step in your simulation
 
     #     # Prepare an empty list to store surface density arrays for computing global min/max
     #     surface_densities = []
@@ -253,11 +255,9 @@ if __name__ == '__main__':
     #         sig = surface_density(step, d, x, y, h, m, disk_particles, stride)
     #         surface_densities.append(sig)
 
-    #     # Compute global min/max for the fixed color scale
-    #     compute_global_min_max(surface_densities)
+    #         # Compute global min/max for the fixed color scale
+    #         compute_global_min_max(surface_densities)
 
-    #     # Loop again to generate plots after computing global min/max
-    #     for step in range(min_step, max_step, step_interval):
     #         # Generate plot for the current step with a fixed color scale
     #         plot_surface_density(step, x, y, sig, disk_particles, stride, "2π", run_type, fixed_scale=True)
 
@@ -266,8 +266,8 @@ if __name__ == '__main__':
 
     cal = {
     "run_cal_star0": run_cal_star0,
-    "run_cal_no_hlim": run_cal_no_hlim,
-    "run_cal_h5": run_cal_h5
+    #"run_cal_no_hlim": run_cal_no_hlim,
+    #"run_cal_h5": run_cal_h5
     }   
 
     for run_name, run_value in cal.items(): 
@@ -276,9 +276,9 @@ if __name__ == '__main__':
         r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
         run_type = run_name.split('_')[1]
 
-        min_step = 0
+        min_step = 10000
         step_interval = 5000
-        max_step = 20000
+        max_step = 30000
 
         for step in range(min_step, max_step, step_interval):
             plot_particles(step, x, y, h, disk_particles, stride, "2π", run_type)

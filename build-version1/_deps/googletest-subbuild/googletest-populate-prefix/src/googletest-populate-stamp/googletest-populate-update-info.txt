@@ -1,7 +1,0 @@
-# This is a generated file and its contents are an internal implementation detail.
-# The patch step will be re-executed if anything in this file changes.
-# No other meaning or use of this file is supported.
-
-command (connected)=/apps/opt/spack/linux-ubuntu20.04-x86_64/gcc-9.3.0/cmake-3.30.5-7ubmzhvg4bacu5sdnbddyv735ag6e5mq/bin/cmake;-Dcan_fetch=YES;-DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE;-P;/data/lwatan/SPH-EXA-fork/build-version1/_deps/googletest-subbuild/googletest-populate-prefix/tmp/googletest-populate-gitupdate.cmake
-command (disconnected)=/apps/opt/spack/linux-ubuntu20.04-x86_64/gcc-9.3.0/cmake-3.30.5-7ubmzhvg4bacu5sdnbddyv735ag6e5mq/bin/cmake;-Dcan_fetch=NO;-DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE;-P;/data/lwatan/SPH-EXA-fork/build-version1/_deps/googletest-subbuild/googletest-populate-prefix/tmp/googletest-populate-gitupdate.cmake
-work_dir=/home/lwatan/data/SPH-EXA-fork/build-version1/_deps/googletest-src

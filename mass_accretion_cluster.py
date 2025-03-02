@@ -18,7 +18,7 @@ run_100_beta = '/home/lwatan/scratch/run_disk_mom_100_beta.hdf5'
 run_100_comb_beta = '/home/lwatan/scratch/run_disk_comb_100_beta.hdf5'
 run_100_radial_beta = '/home/lwatan/scratch/run_disk_radial_100_beta.hdf5'
 run_mom_1e6 = '/home/lwatan/scratch/run_disk_mom_1e6_beta.hdf5'
-run_comb_1e6 = '/home/lwatan/scratch/run_disk_comb_1e6_2.hdf5'
+run_comb_1e6 = '/home/lwatan/scratch/run_disk_comb_100_beta.hdf5'
 run_rad_1e6 = '/home/lwatan/scratch/run_disk_radial_1e6_beta.hdf5'
 
 # constants
@@ -192,7 +192,7 @@ def plot_fit(observed_rates, sound_speeds, best_alpha, time, file_loc, beta, run
     plt.legend()
     plt.grid()
     plt.title(f"Modeled vs Analytical Accretion Rates (beta={beta})")
-    fname = f'analytical_accretion_{beta}_1e6_{run}.pdf'
+    fname = f'analytical_accretion_{beta}_1e6_{run}_r1.pdf'
     plt.savefig(file_loc + fname)
     plt.tight_layout()
     plt.show()

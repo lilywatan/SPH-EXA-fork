@@ -26,11 +26,19 @@ echo "libmpi.so.40 found and accessible."
 OMP_NUM_THREADS=32
 export OMP_NUM_THREADS
 
-echo "28-02-2025: Running SPH-EXA with 1e6 particles, combined criteria, beta = 2pi, h = 1.2, star_inner = 2.5"
-srun build-release/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-angmom -s 1e6 -w 1000 -f c,m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/scratch/run_disk_comb_1e6_3.hdf5'
-echo "28-02-2025: Running SPH-EXA with 1e6 particles, momentum criterion, beta = 2pi, h = 1.2, star_inner = 2.5"
-srun build-angmom/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-angmom -s 1e6 -w 1000 -f c,m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/scratch/run_disk_mom_1e6_3.hdf5'
-echo "28-02-2025: Running SPH-EXA with 1e6 particles, radial criterion, beta = 2pi, h = 1.2, star_inner = 2.5"
-srun build-radial/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-planet -s 1e6 -w 1000 -f c,m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/scratch/run_disk_radial_1e6_3.hdf5'
+# echo "28-02-2025: Running SPH-EXA with 1e6 particles, combined criteria, beta = 2pi, h = 1.2, star_inner = 2.5"
+# srun build-release/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-angmom -s 1e6 -w 1000 -f c,m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/scratch/run_disk_comb_1e6_3.hdf5'
+# echo "28-02-2025: Running SPH-EXA with 1e6 particles, momentum criterion, beta = 2pi, h = 1.2, star_inner = 2.5"
+# srun build-angmom/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-angmom -s 1e6 -w 1000 -f c,m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/scratch/run_disk_mom_1e6_3.hdf5'
+# echo "28-02-2025: Running SPH-EXA with 1e6 particles, radial criterion, beta = 2pi, h = 1.2, star_inner = 2.5"
+# srun build-radial/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-planet -s 1e6 -w 1000 -f c,m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/scratch/run_disk_radial_1e6_3.hdf5'
 # srun build-no-accretion/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-hydro -s 1e6 -w 1000 -f m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/data/SPH-EXA-fork/output/runs/run_disk_cal_1e6_beta_hydro.hdf5'
 
+echo "02-03-2025: Running SPH-EXA with 1e6 timesteps, combined criteria, beta = 2pi, h = 1.2, star_inner = 1"
+srun build-comb/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-angmom -s 1e6 -w 1000 -f c,m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/scratch/run_disk_comb_1e6_r1.hdf5'
+
+echo "02-03-2025: Running SPH-EXA with 1e6 timesteps, momentum criterion, beta = 2pi, h = 1.2, star_inner = 2.5, double angmom threshold"
+srun build-double/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-angmom -s 1e6 -w 1000 -f c,m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/scratch/run_disk_double_1e6.hdf5'
+
+echo "02-03-2025: Running SPH-EXA with 1e6 timesteps, momentum criterion, beta = 2pi, h = 1.2, star_inner = 2.5, half angmom threshold"
+srun build-half/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-angmom -s 1e6 -w 1000 -f c,m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/scratch/run_disk_half_1e6.hdf5'
