@@ -11,7 +11,7 @@ with h5py.File(input_subgrid, 'a') as sub, \
      h5py.File(beta, 'r') as beta_file:
     
     # Get the "Step#25" dataset from the calibration file (was mistakenly Step#16)
-    cal_obj = cal['Step#16']  # Make sure this is the correct step
+    cal_obj = cal['Step#15']  # Make sure this is the correct step
 
     # Get the "Step#0" dataset from the beta file
     beta_obj = beta_file['Step#0']
@@ -53,8 +53,10 @@ with h5py.File(input_subgrid, 'a') as sub, \
     sub['Step#0'].attrs['iteration'] = 0
     sub['Step#0'].attrs['star::x'] = 0
     sub['Step#0'].attrs['star::y'] = 0
-    sub['Step#0'].attrs['numParticlesGlobal'] = len(sub['Step#0']['x'][0:])
     print(len(sub['Step#0']['x'][0:]))
+    sub['Step#0'].attrs['numParticlesGlobal'] = len(sub['Step#0']['x'][0:])
+    print(cal['Step#15'].attrs['numParticlesGlobal'])
+    print(sub['Step#0'].attrs['numParticlesGlobal'])
     # sub['Step#0'].attrs['star::removal_limit_h'] 
     del sub['Step#0'].attrs['star::inner_size'] 
 
