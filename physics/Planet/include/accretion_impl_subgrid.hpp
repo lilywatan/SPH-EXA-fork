@@ -65,10 +65,10 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
         H2_boundary += d.m[i] * dz * dz;
     };
 
-/*#pragma omp parallel for reduction(+ : accr_mass) reduction(+ : accr_mom[ : 3]) reduction(+ : boundary_c) reduction(+ : n_accreted) \
+#pragma omp parallel for reduction(+ : accr_mass) reduction(+ : accr_mom[ : 3]) reduction(+ : boundary_c) reduction(+ : n_accreted) \
     reduction(+ : boundary_mass) reduction(+ : n_boundary) reduction(+ : boundary_r0) reduction(+ : boundary_rho)    \
     reduction(+ : boundary_T) reduction(+ : boundary_sigma0) reduction(+ : boundary_H2) reduction(+: removed_h) \
-    reduction(+ :  removed_r) reduction(+ : smoothing_length) */
+    reduction(+ :  removed_r) reduction(+ : smoothing_length) 
     for (size_t i = first; i < last; i++)
     {
         const double dx    = d.x[i] - star.position[0];
