@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define build directory name (default to 'build-release' if not provided)
-BUILD_DIR=${1:-build-release}
+BUILD_DIR=${1:-build-subgrid}
 
 echo "Compiling in directory: $BUILD_DIR"
 

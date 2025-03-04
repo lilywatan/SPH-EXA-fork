@@ -51,7 +51,7 @@ test/constants.txt
 
 # output files
 output/runs
-output/run_subgrid_debug.hdf5
+output/run_subgrid_debug*.hdf5
 output/plots/local
 *.err
 neighbor_debug*.log
