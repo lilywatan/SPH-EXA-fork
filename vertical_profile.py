@@ -22,6 +22,9 @@ run_100_radial_beta = '/home/lwatan/scratch/run_disk_radial_100_beta.hdf5'
 run_mom_1e6 = '/home/lwatan/scratch/run_disk_mom_1e6_beta.hdf5'
 run_comb_1e6 = '/home/lwatan/scratch/run_disk_comb_1e6_2.hdf5'
 run_rad_1e6 = '/home/lwatan/scratch/run_disk_radial_1e6_beta.hdf5'
+run_comb_r1 = '/home/lwatan/scratch/run_disk_comb_1e6_r1_r1.hdf5'
+run_half = '/home/lwatan/scratch/run_disk_half_1e6.hdf5'
+run_double = '/home/lwatan/scratch/run_disk_double_1e6.hdf5'
 
 # constants
 G = 1.0
@@ -367,9 +370,9 @@ def plot_edge_on_view(timesteps, x, z, disk_mask, stride, beta):
 if __name__ == '__main__':
     stride=1
     runs = {
-    "run_mom_1e6": run_mom_1e6,
-    "run_comb_1e6": run_comb_1e6,
-    "run_rad_1e6": run_rad_1e6
+    "run_comb_r1": run_comb_r1,
+    "run_half": run_half,
+    #"run_double": run_double
     }  
     for run_name, run_value in runs.items(): 
         run_type = run_name.split('_')[1]

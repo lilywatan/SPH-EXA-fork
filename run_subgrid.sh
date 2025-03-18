@@ -6,7 +6,7 @@
 #SBATCH --ntasks=1                # Number of tasks
 #SBATCH --ntasks-per-node=1      # Number of tasks per node§
 #SBATCH --mem-per-cpu=1G          # Memory per CPU
-#SBATCH --time=00:10:00           # Wall clock time limit
+#SBATCH --time=00:80:00           # Wall clock time limit
 
 module load openmpi/5.0.5
 module load hdf5/1.12.2
@@ -27,5 +27,5 @@ OMP_NUM_THREADS=32
 export OMP_NUM_THREADS
 EXEC_PATH="/home/lwatan/data/SPH-EXA-fork/build-subgrid/main/src/sphexa/sphexa"
 
-srun $EXEC_PATH --init '/home/lwatan/data/SPH-EXA-fork/dsubgrid_init_planet_star0.hdf5' --prop std-subgrid -s 1e6 -w 1000 -f m,c,x,y,z,rho,p,vx,vy,vz,h -o '/home/lwatan/scratch/run_subgrid_beta_planet_star0.hdf5'
+srun $EXEC_PATH --init '/home/lwatan/data/SPH-EXA-fork/subgrid_init_planet_star0.hdf5' --prop std-subgrid -s 1e6 -w 1000 -f m,c,x,y,z,rho,p,vx,vy,vz,h -o '/home/lwatan/scratch/run_subgrid_beta_planet_star0.hdf5'
 
