@@ -22,7 +22,7 @@ run_comb_1e6 = '/home/lwatan/scratch/run_disk_comb_100_beta.hdf5'
 run_rad_1e6 = '/home/lwatan/scratch/run_disk_radial_1e6_beta.hdf5'
 run_comb_r1 = '/home/lwatan/scratch/run_disk_comb_1e6_r1_r1.hdf5'
 run_half = '/home/lwatan/scratch/run_disk_half_1e6.hdf5'
-run_double = '/home/lwatan/scratch/run_disk_double_1e6.hdf5'
+run_double = '/home/lwatan/scratch/run_disk_double_1e6_short.hdf5'
 
 # constants
 G = 1.0 
@@ -191,7 +191,7 @@ def plot_fit(observed_rates, sound_speeds, best_alpha, time, file_loc, beta, run
     plt.plot(time, analytical_rates, label=f"Analytical Rates (alpha={best_alpha:.3f})", color="red", lw=2)
     plt.xlabel(r"Time $\frac{{\left[ yr \right]}}{{\left[ 2\pi \right]}}$")
     plt.ylabel(r"Mass Accretion Rate $\frac{{\left[ 2\pi \cdot M_{{\odot}} \right]}}{{\left[ yr \right]}}$")
-    #plt.ylim(0, 0.0003)
+    plt.ylim(0, 0.005)
     plt.legend()
     plt.grid()
     plt.title(f"Modeled vs Analytical Accretion Rates (beta={beta})")

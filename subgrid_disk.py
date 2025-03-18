@@ -10,10 +10,10 @@ from matplotlib.colors import Normalize
 from matplotlib.patches import Circle
 import surface_density
 
-run_subgrid_100 = '/home/lwatan/scratch/run_subgrid_100_beta.hdf5'
-run_subgrid_1e6 = '/home/lwatan/scratch/run_subgrid_1e6_beta.hdf5'
+run_subgrid_star0 = '/home/lwatan/scratch/run_subgrid_beta_planet_star0.hdf5'
 surface_density_min = None
 surface_density_max = None
+plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/subgrid/'
 
 def read_hdf5_data_subgrid(file, stride=1):
     densities = []
@@ -30,6 +30,9 @@ def read_hdf5_data_subgrid(file, stride=1):
     star_z = []
     star_m = []
     disk_r0 = []
+    disk_r = []
+    disk_m = []
+    disk_sigma0 = []
 
     with h5py.File(file, 'r') as f: 
         step_keys = sorted(f.keys(), key=lambda x: int(re.search(r'\d+', x).group()))
@@ -51,14 +54,55 @@ def read_hdf5_data_subgrid(file, stride=1):
             star_z.append(np.array(f[step_key].attrs['star::z']))
             star_m.append(np.array(f[step_key].attrs['star::m']))
             disk_r0.append(np.array(f[step_key].attrs['disk::r0']))
+            #disk_r.append(np.array(f[step_key].attrs['disk::r']))
+            disk_m.append(np.array(f[step_key].attrs['disk::m']))
+            disk_sigma0.append(np.array(f[step_key].attrs['disk::sigma0']))
 
 
 
-    return selected_keys, densities, pressures, masses, x_pos, y_pos, z_pos, h, c, times, star_x, star_y, star_z, star_m, disk_r0
+    return selected_keys, densities, pressures, masses, x_pos, y_pos, z_pos, h, c, times, star_x, star_y, star_z, star_m, disk_r0, disk_r, disk_m, disk_sigma0
 
 def print_radii(r0):
     for i in r0:
         print(i, '\n')
+
+def plot_subgrid_disk(t, x, y, disk_mask, stride, dr0, dr, star_x, star_y):
+    index = int(t / (1000 * stride))
+    x_disk = x[index][disk_mask[index]]
+    y_disk = y[index][disk_mask[index]]
+
+    star_center = (star_x[index], star_y[index])
+    circle_r0 = Circle(star_center, dr0[index], color='red', fill=False, linewidth=2)
+    #circle_r = Circle(star_center, dr[index], color='red', fill=False, linewidth=2)
+    
+    fig, ax = plt.subplots(figsize=(8, 6))
+    #ax.add_patch(circle_r)
+    plt.scatter(x_disk, y_disk,marker='.')
+    ax.add_patch(circle_r0)
+
+    plt.title(f'Subgrid Disk Boundaries, (beta=2π)')
+    plt.xlabel('X Position')
+    plt.ylabel('Y Position')
+
+    fname = f'subgrid_star0_{t}_2π.pdf'
+    plt.savefig(plots + fname, bbox_inches='tight', dpi=300)
+    plt.show()
+
+def plot_radial_evolution(timesteps, dr0, dr):
+    plt.figure(figsize=(8,6))
+    for t in timesteps: 
+        index = int(t / (1000 * stride))
+        plt.plot(t, dr0[index])
+        plt.plot(t, dr[index])
+
+    plt.xlabel(r'Timestep')
+    plt.ylabel("Radius [AU]")
+    plt.title(f'Evolution of Subgrid Disk Radii over Time, beta=2π')
+    plt.grid()
+    plt.legend(loc='upper right', fontsize='small')
+    fname = f'radial_evolution.pdf'
+    plt.savefig(plots + fname)
+    plt.show()
 
 def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, r0, star_x, star_y, grid_size=200, fixed_scale=True): 
     # Global min/max for fixed scale
@@ -97,23 +141,27 @@ def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, r0, 
     
     # Save the plot with scale type in filename
     fname = f'surface_density_1e6_subgrid_hexbin_{t}_{beta}_{scale_type.lower()}.png'
-    plt.savefig(surface_density.plots + fname, bbox_inches='tight', dpi=300)
+    plt.savefig(plots + fname, bbox_inches='tight', dpi=300)
     plt.show()
 
 if __name__ == '__main__':
     stride=1
-    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm, r0 = read_hdf5_data_subgrid(run_subgrid_1e6,stride)
-    print_radii(r0[800])
+    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm, d_r0, d_r, d_m, d_sig = read_hdf5_data_subgrid(run_subgrid_star0,stride)
+    #print_radii(r0[800])
     r, disk_particles = surface_density.particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
-    # Compute surface density for the specified timesteps
-    #sig_1 = surface_density.surface_density(1, d, x, y, h, m, disk_particles, stride)
-    #sig_10 = surface_density.surface_density(10, d, x, y, h, m, disk_particles, stride)
-    sig_800 = surface_density.surface_density(800, d, x, y, h, m, disk_particles, stride)
 
-    # Compute global min/max for the fixed color scale
-    surface_density.compute_global_min_max([sig_800])
+    min_step = 0
+    step_interval = 2000
+    max_step = 20000
 
-    # Generate plots with a fixed color scale
-    #plot_surface_density(1, x, y, sig_1, disk_particles, stride, r0, sx, sy, "2pi", fixed_scale=True)
-    #plot_surface_density(10, x, y, sig_10, disk_particles, stride, "2pi", fixed_scale=True)
-    plot_surface_density(800000, x, y, sig_800, disk_particles, stride, "2pi", r0, sx, sy, fixed_scale=True)
+    for step in range(min_step, max_step, step_interval):
+        # Compute surface density for the current step
+        # sig = surface_density(step, d, x, y, h, m, disk_particles, stride)
+        # surface_densities.append(sig)
+
+        # # Compute global min/max for the fixed color scale
+        # compute_global_min_max(surface_densities)
+
+        # Generate plot for the current step with a fixed color scale
+        #plot_surface_density(step, x, y, sig, disk_particles, stride, "2π", r0, sx, sy fixed_scale=True)
+        plot_subgrid_disk(step, x, y, disk_particles, stride, d_r0, dr, sx, sy)
