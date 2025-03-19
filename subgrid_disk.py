@@ -10,10 +10,10 @@ from matplotlib.colors import Normalize
 from matplotlib.patches import Circle
 import surface_density
 
-run_subgrid_star0 = '/home/lwatan/scratch/run_subgrid_beta_planet_star0_3.hdf5'
+run_subgrid_star0 = '/home/lwatan/scratch/run_subgrid_beta_planet_star0_h5.hdf5'
 surface_density_min = None
 surface_density_max = None
-plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/subgrid/'
+plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/subgrid/h5/'
 
 def read_hdf5_data_subgrid(file, stride=1):
     densities = []
