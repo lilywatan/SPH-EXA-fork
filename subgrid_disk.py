@@ -10,7 +10,7 @@ from matplotlib.colors import Normalize
 from matplotlib.patches import Circle
 import surface_density
 
-run_subgrid_star0 = '/home/lwatan/scratch/run_subgrid_beta_planet_star0.hdf5'
+run_subgrid_star0 = '/home/lwatan/scratch/run_subgrid_beta_planet_star0_3.hdf5'
 surface_density_min = None
 surface_density_max = None
 plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/subgrid/'
@@ -54,7 +54,7 @@ def read_hdf5_data_subgrid(file, stride=1):
             star_z.append(np.array(f[step_key].attrs['star::z']))
             star_m.append(np.array(f[step_key].attrs['star::m']))
             disk_r0.append(np.array(f[step_key].attrs['disk::r0']))
-            #disk_r.append(np.array(f[step_key].attrs['disk::r']))
+            disk_r.append(np.array(f[step_key].attrs['disk::r']))
             disk_m.append(np.array(f[step_key].attrs['disk::m']))
             disk_sigma0.append(np.array(f[step_key].attrs['disk::sigma0']))
 
@@ -73,11 +73,11 @@ def plot_subgrid_disk(t, x, y, disk_mask, stride, dr0, dr, star_x, star_y):
 
     star_center = (star_x[index], star_y[index])
     circle_r0 = Circle(star_center, dr0[index], color='red', fill=False, linewidth=2)
-    #circle_r = Circle(star_center, dr[index], color='red', fill=False, linewidth=2)
+    circle_r = Circle(star_center, dr[index], color='green', fill=False, linewidth=2)
     
     fig, ax = plt.subplots(figsize=(8, 6))
-    #ax.add_patch(circle_r)
     plt.scatter(x_disk, y_disk,marker='.')
+    ax.add_patch(circle_r)
     ax.add_patch(circle_r0)
 
     plt.title(f'Subgrid Disk Boundaries, (beta=2π)')
@@ -126,12 +126,14 @@ def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, r0, 
     # subgrid disk boundary
     star_center = (star_x, star_y)
     circle = Circle(star_center, r0, color='red', fill=False, linewidth=2)
+    circle_r = Circle(star_center, r, color='red', fill=False, linewidth=2)
 
     # Create the plot
     fig, ax = plt.subplots(figsize=(8, 6))
     hb = ax.hexbin(x_disk, y_disk, C=surface_density, gridsize=grid_size, cmap='viridis', norm=norm)
     fig.colorbar(hb, ax=ax, label='Surface Density')
     ax.add_patch(circle)
+    ax.add_patch(circle_r)
     
     # Title for fixed or varying scale
     scale_type = "Fixed" if fixed_scale else "Dynamic"
@@ -164,4 +166,4 @@ if __name__ == '__main__':
 
         # Generate plot for the current step with a fixed color scale
         #plot_surface_density(step, x, y, sig, disk_particles, stride, "2π", r0, sx, sy fixed_scale=True)
-        plot_subgrid_disk(step, x, y, disk_particles, stride, d_r0, dr, sx, sy)
+        plot_subgrid_disk(step, x, y, disk_particles, stride, d_r0, d_r, sx, sy)

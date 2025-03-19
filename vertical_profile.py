@@ -23,7 +23,7 @@ run_mom_1e6 = '/home/lwatan/scratch/run_disk_mom_1e6_beta.hdf5'
 run_comb_1e6 = '/home/lwatan/scratch/run_disk_comb_1e6_2.hdf5'
 run_rad_1e6 = '/home/lwatan/scratch/run_disk_radial_1e6_beta.hdf5'
 run_comb_r1 = '/home/lwatan/scratch/run_disk_comb_1e6_r1_r1.hdf5'
-run_half = '/home/lwatan/scratch/run_disk_half_1e6.hdf5'
+run_half = '/home/lwatan/scratch/run_disk_half_1e6_25.hdf5'
 run_double = '/home/lwatan/scratch/run_disk_double_1e6_short.hdf5'
 
 # constants
@@ -109,7 +109,7 @@ def plot_scale_height_rms(timesteps, r, z, m, sz, disk_mask, stride, num_bins, b
     plt.figure()
     
     for t in timesteps: 
-        index = int(t/(10*stride))
+        index = int(t/(1000*stride))
         r_disk = r[index][disk_mask[index]]
         z_disk = z[index][disk_mask[index]]
         m_disk = m[index][disk_mask[index]]
@@ -146,7 +146,7 @@ def plot_scale_height_rms(timesteps, r, z, m, sz, disk_mask, stride, num_bins, b
     plt.title(f'Scale Height vs Radius, beta={beta}')
     plt.grid()
     plt.legend(loc='upper right', fontsize='small')
-    fname = f'/scale-height-rms/scale_height_rms_1e6_{run}_{beta}_r1.pdf'
+    fname = f'/scale-height-rms/scale_height_rms_1e6_{run}_{beta}_25.pdf'
     plt.savefig(plots + fname)
     plt.show()
 
@@ -159,7 +159,7 @@ def plot_scale_height_rms(timesteps, r, z, m, sz, disk_mask, stride, num_bins, b
     plt.title(f'Aspect Ratio vs Radius, beta={beta}')
     plt.grid()
     plt.legend(loc='upper right', fontsize='small')
-    fname = f'/ar-rms/ar_rms_1e6_{run}_{beta}_r1.pdf'
+    fname = f'/ar-rms/ar_rms_1e6_{run}_{beta}_25.pdf'
     plt.savefig(plots + fname)
     plt.show()
 
@@ -169,7 +169,7 @@ def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_r_bin
     all_scale_heights = {}    # Dictionary to store scale heights for each timestep
     all_aspect_ratios = {}    # Dictionary to store aspect ratios for each timestep
     for t in timesteps:
-        index = int(t/(10*stride))
+        index = int(t/(1000*stride))
         r_disk = r[index][disk_mask[index]]
         z_disk = z[index][disk_mask[index]]
         rho_disk = rho[index][disk_mask[index]]
@@ -261,7 +261,7 @@ def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_r_bin
     plt.title(f"Scale Height vs Radius, beta = {beta}")
     plt.grid()
     plt.legend()
-    fname_scale = f'/scale-height/scale_heights_rho_1e6_{run}_{beta}_r1.pdf'
+    fname_scale = f'/scale-height/scale_heights_rho_1e6_{run}_{beta}_25.pdf'
     plt.savefig(plots + fname_scale)
     plt.show()
 
@@ -274,14 +274,14 @@ def plot_scale_height_density(timesteps, r, z, rho, disk_mask, stride, num_r_bin
     plt.title(f"Aspect Ratio vs Radius, beta = {beta}")
     plt.grid()
     plt.legend()
-    fname_aspect = f'/ar-rho/aspect_ratios_rho_1e6_{run}_{beta}_r1.pdf'
+    fname_aspect = f'/ar-rho/aspect_ratios_rho_1e6_{run}_{beta}_25.pdf'
     plt.savefig(plots + fname_aspect)
     plt.show()
 
 def plot_aspect_ratio(timesteps, c_s, r, m_s, disk_mask, stride, num_bins, beta, run): 
     plt.figure()
     for t in timesteps: 
-        index = int(t/(10*stride))
+        index = int(t/(1000*stride))
         c_disk = c_s[index][disk_mask[index]]
         r_disk = r[index][disk_mask[index]]
         m_s_disk = m_s[index]
@@ -310,7 +310,7 @@ def plot_aspect_ratio(timesteps, c_s, r, m_s, disk_mask, stride, num_bins, beta,
         plt.ylabel('H(r)/r')
         plt.grid()
         plt.legend()
-        fname = f'/ar-cs/aspect_ratios_cs_1e6_{run}_{beta}_r1.pdf'
+        fname = f'/ar-cs/aspect_ratios_cs_1e6_{run}_{beta}_25.pdf'
         plt.savefig(plots + fname)  
         plt.show()
 
@@ -318,7 +318,7 @@ def plot_vertical_density(timesteps, z, densities, disk_mask, stride, beta, num_
     plt.figure()
 
     for t in timesteps:
-        index = int(t/(stride*10))
+        index = int(t/(stride*1000))
         z_disk = z[index][disk_mask[index]]
         densities_disk = densities[index][disk_mask[index]]
 
@@ -354,7 +354,7 @@ def plot_vertical_density(timesteps, z, densities, disk_mask, stride, beta, num_
 def plot_edge_on_view(timesteps, x, z, disk_mask, stride, beta):
     for t in timesteps: 
         plt.figure()
-        index = int(t/(10*stride))
+        index = int(t/(1000*stride))
         z_disk = z[index][disk_mask[index]]
         x_disk = x[index][disk_mask[index]]
         plt.scatter(x_disk, z_disk, marker='.')
@@ -371,8 +371,8 @@ if __name__ == '__main__':
     stride=1
     runs = {
     #"run_comb_r1": run_comb_r1,
-    #"run_half": run_half,
-    "run_double": run_double
+    "run_half": run_half,
+    #"run_double": run_double
     }  
     for run_name, run_value in runs.items(): 
         run_type = run_name.split('_')[1]
@@ -380,8 +380,8 @@ if __name__ == '__main__':
         r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
 
         min_step = 0
-        step_interval = 2000
-        max_step = 8000
+        step_interval = 50000
+        max_step = 260000
         steps = []
         for step in range(min_step, max_step, step_interval):
             steps.append(step)

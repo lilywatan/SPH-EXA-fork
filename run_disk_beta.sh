@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=disk_mom_1e6_double_short         # Job name    (default: sbatch)
-#SBATCH --output=disk_mom_1e6_double_short.out        # Output file (default: slurm-%j.out)
-#SBATCH --error=disk_mom_1e6_double_short_%j.err         # Error file  (default: slurm-%j.err)
+#SBATCH --job-name=disk_mom_1e6_half_25         # Job name    (default: sbatch)
+#SBATCH --output=disk_mom_1e6_half_25.out        # Output file (default: slurm-%j.out)
+#SBATCH --error=disk_mom_1e6_half_25_%j.err         # Error file  (default: slurm-%j.err)
 #SBATCH --cpus-per-task=32       # Number of CPUs per task
 #SBATCH --ntasks=1                # Number of tasks
 #SBATCH --ntasks-per-node=1      # Number of tasks per node§
@@ -37,8 +37,8 @@ export OMP_NUM_THREADS
 # echo "02-03-2025: Running SPH-EXA with 1e6 timesteps, combined criteria, beta = 2pi, h = 1.2, star_inner = 1"
 # srun build-comb/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-angmom -s 1e6 -w 1000 -f c,m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/scratch/run_disk_mom_1e6_half_r1.hdf5'
 
-echo "18-03-2025: Running SPH-EXA with 1e6 timesteps, momentum criterion, beta = 2pi, h = 1.2, star_inner = 2.5, double angmom threshold"
-srun build-double/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-angmom -s 8000 -w 10 -f c,m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/scratch/run_disk_double_1e6_short.hdf5'
+# echo "18-03-2025: Running SPH-EXA with 1e6 timesteps, momentum criterion, beta = 2pi, h = 1.2, star_inner = 2.5, double angmom threshold"
+# srun build-double/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-angmom -s 8000 -w 10 -f c,m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/scratch/run_disk_double_1e6_short.hdf5'
 
-# echo "02-03-2025: Running SPH-EXA with 1e6 timesteps, momentum criterion, beta = 2pi, h = 1.2, star_inner = 2.5, half angmom threshold"
-# srun build-half/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-angmom -s 1e6 -w 1000 -f c,m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/scratch/run_disk_half_1e6.hdf5'
+echo "18-03-2025: Running SPH-EXA with 1e6 timesteps, momentum criterion, beta = 2pi, h = 1.2, star_inner = 2.5, half angmom threshold"
+srun build-half/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-angmom -s 1e6 -w 1000 -f c,m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/scratch/run_disk_half_1e6_25.hdf5'

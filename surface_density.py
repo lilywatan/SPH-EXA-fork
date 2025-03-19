@@ -26,7 +26,7 @@ run_calibration = './output/runs/run_disk_cal_1e6_beta_2.hdf5'
 run_cal_planet_3 = '/home/lwatan/scratch/run_disk_cal_1e6_beta_planet_3.hdf5'
 run_cal_planet_2 = '/home/lwatan/scratch/run_disk_cal_1e6_beta_planet_2.hdf5'
 run_comb_r1 = '/home/lwatan/scratch/run_disk_comb_r1_beta.hdf5'
-run_half = '/home/lwatan/scratch/run_disk_half_2.hdf5'
+#run_half = '/home/lwatan/scratch/run_disk_half_2.hdf5'
 run_double = '/home/lwatan/scratch/run_disk_radial_1e6_beta.hdf5'
 # calibration runs
 run_cal_star0 = '/home/lwatan/scratch/run_disk_cal_1e6_beta_planet_star0.hdf5'
@@ -35,7 +35,7 @@ run_cal_h5 = '/home/lwatan/scratch/run_disk_cal_1e6_beta_h5.hdf5'
 
 # more runs
 run_comb_r1 = '/home/lwatan/scratch/run_disk_comb_1e6_r1_r1.hdf5'
-run_half = '/home/lwatan/scratch/run_disk_half_1e6.hdf5'
+run_half = '/home/lwatan/scratch/run_disk_half_1e6_25.hdf5'
 run_double = '/home/lwatan/scratch/run_disk_double_1e6_short.hdf5'
 
 # constants
@@ -113,7 +113,7 @@ def W(r, h, sigma=10/(7*pi)):
 
 # calculate surface density at timestep t for all particles 
 def surface_density(t, rho, x, y, h, m, disk_mask, stride): 
-    index = int(t/(10*stride))
+    index = int(t/(1000*stride))
     print(len(m), " ", index)
     #rho_disk = rho[index][disk_mask[index]]
     h_disk = h[index][disk_mask[index]]
@@ -164,7 +164,7 @@ def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, run,
         norm = Normalize(vmin=current_min, vmax=current_max)
 
     # Index calculation for the given timestep
-    index = int(t / (10 * stride))
+    index = int(t / (1000 * stride))
     x_disk = x[index][disk_mask[index]]
     y_disk = y[index][disk_mask[index]]
     print(x_disk.shape, " ", y_disk.shape, " ", surface_density.shape)
@@ -181,12 +181,12 @@ def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, run,
     plt.ylabel('Y Position')
     
     # Save the plot with scale type in filename
-    fname = f'surface_density_1e6_{run}_hexbin_{t}_{beta}_{scale_type.lower()}_r1.pdf'
+    fname = f'surface_density_1e6_{run}_hexbin_{t}_{beta}_{scale_type.lower()}_25.pdf'
     plt.savefig(plots + fname, bbox_inches='tight', dpi=300)
     plt.show()
 
 def plot_particles(t, x, y, h, disk_mask, stride, beta, run):
-    index = int(t / (10 * stride))
+    index = int(t / (1000 * stride))
     
     # Apply disk mask to extract particle positions and smoothing lengths
     x_disk = x[index][disk_mask[index]]
@@ -237,8 +237,8 @@ if __name__ == '__main__':
     stride=1
     runs = {
     #"run_comb_r1": run_comb_r1,
-    #"run_half": run_half,
-    "run_double": run_double
+    "run_half": run_half,
+    #"run_double": run_double
     }   
     for run_name, run_value in runs.items(): 
         print(f"starting with run {run_name}")
@@ -248,8 +248,8 @@ if __name__ == '__main__':
         # Compute surface density for the specified timesteps
         # Define the step interval
         min_step = 0
-        step_interval = 1000
-        max_step = 8100  # Adjust this to the maximum step in your simulation
+        step_interval = 50000
+        max_step = 260000  # Adjust this to the maximum step in your simulation
 
         # Prepare an empty list to store surface density arrays for computing global min/max
         surface_densities = []
