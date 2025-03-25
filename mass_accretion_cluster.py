@@ -201,24 +201,23 @@ def plot_fit(observed_rates, sound_speeds, best_alpha, time, file_loc, beta, run
     plt.show()
 
 def plot_all(t_half, t_single, t_double, t_rad, alpha_half, alpha_single, alpha_double, alpha_rad, c_half, c_single, c_double, c_rad): 
-    n_ts = len(time)
     half = alpha_half * (c_half**3) / G
     double = alpha_double * (c_double**3) / G
     single = alpha_single * (c_single**3) / G
     rad = alpha_rad * (c_rad**3) / G
     plt.figure(figsize=(10, 5))
-    plt.plot(t_half, half, label=f"Momentum Criterion Half Threshold (alpha={alpha_half:.3f})", color="red", lw=2)
-    plt.plot(t_single, single, label=f"Momentum Criterion Single Threshold (alpha={alpha_single:.3f})", color="orange", lw=2)
-    plt.plot(t_double, double, label=f"Momentum Criterion Double Threshold (alpha={alpha_double:.3f})", color="deeppink", lw=2)
+    plt.plot(t_half, half, label=f"0.5 Momentum (alpha={alpha_half:.3f})", color="red", lw=2)
+    plt.plot(t_single, single, label=f"1.0 Momentum (alpha={alpha_single:.3f})", color="orange", lw=2)
+    plt.plot(t_double, double, label=f"2.0 Momentum (alpha={alpha_double:.3f})", color="deeppink", lw=2)
     plt.plot(t_rad, rad, label=f"Radial Criterion (alpha={alpha_rad:.3f})", color="blue", lw=2)
     plt.xlabel(r"Time $\frac{{\left[ yr \right]}}{{\left[ 2\pi \right]}}$")
     plt.ylabel(r"Analytical Mass Accretion Rate $\frac{{\left[ 2\pi \cdot M_{{\odot}} \right]}}{{\left[ yr \right]}}$")
-    plt.ylim(0, 0.0003)
+    plt.ylim(0, 0.00005)
     plt.legend()
     plt.grid()
     plt.title(f"Analytical Accretion Rates of different Accretion Criteria")
-    fname = f'analytical_accretion_comparison.pdf'
-    plt.savefig(file_loc + fname)
+    fname = f'analytical_accretion_comparison_all.pdf'
+    plt.savefig(plots + fname)
     plt.tight_layout()
     plt.show()
 
@@ -260,7 +259,7 @@ if __name__ == "__main__":
     a_single, c_single, t_single = gen_data(run_mom_1e6)
     a_double, c_double, t_double = gen_data(run_double)
     a_rad, c_rad, t_rad = gen_data(run_rad_1e6)
-    plot_all(t_half, t_single, t_double, t_rad, t_double, a_half, a_single, a_double, a_rad, c_half, c_single, c_double, c_half)
+    plot_all(t_half, t_single, t_double, t_rad, a_half, a_single, a_double, a_rad, c_half, c_single, c_double, c_rad)
     # Plot the results
     #plot_fit(comb_acc_20, comb_c_20, best_alpha_20, comb_t_20, plots, "inf")
     #plot_fit(comb_acc_20_beta, comb_c_20_beta, best_alpha_20_beta, comb_t_20_beta, plots, "2pi")

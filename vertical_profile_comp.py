@@ -138,39 +138,74 @@ def get_scale_height_rms(timesteps, r, z, m, sz, disk_mask, stride, num_bins):
         aspect_ratio_data[t] = rms_values_ar
     return bin_centers, scale_height_data, aspect_ratio_data 
 
-def plot_all(t_double, t_rest, b_half, b_single, b_double, b_rad, s_half, s_single, s_double, s_rad, a_half, a_single, a_double, a_rad): 
+def get_scale_height_rms_double(timesteps, r, z, m, sz, disk_mask, stride, num_bins): 
+    radial_bins = None
+    scale_height_data = {}  # Store H(r) values per timestep
+    aspect_ratio_data = {}  # Store H(r)/r values per timestep
+
+    plt.figure()
+    
+    for t in timesteps: 
+        index = int(t/(10*stride))
+        r_disk = r[index][disk_mask[index]]
+        z_disk = z[index][disk_mask[index]]
+        m_disk = m[index][disk_mask[index]]
+        star_z = sz[index]
+
+        # Define radial bins only once
+        if radial_bins is None:
+            r_min, r_max = np.min(r_disk), np.max(r_disk)
+            radial_bins = np.linspace(r_min, r_max, num_bins + 1)
+            bin_centers = 0.5 * (radial_bins[:-1] + radial_bins[1:])
+
+        # Compute RMS scale height for each radial bin
+        rms_values_H = []
+        rms_values_ar = []
+        for i in range(len(radial_bins) - 1):
+            mask = (r_disk >= radial_bins[i]) & (r_disk < radial_bins[i+1])
+            m_selected = m_disk[mask]
+            z_selected = z_disk[mask]
+            
+            rms = scale_height_rms(m_selected, z_selected, star_z)
+            rms_values_H.append(rms)
+            rms_values_ar.append(rms / bin_centers[i] if bin_centers[i] != 0 else np.nan)  # Avoid division by zero
+        
+        # Store results for this timestep
+        scale_height_data[t] = rms_values_H
+        aspect_ratio_data[t] = rms_values_ar
+    return bin_centers, scale_height_data, aspect_ratio_data 
+
+def plot_all(t_rest, b_half, b_single, b_double, b_rad, s_half, s_single, s_double, s_rad, a_half, a_single, a_double, a_rad): 
     plt.figure(figsize=(8,6))
     plt.plot(b_double, s_double[0], marker='o', label=f'Initial {0}')
-    for t in t_double: 
-        plt.plot(b_double, s_double[t], marker='o', label=f'2.0 Momentum {t}')
-    for t in t_rest: 
+    #plt.plot(b_double, s_double[7000], marker='o', label=f'2.0 Momentum {7000}')
+    for t in t_rest[1:]: 
         plt.plot(b_half, s_half[t], marker='o', label=f'0.5 Momentum {t}')
         plt.plot(b_single, s_single[t], marker='o', label=f'1.0 Momentum {t}')
         plt.plot(b_rad, s_rad[t], marker='o', label=f'Radial Criterion {t}')
     plt.xlabel(r'Radius (r) $\left[ AU \right]$')
     plt.ylabel(r"Scale Height (H) $\left[ AU \right]$")
-    plt.title(f'Scale Height vs Radius of Different Accretion Criteria')
+    plt.title(f'Scale Height vs Radius of Different Accretion Criteria Timestep 250000')
     plt.grid()
     plt.legend(loc='upper right', fontsize='small')
-    fname = f'/scale-height-rms/scale_height_rms_1e6_comparison.pdf'
+    fname = f'/scale-height-rms/scale_height_rms_1e6_comparison_250.pdf'
     plt.savefig(plots + fname)
     plt.show()
 
     # aspect ratio
     plt.figure(figsize=(8,6))
-    plt.plot(b_double, s_double[0], marker='o', label=f'Initial {0}')
-    for t in t_double: 
-        plt.plot(b_double, a_double[t], marker='o', label=f'2.0 Momentum {t}')
-    for t in t_rest: 
+    plt.plot(b_double, a_double[0], marker='o', label=f'Initial {0}')
+    #plt.plot(b_double, a_double[7000], marker='o', label=f'2.0 Momentum {7000}')
+    for t in t_rest[1:]: 
         plt.plot(b_half, a_half[t], marker='o', label=f'0.5 Momentum {t}')
         plt.plot(b_single, a_single[t], marker='o', label=f'1.0 Momentum {t}')
         plt.plot(b_rad, a_rad[t], marker='o', label=f'Radial Criterion {t}')
     plt.xlabel(r'Radius (r) $\left[ AU \right]$')
     plt.ylabel("Aspect Ratio (H(r)/r)")
-    plt.title(f'Aspect Ratio vs Radius of Different Accretion Criteria')
+    plt.title(f'Aspect Ratio vs Radius of Different Accretion Criteria (Timestep 25000)')
     plt.grid()
     plt.legend(loc='upper right', fontsize='small')
-    fname = f'/ar-rms/ar_rms_1e6_comparison.pdf'
+    fname = f'/ar-rms/ar_rms_1e6_comparison_250.pdf'
     plt.savefig(plots + fname)
     plt.show()
 
@@ -180,17 +215,23 @@ def gen_data(run_value, steps):
     b, s, a = get_scale_height_rms(steps, r, z, m, sz, disk_particles, stride, 20)
     return b, s, a
 
+def gen_data_double(run_value, steps): 
+    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_value,stride)
+    r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
+    b, s, a = get_scale_height_rms_double(steps, r, z, m, sz, disk_particles, stride, 20)
+    return b, s, a
+
 if __name__ == '__main__':
     stride=1
 
-    steps_rest = [7000, 100000, 250000]
-    steps_double = [7000]
+    steps_rest = [0, 250000]
+    steps_double = [0, 7000]
 
     b_half, s_half, a_half = gen_data(run_half, steps_rest)
-    b_double, s_double, a_double = gen_data(run_double, steps_double)
+    b_double, s_double, a_double = gen_data_double(run_double, steps_double)
     b_single, s_single, a_single = gen_data(run_mom_1e6, steps_rest)
     b_rad, s_rad, a_rad = gen_data(run_rad_1e6, steps_rest)
 
-    plot_all(steps_double, steps_rest, b_half, b_single, b_double, b_rad, s_half, s_single, s_double, s_rad, a_half, a_single, a_double, a_rad)
+    plot_all(steps_rest, b_half, b_single, b_double, b_rad, s_half, s_single, s_double, s_rad, a_half, a_single, a_double, a_rad)
 
 
