@@ -77,8 +77,8 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
         const double dist2 = dx * dx + dy * dy + dz * dz;
 
         smoothing_length += d.h[i];
-        const double min_h = 1; 
-        const double max_h = 2;
+        const double min_h = 3; 
+        const double max_h = 4;
         // radial criterion based on smoothing length -> accrete onto disk: 
         if (dist2 < (min_h*d.h[i])*(min_h*d.h[i])) { 
             remove_and_sum(i, accr_mass, accr_mom, n_accreted, removed_h, removed_r, dist2); }

@@ -235,60 +235,60 @@ def plot_particles(t, x, y, h, disk_mask, stride, beta, run):
     
 if __name__ == '__main__':
     stride=1
-    runs = {
-    #"run_comb_r1": run_comb_r1,
-    "run_half": run_half,
-    #"run_double": run_double
-    }   
-    for run_name, run_value in runs.items(): 
-        print(f"starting with run {run_name}")
-        ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_value,stride)
-        r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
-        run_type = run_name.split('_')[1]
-        # Compute surface density for the specified timesteps
-        # Define the step interval
-        min_step = 0
-        step_interval = 50000
-        max_step = 260000  # Adjust this to the maximum step in your simulation
-
-        # Prepare an empty list to store surface density arrays for computing global min/max
-        surface_densities = []
-
-        # Loop through steps in increments of 100,000
-        for step in range(min_step, max_step, step_interval):
-            # Compute surface density for the current step
-            sig = surface_density(step, d, x, y, h, m, disk_particles, stride)
-            surface_densities.append(sig)
-
-            # Compute global min/max for the fixed color scale
-            compute_global_min_max(surface_densities)
-
-            # Generate plot for the current step with a fixed color scale
-            plot_surface_density(step, x, y, sig, disk_particles, stride, "2π", run_type, fixed_scale=True)
-
-        print(f"finished with run {run_name}")
-        #plot_particles(step, x, y, h, disk_particles, stride, "2pi")
-
-    # cal = {
-    # "run_cal_star0": run_cal_star0,
-    # #"run_cal_no_hlim": run_cal_no_hlim,
-    # #"run_cal_h5": run_cal_h5
+    # runs = {
+    # #"run_comb_r1": run_comb_r1,
+    # "run_half": run_half,
+    # #"run_double": run_double
     # }   
-
-    # for run_name, run_value in cal.items(): 
+    # for run_name, run_value in runs.items(): 
     #     print(f"starting with run {run_name}")
     #     ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_value,stride)
     #     r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
     #     run_type = run_name.split('_')[1]
+    #     # Compute surface density for the specified timesteps
+    #     # Define the step interval
+    #     min_step = 0
+    #     step_interval = 50000
+    #     max_step = 260000  # Adjust this to the maximum step in your simulation
 
-    #     min_step = 10000
-    #     step_interval = 5000
-    #     max_step = 30000
+    #     # Prepare an empty list to store surface density arrays for computing global min/max
+    #     surface_densities = []
 
+    #     # Loop through steps in increments of 100,000
     #     for step in range(min_step, max_step, step_interval):
-    #         plot_particles(step, x, y, h, disk_particles, stride, "2π", run_type)
+    #         # Compute surface density for the current step
+    #         sig = surface_density(step, d, x, y, h, m, disk_particles, stride)
+    #         surface_densities.append(sig)
+
+    #         # Compute global min/max for the fixed color scale
+    #         compute_global_min_max(surface_densities)
+
+    #         # Generate plot for the current step with a fixed color scale
+    #         plot_surface_density(step, x, y, sig, disk_particles, stride, "2π", run_type, fixed_scale=True)
 
     #     print(f"finished with run {run_name}")
+    #     #plot_particles(step, x, y, h, disk_particles, stride, "2pi")
+
+    cal = {
+    "run_cal_star0": run_cal_star0,
+    #"run_cal_no_hlim": run_cal_no_hlim,
+    #"run_cal_h5": run_cal_h5
+    }   
+
+    for run_name, run_value in cal.items(): 
+        print(f"starting with run {run_name}")
+        ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm = read_hdf5_data(run_value,stride)
+        r, disk_particles = particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
+        run_type = run_name.split('_')[1]
+
+        min_step = 0
+        step_interval = 50000
+        max_step = 260000
+
+        for step in range(min_step, max_step, step_interval):
+            plot_particles(step, x, y, h, disk_particles, stride, "2π", run_type)
+
+        print(f"finished with run {run_name}")
 
 
     # Generate plots with a dynamic color scale

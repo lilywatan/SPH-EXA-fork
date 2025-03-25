@@ -11,9 +11,11 @@ from matplotlib.patches import Circle
 import surface_density
 
 run_subgrid_star0 = '/home/lwatan/scratch/run_subgrid_beta_planet_star0_h5.hdf5'
+run_subgrid_star0_lim12 = '/home/lwatan/scratch/run_subgrid_beta_planet_star0_1-2lim.hdf5'
+run_subgrid_star0_lim34 = '/home/lwatan/scratch/run_subgrid_beta_planet_star0_3-4lim.hdf5'
 surface_density_min = None
 surface_density_max = None
-plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/subgrid/h5/'
+plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/subgrid/3-4lim/'
 
 def read_hdf5_data_subgrid(file, stride=1):
     densities = []
@@ -148,7 +150,7 @@ def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, r0, 
 
 if __name__ == '__main__':
     stride=1
-    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm, d_r0, d_r, d_m, d_sig = read_hdf5_data_subgrid(run_subgrid_star0,stride)
+    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm, d_r0, d_r, d_m, d_sig = read_hdf5_data_subgrid(run_subgrid_star0_lim34,stride)
     #print_radii(r0[800])
     r, disk_particles = surface_density.particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
 

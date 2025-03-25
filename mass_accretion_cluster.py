@@ -200,6 +200,34 @@ def plot_fit(observed_rates, sound_speeds, best_alpha, time, file_loc, beta, run
     plt.tight_layout()
     plt.show()
 
+def plot_all(t_half, t_single, t_double, t_rad, alpha_half, alpha_single, alpha_double, alpha_rad, c_half, c_single, c_double, c_rad): 
+    n_ts = len(time)
+    half = alpha_half * (c_half**3) / G
+    double = alpha_double * (c_double**3) / G
+    single = alpha_single * (c_single**3) / G
+    rad = alpha_rad * (c_rad**3) / G
+    plt.figure(figsize=(10, 5))
+    plt.plot(t_half, half, label=f"Momentum Criterion Half Threshold (alpha={alpha_half:.3f})", color="red", lw=2)
+    plt.plot(t_single, single, label=f"Momentum Criterion Single Threshold (alpha={alpha_single:.3f})", color="orange", lw=2)
+    plt.plot(t_double, double, label=f"Momentum Criterion Double Threshold (alpha={alpha_double:.3f})", color="deeppink", lw=2)
+    plt.plot(t_rad, rad, label=f"Radial Criterion (alpha={alpha_rad:.3f})", color="blue", lw=2)
+    plt.xlabel(r"Time $\frac{{\left[ yr \right]}}{{\left[ 2\pi \right]}}$")
+    plt.ylabel(r"Analytical Mass Accretion Rate $\frac{{\left[ 2\pi \cdot M_{{\odot}} \right]}}{{\left[ yr \right]}}$")
+    plt.ylim(0, 0.0003)
+    plt.legend()
+    plt.grid()
+    plt.title(f"Analytical Accretion Rates of different Accretion Criteria")
+    fname = f'analytical_accretion_comparison.pdf'
+    plt.savefig(file_loc + fname)
+    plt.tight_layout()
+    plt.show()
+
+def gen_data(run_half): 
+    m_half, c_half, t_half = read_hdf5_data_2(run_half)
+    acc_half = calc_mass_accretion(m_half, t_half)
+    a_half = alpha_estimation(np.array(acc_half), np.array(c_half))
+    return a_half, c_half, t_half
+
 if __name__ == "__main__":
     #comb_m_20, comb_c_20, comb_t_20 = read_hdf5_data_2(run_20_mom)
     #comb_m_20_beta, comb_c_20_beta, comb_t_20_beta = read_hdf5_data_2(run_20_mom_beta)
@@ -217,19 +245,24 @@ if __name__ == "__main__":
     #mom_acc_50_beta = calc_mass_accretion(mom_m_50_beta, mom_t_50_beta)
     #best_alpha_50_beta = alpha_estimation(np.array(mom_acc_50_beta), np.array(mom_c_50_beta))
 
-    runs = {
-    #"run_comb_r1": run_comb_r1,
-    "run_half": run_half,
-    #"run_double": run_double
-    }   
-    for run_name, run_value in runs.items(): 
-        run_type = run_name.split('_')[1]
-        m, c, t = read_hdf5_data_2(run_value)
-        acc = calc_mass_accretion(m, t)
-        best_alpha = alpha_estimation(np.array(acc), np.array(c))
-
+    # runs = {
+    # "run_mom": run_mom_1e6,
+    # "run_half": run_half,
+    # "run_double": run_double
+    # "run_rad": run_rad_1e6
+    # }   
+    # for run_name, run_value in runs.items(): 
+    #     run_type = run_name.split('_')[1]
+    #     m, c, t = read_hdf5_data_2(run_value)
+    #     acc = calc_mass_accretion(m, t)
+    #     best_alpha = alpha_estimation(np.array(acc), np.array(c))
+    a_half, c_half, t_half = gen_data(run_half)
+    a_single, c_single, t_single = gen_data(run_mom_1e6)
+    a_double, c_double, t_double = gen_data(run_double)
+    a_rad, c_rad, t_rad = gen_data(run_rad_1e6)
+    plot_all(t_half, t_single, t_double, t_rad, t_double, a_half, a_single, a_double, a_rad, c_half, c_single, c_double, c_half)
     # Plot the results
     #plot_fit(comb_acc_20, comb_c_20, best_alpha_20, comb_t_20, plots, "inf")
     #plot_fit(comb_acc_20_beta, comb_c_20_beta, best_alpha_20_beta, comb_t_20_beta, plots, "2pi")
-        plot_fit(acc, c, best_alpha, t, plots, "2π", run_type)
+        #plot_fit(acc, c, best_alpha, t, plots, "2π", run_type)
     # plot_mass_accretion(rad_m_20, acc_rad, rad_t_20, plots)
