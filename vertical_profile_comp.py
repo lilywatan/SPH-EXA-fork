@@ -19,9 +19,9 @@ plots = './output/plots/vertical-profile'
 run_100_beta = '/home/lwatan/scratch/run_disk_mom_100_beta.hdf5'
 run_100_comb_beta = '/home/lwatan/scratch/run_disk_comb_100_beta.hdf5'
 run_100_radial_beta = '/home/lwatan/scratch/run_disk_radial_100_beta.hdf5'
-run_mom_1e6 = '/home/lwatan/scratch/run_disk_mom_1e6_beta.hdf5'
+run_mom_1e6 = '/home/lwatan/scratch/run_disk_mom_1e6_3.hdf5'
 run_comb_1e6 = '/home/lwatan/scratch/run_disk_comb_1e6_2.hdf5'
-run_rad_1e6 = '/home/lwatan/scratch/run_disk_radial_1e6_beta.hdf5'
+run_rad_1e6 = '/home/lwatan/scratch/run_disk_radial_1e6_3.hdf5'
 run_comb_r1 = '/home/lwatan/scratch/run_disk_comb_1e6_r1_r1.hdf5'
 run_half = '/home/lwatan/scratch/run_disk_half_1e6_25.hdf5'
 run_double = '/home/lwatan/scratch/run_disk_double_1e6_short.hdf5'
@@ -175,37 +175,37 @@ def get_scale_height_rms_double(timesteps, r, z, m, sz, disk_mask, stride, num_b
         aspect_ratio_data[t] = rms_values_ar
     return bin_centers, scale_height_data, aspect_ratio_data 
 
-def plot_all(t_rest, b_half, b_single, b_double, b_rad, s_half, s_single, s_double, s_rad, a_half, a_single, a_double, a_rad): 
+def plot_all(t, b_half, b_single, b_double, b_rad, s_half, s_single, s_double, s_rad, a_half, a_single, a_double, a_rad): 
     plt.figure(figsize=(8,6))
     plt.plot(b_double, s_double[0], marker='o', label=f'Initial {0}')
-    #plt.plot(b_double, s_double[7000], marker='o', label=f'2.0 Momentum {7000}')
-    for t in t_rest[1:]: 
-        plt.plot(b_half, s_half[t], marker='o', label=f'0.5 Momentum {t}')
-        plt.plot(b_single, s_single[t], marker='o', label=f'1.0 Momentum {t}')
-        plt.plot(b_rad, s_rad[t], marker='o', label=f'Radial Criterion {t}')
+    if t == 7000:
+        plt.plot(b_double, s_double[7000], marker='o', label=f'2.0 Momentum {7000}')
+    plt.plot(b_half, s_half[t], marker='o', label=f'0.5 Momentum {t}')
+    plt.plot(b_single, s_single[t], marker='o', label=f'1.0 Momentum {t}')
+    plt.plot(b_rad, s_rad[t], marker='o', label=f'Radial Criterion {t}')
     plt.xlabel(r'Radius (r) $\left[ AU \right]$')
     plt.ylabel(r"Scale Height (H) $\left[ AU \right]$")
-    plt.title(f'Scale Height vs Radius of Different Accretion Criteria Timestep 250000')
+    plt.title(f'Scale Height vs Radius of Different Accretion Criteria at Timestep {t}')
     plt.grid()
     plt.legend(loc='upper right', fontsize='small')
-    fname = f'/scale-height-rms/scale_height_rms_1e6_comparison_250.pdf'
+    fname = f'/scale-height-rms/scale_height_rms_1e6_comparison_{t}.pdf'
     plt.savefig(plots + fname)
     plt.show()
 
     # aspect ratio
     plt.figure(figsize=(8,6))
     plt.plot(b_double, a_double[0], marker='o', label=f'Initial {0}')
-    #plt.plot(b_double, a_double[7000], marker='o', label=f'2.0 Momentum {7000}')
-    for t in t_rest[1:]: 
-        plt.plot(b_half, a_half[t], marker='o', label=f'0.5 Momentum {t}')
-        plt.plot(b_single, a_single[t], marker='o', label=f'1.0 Momentum {t}')
-        plt.plot(b_rad, a_rad[t], marker='o', label=f'Radial Criterion {t}')
+    if t == 7000: 
+        plt.plot(b_double, a_double[7000], marker='o', label=f'2.0 Momentum {7000}')
+    plt.plot(b_half, a_half[t], marker='o', label=f'0.5 Momentum {t}')
+    plt.plot(b_single, a_single[t], marker='o', label=f'1.0 Momentum {t}')
+    plt.plot(b_rad, a_rad[t], marker='o', label=f'Radial Criterion {t}')
     plt.xlabel(r'Radius (r) $\left[ AU \right]$')
     plt.ylabel("Aspect Ratio (H(r)/r)")
-    plt.title(f'Aspect Ratio vs Radius of Different Accretion Criteria (Timestep 25000)')
+    plt.title(f'Aspect Ratio vs Radius of Different Accretion Criteria at Timestep {t}')
     plt.grid()
     plt.legend(loc='upper right', fontsize='small')
-    fname = f'/ar-rms/ar_rms_1e6_comparison_250.pdf'
+    fname = f'/ar-rms/ar_rms_1e6_comparison_{t}.pdf'
     plt.savefig(plots + fname)
     plt.show()
 
@@ -224,7 +224,7 @@ def gen_data_double(run_value, steps):
 if __name__ == '__main__':
     stride=1
 
-    steps_rest = [0, 250000]
+    steps_rest = [0, 7000, 100000, 250000]
     steps_double = [0, 7000]
 
     b_half, s_half, a_half = gen_data(run_half, steps_rest)
@@ -232,6 +232,8 @@ if __name__ == '__main__':
     b_single, s_single, a_single = gen_data(run_mom_1e6, steps_rest)
     b_rad, s_rad, a_rad = gen_data(run_rad_1e6, steps_rest)
 
-    plot_all(steps_rest, b_half, b_single, b_double, b_rad, s_half, s_single, s_double, s_rad, a_half, a_single, a_double, a_rad)
+    plot_all(7000, b_half, b_single, b_double, b_rad, s_half, s_single, s_double, s_rad, a_half, a_single, a_double, a_rad)
+    plot_all(100000, b_half, b_single, b_double, b_rad, s_half, s_single, s_double, s_rad, a_half, a_single, a_double, a_rad)
+    plot_all(250000, b_half, b_single, b_double, b_rad, s_half, s_single, s_double, s_rad, a_half, a_single, a_double, a_rad)
 
 

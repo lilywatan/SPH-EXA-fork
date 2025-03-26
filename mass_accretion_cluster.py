@@ -17,9 +17,9 @@ plots = './output/plots/mass-accretion/'
 run_100_beta = '/home/lwatan/scratch/run_disk_mom_100_beta.hdf5'
 run_100_comb_beta = '/home/lwatan/scratch/run_disk_comb_100_beta.hdf5'
 run_100_radial_beta = '/home/lwatan/scratch/run_disk_radial_100_beta.hdf5'
-run_mom_1e6 = '/home/lwatan/scratch/run_disk_mom_1e6_beta.hdf5'
+run_mom_1e6 = '/home/lwatan/scratch/run_disk_mom_1e6_3.hdf5'
 run_comb_1e6 = '/home/lwatan/scratch/run_disk_comb_100_beta.hdf5'
-run_rad_1e6 = '/home/lwatan/scratch/run_disk_radial_1e6_beta.hdf5'
+run_rad_1e6 = '/home/lwatan/scratch/run_disk_radial_1e6_3.hdf5'
 run_comb_r1 = '/home/lwatan/scratch/run_disk_comb_1e6_r1_r1.hdf5'
 run_half = '/home/lwatan/scratch/run_disk_half_1e6_25.hdf5'
 run_double = '/home/lwatan/scratch/run_disk_double_1e6_short.hdf5'
@@ -200,7 +200,7 @@ def plot_fit(observed_rates, sound_speeds, best_alpha, time, file_loc, beta, run
     plt.tight_layout()
     plt.show()
 
-def plot_all(t_half, t_single, t_double, t_rad, alpha_half, alpha_single, alpha_double, alpha_rad, c_half, c_single, c_double, c_rad): 
+def plot_all(t_half, t_single, t_double, t_rad, alpha_half, alpha_single, alpha_double, alpha_rad, c_half, c_single, c_double, c_rad, lim, v): 
     half = alpha_half * (c_half**3) / G
     double = alpha_double * (c_double**3) / G
     single = alpha_single * (c_single**3) / G
@@ -212,11 +212,11 @@ def plot_all(t_half, t_single, t_double, t_rad, alpha_half, alpha_single, alpha_
     plt.plot(t_rad, rad, label=f"Radial Criterion (alpha={alpha_rad:.3f})", color="blue", lw=2)
     plt.xlabel(r"Time $\frac{{\left[ yr \right]}}{{\left[ 2\pi \right]}}$")
     plt.ylabel(r"Analytical Mass Accretion Rate $\frac{{\left[ 2\pi \cdot M_{{\odot}} \right]}}{{\left[ yr \right]}}$")
-    plt.ylim(0, 0.00005)
+    plt.ylim(0, lim)
     plt.legend()
     plt.grid()
     plt.title(f"Analytical Accretion Rates of different Accretion Criteria")
-    fname = f'analytical_accretion_comparison_all.pdf'
+    fname = f'analytical_accretion_comparison_{v}.pdf'
     plt.savefig(plots + fname)
     plt.tight_layout()
     plt.show()
@@ -259,7 +259,8 @@ if __name__ == "__main__":
     a_single, c_single, t_single = gen_data(run_mom_1e6)
     a_double, c_double, t_double = gen_data(run_double)
     a_rad, c_rad, t_rad = gen_data(run_rad_1e6)
-    plot_all(t_half, t_single, t_double, t_rad, a_half, a_single, a_double, a_rad, c_half, c_single, c_double, c_rad)
+    plot_all(t_half, t_single, t_double, t_rad, a_half, a_single, a_double, a_rad, c_half, c_single, c_double, c_rad, 0.00005, "all")
+    plot_all(t_half, t_single, t_double, t_rad, a_half, a_single, a_double, a_rad, c_half, c_single, c_double, c_rad, 0.005, "double")
     # Plot the results
     #plot_fit(comb_acc_20, comb_c_20, best_alpha_20, comb_t_20, plots, "inf")
     #plot_fit(comb_acc_20_beta, comb_c_20_beta, best_alpha_20_beta, comb_t_20_beta, plots, "2pi")
