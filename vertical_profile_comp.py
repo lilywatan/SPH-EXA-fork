@@ -224,7 +224,7 @@ def gen_data_double(run_value, steps):
 if __name__ == '__main__':
     stride=1
 
-    steps_rest = [0, 7000, 100000, 250000]
+    steps_rest = [0, 7000, 100000, 200000]
     steps_double = [0, 7000]
 
     b_half, s_half, a_half = gen_data(run_half, steps_rest)
@@ -234,6 +234,6 @@ if __name__ == '__main__':
 
     plot_all(7000, b_half, b_single, b_double, b_rad, s_half, s_single, s_double, s_rad, a_half, a_single, a_double, a_rad)
     plot_all(100000, b_half, b_single, b_double, b_rad, s_half, s_single, s_double, s_rad, a_half, a_single, a_double, a_rad)
-    plot_all(250000, b_half, b_single, b_double, b_rad, s_half, s_single, s_double, s_rad, a_half, a_single, a_double, a_rad)
+    plot_all(200000, b_half, b_single, b_double, b_rad, s_half, s_single, s_double, s_rad, a_half, a_single, a_double, a_rad)
 
 
