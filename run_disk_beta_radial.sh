@@ -40,5 +40,5 @@ export OMP_NUM_THREADS
 # echo "18-03-2025: Running SPH-EXA with 1e6 timesteps, momentum criterion, beta = 2pi, h = 1.2, star_inner = 2.5, double angmom threshold"
 # srun build-double/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-angmom -s 8000 -w 10 -f c,m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/scratch/run_disk_double_1e6_short.hdf5'
 
-echo "22-05-2025: Running SPH-EXA with 1e6 timesteps, distance criterion, beta = 2pi, h = 1.2, star_inner = 1.0, 1.0 angmom threshold"
-srun build-1.0-mom/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-planet -s 1e6 -w 1000 -f c,m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/scratch/run_disk_rad_1.hdf5'
+echo "22-05-2025: Running SPH-EXA with 1e6 timesteps, distance criterion, beta = 2pi, h = 1.2, star_inner = 2.5, 1.0 angmom threshold"
+srun build-2.5-comb/main/src/sphexa/sphexa --init '/home/lwatan/data/disk5_beta.hdf5' --prop std-planet -s 1e6 -w 1000 -f c,m,x,y,z,rho,vx,vy,vz,h,u,temp,alpha,du_m1,x_m1,y_m1,z_m1 -o '/home/lwatan/scratch/run_disk_rad_25_2.hdf5'

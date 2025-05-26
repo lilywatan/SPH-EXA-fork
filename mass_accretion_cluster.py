@@ -31,7 +31,7 @@ run_mom_1 = '/home/lwatan/scratch/run_disk_mom_1-0.hdf5'
 run_comb_1 = '/home/lwatan/scratch/run_disk_comb_1-0.hdf5'
 run_rad_1 = '/home/lwatan/scratch/run_disk_rad_1.hdf5'
 run_mom_half = '/home/lwatan/scratch/run_disk_mom_2-5_half.hdf5'
-run_mom_double = '/home/lwatan/scratch/run_disk_mom_2-5_double.hdf5'
+run_mom_double = '/home/lwatan/scratch/run_disk_mom_double_2.hdf5'
 
 # constants
 G = 1.0 
@@ -42,6 +42,8 @@ def read_hdf5_data_2(file, output=None, block_size=1):
 
     with h5py.File(file, 'r') as f: 
         step_keys = sorted(f.keys(), key=lambda x: int(re.search(r'\d+', x).group()))
+        if file == run_rad_25: 
+            step_keys = step_keys[:250]
 
         star_mass_data = []
         sound_speed_data = []
@@ -237,13 +239,15 @@ def plot_all(t_half, t_single, t_double, t_rad, alpha_half, alpha_single, alpha_
     plt.plot(t_single, single, label=f"1.0 Momentum (alpha={alpha_single:.3f})", color="orange", lw=2)
     plt.plot(t_double, double, label=f"2.0 Momentum (alpha={alpha_double:.3f})", color="deeppink", lw=2)
     plt.plot(t_rad, rad, label=f"Radial Criterion (alpha={alpha_rad:.3f})", color="blue", lw=2)
+    plt.xscale('log')
+    plt.yscale('log')
     plt.xlabel(r"Time $\frac{{\left[ yr \right]}}{{\left[ 2\pi \right]}}$")
     plt.ylabel(r"Analytical Mass Accretion Rate $\frac{{\left[ 2\pi \cdot M_{{\odot}} \right]}}{{\left[ yr \right]}}$")
     plt.ylim(0, lim)
     plt.legend()
     plt.grid()
     plt.title(f"Analytical Accretion Rates of different Accretion Criteria")
-    fname = f'analytical_accretion_comparison_{v}.pdf'
+    fname = f'analytical_accretion_comparison_{v}_log.pdf'
     plt.savefig(plots + fname)
     plt.tight_layout()
     plt.show()
@@ -271,29 +275,29 @@ if __name__ == "__main__":
     #mom_acc_50_beta = calc_mass_accretion(mom_m_50_beta, mom_t_50_beta)
     #best_alpha_50_beta = alpha_estimation(np.array(mom_acc_50_beta), np.array(mom_c_50_beta))
 
-    runs = {
-    "run_mom_25": run_mom_25,
-    "run_comb_25": run_comb_25,
-    "run_rad_25": run_rad_25,
-    "run_mom_1": run_mom_1,
-    "run_comb_1": run_comb_1,
-    "run_rad_1": run_rad_1,
-    "run_mom_half": run_mom_half,
-    "run_mom_double": run_mom_double,
-    }   
-    for run_name, run_value in runs.items(): 
-        run_type = run_name.split('_')[1:]
-        m, c, t = read_hdf5_data_2(run_value)
-        acc = calc_mass_accretion(m, t)
-        best_alpha = alpha_estimation(np.array(acc), np.array(c))
-    # a_half, c_half, t_half = gen_data(run_half)
-    # a_single, c_single, t_single = gen_data(run_mom_1e6)
-    # a_double, c_double, t_double = gen_data(run_double)
-    # a_rad, c_rad, t_rad = gen_data(run_rad_1e6)
-    # plot_all(t_half, t_single, t_double, t_rad, a_half, a_single, a_double, a_rad, c_half, c_single, c_double, c_rad, 0.00005, "all")
-    # plot_all(t_half, t_single, t_double, t_rad, a_half, a_single, a_double, a_rad, c_half, c_single, c_double, c_rad, 0.005, "double")
+    #runs = {
+    # "run_mom_25": run_mom_25,
+    # "run_comb_25": run_comb_25,
+    #"run_rad_25": run_rad_25,
+    # "run_mom_1": run_mom_1,
+    # "run_comb_1": run_comb_1,
+    # "run_rad_1": run_rad_1,
+    # "run_mom_half": run_mom_half,
+    #  "run_mom_double": run_mom_double,
+    # }   
+    # for run_name, run_value in runs.items(): 
+    #     run_type = run_name.split('_')[1:]
+    #     m, c, t = read_hdf5_data_2(run_value)
+    #     acc = calc_mass_accretion(m, t)
+    #     best_alpha = alpha_estimation(np.array(acc), np.array(c))
+    a_half, c_half, t_half = gen_data(run_mom_half)
+    a_single, c_single, t_single = gen_data(run_mom_25)
+    a_double, c_double, t_double = gen_data(run_mom_double)
+    a_rad, c_rad, t_rad = gen_data(run_rad_25)
+    plot_all(t_half, t_single, t_double, t_rad, a_half, a_single, a_double, a_rad, c_half, c_single, c_double, c_rad, 0.00005, "all")
+    plot_all(t_half, t_single, t_double, t_rad, a_half, a_single, a_double, a_rad, c_half, c_single, c_double, c_rad, 0.005, "double")
     # Plot the results
     #plot_fit(comb_acc_20, comb_c_20, best_alpha_20, comb_t_20, plots, "inf")
     #plot_fit(comb_acc_20_beta, comb_c_20_beta, best_alpha_20_beta, comb_t_20_beta, plots, "2pi")
-        plot_fit_log(acc, c, best_alpha, t, plots, "2π", run_type)
+        #plot_fit_log(acc, c, best_alpha, t, plots, "2π", run_type)
     # plot_mass_accretion(rad_m_20, acc_rad, rad_t_20, plots)
