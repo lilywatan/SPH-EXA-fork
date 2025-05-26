@@ -13,9 +13,10 @@ import surface_density
 run_subgrid_star0 = '/home/lwatan/scratch/run_subgrid_beta_planet_star0_h5.hdf5'
 run_subgrid_star0_lim12 = '/home/lwatan/scratch/run_subgrid_beta_planet_star0_1-2lim.hdf5'
 run_subgrid_star0_lim34 = '/home/lwatan/scratch/run_subgrid_beta_planet_star0_3-4lim.hdf5'
+run_subgrid_star0_radlim = '/home/lwatan/scratch/run_subgrid_beta_planet_star0_radial_lim_2.hdf5'
 surface_density_min = None
 surface_density_max = None
-plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/subgrid/3-4lim/'
+plots = '/home/lwatan/data/SPH-EXA-fork/output/plots/subgrid/radlim/'
 
 def read_hdf5_data_subgrid(file, stride=1):
     densities = []
@@ -69,12 +70,14 @@ def print_radii(r0):
         print(i, '\n')
 
 def plot_subgrid_disk(t, x, y, disk_mask, stride, dr0, dr, star_x, star_y):
-    index = int(t / (1000 * stride))
+    print("length x_disk: ", len(x), "\n")
+    index = int(t / (10 * stride))
+    print("index: ", index, "\n")
     x_disk = x[index][disk_mask[index]]
     y_disk = y[index][disk_mask[index]]
 
     star_center = (star_x[index], star_y[index])
-    circle_r0 = Circle(star_center, dr0[index], color='red', fill=False, linewidth=2)
+    circle_r0 = Circle(star_center, dr0[index], color='red', fill=False, linewidth=2, alpha=0.5)
     circle_r = Circle(star_center, dr[index], color='green', fill=False, linewidth=2)
     
     fig, ax = plt.subplots(figsize=(8, 6))
@@ -86,7 +89,7 @@ def plot_subgrid_disk(t, x, y, disk_mask, stride, dr0, dr, star_x, star_y):
     plt.xlabel('X Position')
     plt.ylabel('Y Position')
 
-    fname = f'subgrid_star0_{t}_2π.pdf'
+    fname = f'subgrid_star0_{t}_2π_corr.pdf'
     plt.savefig(plots + fname, bbox_inches='tight', dpi=300)
     plt.show()
 
@@ -150,13 +153,13 @@ def plot_surface_density(t, x, y, surface_density, disk_mask, stride, beta, r0, 
 
 if __name__ == '__main__':
     stride=1
-    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm, d_r0, d_r, d_m, d_sig = read_hdf5_data_subgrid(run_subgrid_star0_lim34,stride)
+    ts, d, p, m, x, y, z, h, c_s, times, sx, sy, sz, sm, d_r0, d_r, d_m, d_sig = read_hdf5_data_subgrid(run_subgrid_star0_radlim,stride)
     #print_radii(r0[800])
     r, disk_particles = surface_density.particle_radii2(x, y, z, m, sx, sy, sz, sm, ts)
 
     min_step = 0
-    step_interval = 2000
-    max_step = 20000
+    step_interval = 100
+    max_step = 1700
 
     for step in range(min_step, max_step, step_interval):
         # Compute surface density for the current step

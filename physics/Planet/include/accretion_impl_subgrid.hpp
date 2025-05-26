@@ -79,13 +79,22 @@ void computeAccretionConditionImplSubGridDisk(size_t first, size_t last, Dataset
         smoothing_length += d.h[i];
         const double min_h = 3; 
         const double max_h = 4;
+        const double radial_boundary = star.inner_size * star.inner_size;; 
+        /*
         // radial criterion based on smoothing length -> accrete onto disk: 
         if (dist2 < (min_h*d.h[i])*(min_h*d.h[i])) { 
             remove_and_sum(i, accr_mass, accr_mom, n_accreted, removed_h, removed_r, dist2); }
         // radial criterion for boundary -> 2h < r < 3h 
         else if (dist2 > (min_h*d.h[i])*(min_h*d.h[i]) && dist2 < (max_h*d.h[i])*(max_h*d.h[i])) { add_to_boundary(i, boundary_mass, n_boundary, 
             boundary_r0, boundary_rho, boundary_T, dist2, boundary_sigma0, boundary_c, boundary_H2, dz); }
-        
+        */
+        // radial criterion based on star inner size -> accrete onto disk:
+        if (dist2 < radial_boundary) { 
+            remove_and_sum(i, accr_mass, accr_mom, n_accreted, removed_h, removed_r, dist2); }
+        // radial criterion for boundary based on star size
+        else if (dist2 > radial_boundary && dist2 < 1.25*radial_boundary ) { add_to_boundary(i, boundary_mass, n_boundary, 
+            boundary_r0, boundary_rho, boundary_T, dist2, boundary_sigma0, boundary_c, boundary_H2, dz); }
+
         /* if (dist2 < 2 * 2 && d.h[i] < 2.0) { 
             remove_and_sum(i, accr_mass, n_accreted, removed_h, removed_r, dist2); } 
 

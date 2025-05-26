@@ -49,8 +49,8 @@ struct DiskData
         optionalIO("disk::m", &m, 1);
         optionalIO("disk::c_boundary", &c_boundary, 1);
         optionalIO("disk::r0", &r0, 1);
-        optionalIO("disk::r", &r0, 1);
-        optionalIO("disk::h", &r0, 1);
+        optionalIO("disk::r", &r, 1);
+        optionalIO("disk::h", &h, 1);
         optionalIO("disk::rho_boundary", &rho_boundary, 1);
         optionalIO("disk::T_boundary", &T_boundary, 1);
         optionalIO("disk::sigma0", &sigma0, 1);
